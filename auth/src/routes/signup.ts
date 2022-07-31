@@ -1,29 +1,10 @@
-import express, { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { BadRequestError, UserType, validateRequest } from "@mfsvton/common";
+import express, { Request, Response } from "express";
+import { body } from "express-validator";
+import jwt from "jsonwebtoken";
+import { User } from "../models/user";
 
 const router = express.Router();
-
-enum UserType {
-  Customer = "customer",
-  Admin = "admin",
-}
-
-const validationRequest = (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    throw new Error(
-      errors
-        .array()
-        .map((error) => {
-          return JSON.stringify({ message: error.msg, field: error.param });
-        })
-        .toString()
-    );
-  }
-  next();
-};
-
-let User: [{ email: string; password: string; type: UserType }];
 
 router.post(
   "/api/user/signup",
@@ -35,12 +16,31 @@ router.post(
       .withMessage("pass must be between 5 & 15 chars"),
     body("type").isIn(Object.values(UserType)),
   ],
-  validationRequest,
+  validateRequest,
   async (req: Request, res: Response) => {
     const { email, password, type } = req.body;
 
-    //const user = User.push({ email, password, type });
-    //console.log(user);
+    const existingUser = await User.findOne({ email, type });
+
+    if (existingUser) {
+      throw new BadRequestError("email is used");
+    }
+
+    const user = User.build({ email, password, type });
+    await user.save();
+
+    const userJwt = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        type: user.type,
+      },
+      process.env.JWT_KEY!
+    );
+
+    req.session = {
+      jwt: userJwt,
+    };
 
     res.status(201).send({ email, password, type });
   }
