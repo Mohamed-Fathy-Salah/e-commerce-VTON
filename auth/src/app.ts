@@ -1,6 +1,8 @@
+import 'express-async-errors';
 import { errorHandler, NotFoundError } from "@mfsvton/common";
 import cookieSession from "cookie-session";
-import express, { json } from "express";
+import express from "express";
+import {json} from 'body-parser';
 
 import { signupRouter } from "./routes/signup";
 import { signinRouter } from "./routes/signin";
