@@ -3,9 +3,9 @@ import express, {Request, Response} from "express";
 import {body} from 'express-validator';
 import {Customer} from '../models/customer'
 
-const route = express.Router();
+const router = express.Router();
 
-route.post(
+router.post(
   "/api/customerdata",
   requireCustomerAuth,
   [
@@ -20,6 +20,7 @@ route.post(
       // TODO: add all data
       
       const data = Customer.build({
+          customerId: req.currentUser!.id,
           name: body.name
       });
 
@@ -27,4 +28,4 @@ route.post(
   }
 );
 
-export { route as newCustomerDataRoute };
+export { router as newCustomerDataRoute };

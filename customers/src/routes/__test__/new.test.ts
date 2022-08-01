@@ -1,19 +1,22 @@
 import { app } from "../../app";
 import request from "supertest";
 import { UserType } from "@mfsvton/common";
+import mongoose from "mongoose";
 
 it("error when setting customer data with out login or with admin", async () => {
   await request(app)
     .post("/api/customerdata")
     .send({
+      customerId: new mongoose.Types.ObjectId().toHexString(),
       name: "blah",
     })
     .expect(401);
 
   await request(app)
     .post("/api/customerdata")
-    .set('Cookie', global.signin(UserType.Admin))
+    .set("Cookie", global.signin(UserType.Admin))
     .send({
+      customerId: new mongoose.Types.ObjectId().toHexString(),
       name: "blah",
     })
     .expect(401);
@@ -21,14 +24,14 @@ it("error when setting customer data with out login or with admin", async () => 
 
 it("error when name is not added or is empty", async () => {
   await request(app)
-  .post("/api/customerdata")
-  .set('Cookie', global.signin(UserType.Customer))
-  .send({})
-  .expect(400);
+    .post("/api/customerdata")
+    .set("Cookie", global.signin(UserType.Customer))
+    .send({})
+    .expect(400);
 
   await request(app)
     .post("/api/customerdata")
-    .set('Cookie', global.signin(UserType.Customer))
+    .set("Cookie", global.signin(UserType.Customer))
     .send({
       name: "",
     })
@@ -37,10 +40,10 @@ it("error when name is not added or is empty", async () => {
 
 it("201 when customer data is right", async () => {
   await request(app)
-  .post("/api/customerdata")
-  .set('Cookie', global.signin(UserType.Customer))
-  .send({
-      name: "blah"
-  })
-  .expect(201);
+    .post("/api/customerdata")
+    .set("Cookie", global.signin(UserType.Customer))
+    .send({
+      name: "blah",
+    })
+    .expect(201);
 });
