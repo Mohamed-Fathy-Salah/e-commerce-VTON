@@ -17,3 +17,10 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /api/customerdata/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: customers-srv
+                port:
+                  number: 3000

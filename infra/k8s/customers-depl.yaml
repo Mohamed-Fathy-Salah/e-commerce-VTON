@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-deployment
+  labels:
+    app: customers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customers
+  template:
+    metadata:
+      labels:
+        app: customers
+    spec:
+      containers:
+        - name: customers
+          image: mofasa101/customers
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: "mongodb://customers-mongo-srv:27017/customers"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-srv
+spec:
+  selector:
+    app: customers
+  ports:
+    - name: customers
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
