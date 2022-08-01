@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 // An interface that describes the properties
 // that are requried to create a new User
 interface CustomerAttrs {
+  customerId: string;
   name: string;
   gender?: Gender;
   age?: number;
@@ -28,6 +29,7 @@ interface CustomerModel extends mongoose.Model<CustomerDoc> {
 // An interface that describes the properties
 // that a User Document has
 interface CustomerDoc extends mongoose.Document {
+  customerId: string;
   name: string;
   gender?: Gender;
   age?: number;
@@ -36,11 +38,13 @@ interface CustomerDoc extends mongoose.Document {
   photo?: string; // TODO: add actual image
   sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
 }
-//enum: Object.values(UserType),
-//default: UserType.Customer,
 
 const customerSchema = new mongoose.Schema(
   {
+    customerId: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,

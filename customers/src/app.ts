@@ -5,6 +5,8 @@ import express from "express";
 import { json } from "body-parser";
 
 import { newCustomerDataRoute } from "./routes/new";
+import { updateCustomerDataRoute } from "./routes/update";
+import { showCustomerDataRoute } from "./routes/show";
 
 const app = express();
 app.set("trust proxy", true);
@@ -20,6 +22,8 @@ app.use(
 app.use(currentUser);
 
 app.use(newCustomerDataRoute);
+app.use(updateCustomerDataRoute);
+app.use(showCustomerDataRoute);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
