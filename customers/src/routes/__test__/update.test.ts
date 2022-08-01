@@ -12,6 +12,7 @@ it("error if user is admin ", async () => {
   await request(app)
     .put("/api/customerdata")
     .set("Cookie", global.signin(UserType.Admin))
+    .send({})
     .expect(401);
 });
 
