@@ -1,4 +1,4 @@
-import { requireCustomerAuth, validateRequest } from "@mfsvton/common";
+import { requireCustomerAuth, validateRequest, Gender, SkinTone} from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { Customer } from "../models/customer";
@@ -10,9 +10,7 @@ router.post(
   requireCustomerAuth,
   [
       // todo: add messages
-    body("name").custom((value) => {
-      return !value || value.length > 0;
-    }),
+    body("name").not().isEmpty(),
     body("gender").custom((value) => {
       return !value || Object.values(Gender).includes(value);
     }),
