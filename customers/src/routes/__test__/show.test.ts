@@ -2,7 +2,6 @@ import { app } from "../../app";
 import request from "supertest";
 import { UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
-import { Customer } from "../../models/customer";
 
 it("error if user is not signed in ", async () => {
   await request(app).get("/api/customerdata").expect(401);
