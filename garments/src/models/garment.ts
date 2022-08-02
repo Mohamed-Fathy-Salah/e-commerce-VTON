@@ -25,7 +25,7 @@ interface GarmentModel extends mongoose.Model<GarmentDoc> {
 
 // An interface that describes the properties
 // that a User Document has
-interface GarmentDoc extends mongoose.Document {
+export interface GarmentDoc extends mongoose.Document {
   adminId: string;
   garmentClass: GarmentClass;
   gender: Gender;
