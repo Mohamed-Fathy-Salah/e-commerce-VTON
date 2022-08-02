@@ -25,14 +25,15 @@ it("error if user is not in DB ", async () => {
 
 it("correct data when user signin", async () => {
   const customerId = new mongoose.Types.ObjectId().toHexString();
-
-  const customer = Customer.build({
-    customerId,
-    name: "hi",
-  });
-  customer.save();
-
   const cookie = global.signin(UserType.Customer, customerId);
+
+  await request(app)
+    .post("/api/customerdata")
+    .set("Cookie", cookie)
+    .send({
+      name: "blah",
+    })
+    .expect(201);
 
   const res = await request(app)
   .put('/api/customerdata')
@@ -46,6 +47,7 @@ it("correct data when user signin", async () => {
     })
   .expect(201)
 
+  expect(res.body.customerId).toEqual(customerId);
   expect(res.body.name).toEqual('hihi');
   expect(res.body.gender).toEqual(Gender.Male);
   expect(res.body.age).toEqual(15);

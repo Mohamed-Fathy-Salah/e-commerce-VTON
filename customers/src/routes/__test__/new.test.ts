@@ -39,11 +39,15 @@ it("error when name is not added or is empty", async () => {
 });
 
 it("201 when customer data is right", async () => {
-  await request(app)
+  const customerId = new mongoose.Types.ObjectId().toHexString();
+  const cookie = global.signin(UserType.Customer, customerId);
+  const res = await request(app)
     .post("/api/customerdata")
-    .set("Cookie", global.signin(UserType.Customer))
+    .set("Cookie", cookie)
     .send({
       name: "blah",
     })
     .expect(201);
+
+  expect(res.body.customerId).toEqual(customerId);
 });

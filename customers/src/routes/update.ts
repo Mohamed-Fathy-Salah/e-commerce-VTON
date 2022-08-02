@@ -32,7 +32,6 @@ router.put(
     const customerId = req.currentUser!.id;
 
     const customer = await Customer.findOne({ customerId });
-
     if (!customer) {
       throw new NotFoundError();
     }
