@@ -4,9 +4,10 @@ import cookieSession from "cookie-session";
 import express from "express";
 import { json } from "body-parser";
 
-import { newCustomerDataRoute } from "./routes/new";
-import { updateCustomerDataRoute } from "./routes/update";
-import { showCustomerDataRoute } from "./routes/show";
+import { newCartRouter } from "./routes/new";
+import { updateCartRouter } from "./routes/update";
+import { showCartRouter } from "./routes/show";
+import { deleteCartRouter } from "./routes/delete";
 
 const app = express();
 app.set("trust proxy", true);
@@ -21,9 +22,10 @@ app.use(
 
 app.use(currentUser);
 
-app.use(newCustomerDataRoute);
-app.use(updateCustomerDataRoute);
-app.use(showCustomerDataRoute);
+app.use(newCartRouter)
+app.use(showCartRouter)
+app.use(deleteCartRouter)
+app.use(updateCartRouter)
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();

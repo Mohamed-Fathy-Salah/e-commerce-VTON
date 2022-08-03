@@ -23,4 +23,4 @@ router.delete(
   }
 );
 
-export { router as newCustomerDataRoute };
+export { router as deleteCartRouter };
