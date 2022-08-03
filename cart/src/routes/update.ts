@@ -12,8 +12,15 @@ const router = express.Router();
 router.put(
   "/api/cart",
   requireCustomerAuth,
-  // todo: validate all
-  [body("")],
+  [
+    body("garmentId")
+    .not()
+    .isEmpty(),
+    body("price")
+    .isFloat({ gt: 0}),
+    body("quantity")
+    .isFloat({ gt: -1})
+  ],
   validateRequest,
   async (req: Request, res: Response) => {
     const customerId = req.currentUser!.id;
@@ -24,7 +31,6 @@ router.put(
       throw new NotFoundError();
     }
 
-    // todo: price 'or' quantity not 'and'
     const {garmentId, price, quantity} = req.body;
 
     const idx = cart.garments.findIndex(i => i.garmentId === garmentId)

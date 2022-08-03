@@ -18,8 +18,35 @@ it("cart not found error", async () => {
   await request(app)
     .put("/api/cart")
     .set("Cookie", global.signin(UserType.Customer))
-    .send({})
+    .send({ garmentId: new mongoose.Types.ObjectId().toHexString() , quantity: 1, price: 10 })
     .expect(404);
+});
+
+it("validate body", async () => {
+  const customerId = new mongoose.Types.ObjectId().toHexString();
+  const cookie = global.signin(UserType.Customer, customerId);
+  const garmentId = new mongoose.Types.ObjectId().toHexString();
+
+  const cart = Cart.build({ customerId });
+  await cart.save();
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId, quantity: -1, price: 10 })
+    .expect(400);
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId, quantity: 1, price: 0 })
+    .expect(400);
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId})
+    .expect(400);
 });
 
 it("updated successfully", async () => {
@@ -64,4 +91,3 @@ it("updated successfully", async () => {
     expect(res.body.garments.length).toEqual(2)
 });
 
-it.todo("validate body");
