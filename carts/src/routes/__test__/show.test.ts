@@ -1,41 +1,39 @@
 import { app } from "../../app";
 import request from "supertest";
 import { UserType } from "@mfsvton/common";
+import { Cart } from "../../models/cart";
 import mongoose from "mongoose";
 
-// todo: fix tests
+it("error with wrong creds", async () => {
+  await request(app).get("/api/cart").send({}).expect(401);
 
-it("error if user is not signed in ", async () => {
-  await request(app).get("/api/customerdata").expect(401);
-});
-
-it("error if user is admin ", async () => {
   await request(app)
-    .get("/api/customerdata")
+    .get("/api/cart")
     .set("Cookie", global.signin(UserType.Admin))
+    .send({})
     .expect(401);
 });
 
-it("error if user is not in DB ", async () => {
+it("cart not found error", async () => {
   await request(app)
-    .get("/api/customerdata")
+    .get("/api/cart")
     .set("Cookie", global.signin(UserType.Customer))
+    .send({})
     .expect(404);
 });
 
-it("correct data when user signin", async () => {
+it("showed successfully", async () => {
   const customerId = new mongoose.Types.ObjectId().toHexString();
   const cookie = global.signin(UserType.Customer, customerId);
 
+  const cart = Cart.build({ customerId });
+  await cart.save();
+
   const res = await request(app)
-    .post("/api/customerdata")
+    .get("/api/cart")
     .set("Cookie", cookie)
-    .send({
-      name: "blah",
-    })
-    .expect(201);
+    .send()
+    .expect(200);
 
-  await request(app).get("/api/customerdata").set("Cookie", cookie).expect(200);
-
-  expect(res.body.customerId).toEqual(customerId);
+    expect(res.body.customerId).toEqual(customerId)
 });

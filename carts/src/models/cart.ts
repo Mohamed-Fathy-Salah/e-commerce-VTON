@@ -2,14 +2,8 @@ import mongoose from "mongoose";
 
 // An interface that describes the properties
 // that are requried to create a new User
-// TODO: make customerId the primary key and no need for _id
 interface CartAttrs {
     customerId: string;
-    garments: [{
-        garmentId: string,
-        quantity: number,
-        price: number
-    }]
 }
 
 // An interface that describes the properties
@@ -20,7 +14,7 @@ interface CartModel extends mongoose.Model<CartDoc> {
 
 // An interface that describes the properties
 // that a User Document has
-interface CartDoc extends mongoose.Document {
+export interface CartDoc extends mongoose.Document {
     customerId: string;
     garments: [{
         garmentId: string,
@@ -46,6 +40,8 @@ const customerSchema = new mongoose.Schema(
         price: {
             type: Number
         }
+    }, {
+        _id: false 
     }]
   },{
     toJSON: {

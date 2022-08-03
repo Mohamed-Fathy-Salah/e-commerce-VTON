@@ -1,58 +1,67 @@
 import { app } from "../../app";
 import request from "supertest";
-import { GarmentClass, GarmentSize, Gender, SkinTone, UserType } from "@mfsvton/common";
+import { UserType } from "@mfsvton/common";
+import { Cart } from "../../models/cart";
 import mongoose from "mongoose";
-import { Customer } from "../../models/customer";
 
-it("error if user is not signed in ", async () => {
-  await request(app).put("/api/customerdata").expect(401);
-});
+it("error with wrong creds", async () => {
+  await request(app).put("/api/cart").send({}).expect(401);
 
-it("error if user is admin ", async () => {
   await request(app)
-    .put("/api/customerdata")
+    .put("/api/cart")
     .set("Cookie", global.signin(UserType.Admin))
     .send({})
     .expect(401);
 });
 
-it("error if user is not in DB ", async () => {
+it("cart not found error", async () => {
   await request(app)
-    .put("/api/customerdata")
+    .put("/api/cart")
     .set("Cookie", global.signin(UserType.Customer))
+    .send({})
     .expect(404);
 });
 
-it("correct data when user signin", async () => {
+it("updated successfully", async () => {
   const customerId = new mongoose.Types.ObjectId().toHexString();
   const cookie = global.signin(UserType.Customer, customerId);
+  const garmentId = new mongoose.Types.ObjectId().toHexString();
+
+  const cart = Cart.build({ customerId });
+  await cart.save();
 
   await request(app)
-    .post("/api/customerdata")
+    .put("/api/cart")
     .set("Cookie", cookie)
-    .send({
-      name: "blah",
-    })
+    .send({ garmentId, quantity: 1, price: 10 })
+    .expect(201);
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId, quantity: 1, price: 10 })
+    .expect(201);
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId, quantity: 2, price: 13 })
+    .expect(201);
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({garmentId: new mongoose.Types.ObjectId().toHexString(), quantity: 3, price: 20})
     .expect(201);
 
   const res = await request(app)
-  .put('/api/customerdata')
-  .set('Cookie', cookie)
-  .send({
-      name : 'hihi',
-      gender: Gender.Male,
-      age: 15,
-      skinTone: SkinTone.White,
-      sizePreferences: [{ garmentClass: GarmentClass.Shirt, garmentSize: GarmentSize.Large }]
-    })
-  .expect(201)
+    .get("/api/cart")
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
 
-  expect(res.body.customerId).toEqual(customerId);
-  expect(res.body.name).toEqual('hihi');
-  expect(res.body.gender).toEqual(Gender.Male);
-  expect(res.body.age).toEqual(15);
-  expect(res.body.skinTone).toEqual(SkinTone.White);
-  expect(res.body.sizePreferences.length).toEqual(1);
+    expect(res.body.customerId).toEqual(customerId)
+    expect(res.body.garments.length).toEqual(2)
 });
 
-it.todo('add measurements and append-modify size preferences');
+it.todo("validate body");

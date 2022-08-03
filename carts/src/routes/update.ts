@@ -24,7 +24,17 @@ router.put(
       throw new NotFoundError();
     }
 
-    // todo: process garments
+    // todo: price 'or' quantity not 'and'
+    const {garmentId, price, quantity} = req.body;
+
+    const idx = cart.garments.findIndex(i => i.garmentId === garmentId)
+    
+    if(idx === -1) {
+        cart.garments.push(req.body)
+    }else {
+        cart.garments[idx] = {garmentId, price, quantity} 
+    }
+    await cart.save();
 
     res.status(201).send(cart);
   }

@@ -1,53 +1,52 @@
 import { app } from "../../app";
 import request from "supertest";
 import { UserType } from "@mfsvton/common";
+import { Cart } from "../../models/cart";
 import mongoose from "mongoose";
 
-it("error when setting customer data with out login or with admin", async () => {
-  await request(app)
-    .post("/api/customerdata")
-    .send({
-      customerId: new mongoose.Types.ObjectId().toHexString(),
-      name: "blah",
-    })
-    .expect(401);
+it("error with wrong creds", async () => {
+  await request(app).delete("/api/cart").send({}).expect(401);
 
   await request(app)
-    .post("/api/customerdata")
+    .delete("/api/cart")
     .set("Cookie", global.signin(UserType.Admin))
-    .send({
-      customerId: new mongoose.Types.ObjectId().toHexString(),
-      name: "blah",
-    })
+    .send({})
     .expect(401);
 });
 
-it("error when name is not added or is empty", async () => {
+it("cart not found error", async () => {
   await request(app)
-    .post("/api/customerdata")
+    .delete("/api/cart")
     .set("Cookie", global.signin(UserType.Customer))
     .send({})
-    .expect(400);
-
-  await request(app)
-    .post("/api/customerdata")
-    .set("Cookie", global.signin(UserType.Customer))
-    .send({
-      name: "",
-    })
-    .expect(400);
+    .expect(404);
 });
 
-it("201 when customer data is right", async () => {
+it("deleted successfully", async () => {
   const customerId = new mongoose.Types.ObjectId().toHexString();
   const cookie = global.signin(UserType.Customer, customerId);
-  const res = await request(app)
-    .post("/api/customerdata")
+
+  const cart = Cart.build({ customerId });
+  await cart.save();
+
+  await request(app)
+    .put("/api/cart")
     .set("Cookie", cookie)
-    .send({
-      name: "blah",
-    })
+    .send({ garmentId: "adfdsaf", quantity: 1, price: 10 })
     .expect(201);
 
-  expect(res.body.customerId).toEqual(customerId);
+  await request(app)
+    .delete("/api/cart")
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
+
+  const res = await request(app)
+    .get("/api/cart")
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
+
+    expect(res.body.customerId).toEqual(customerId)
+    expect(res.body.garments.length).toEqual(0)
 });
