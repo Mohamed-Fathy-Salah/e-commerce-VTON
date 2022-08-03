@@ -33,7 +33,14 @@ router.post(
     const data = Customer.build({
       customerId: req.currentUser!.id,
       name: body.name,
+      age: body.age,
+      skinTone: body.skinTone,
+      gender: body.gender,
+      measurements: body.measurements,
+      //photo: body.photo,
+      sizePreferences: body.sizePreferences
     });
+    await data.save();
 
     res.status(201).send(data);
   }

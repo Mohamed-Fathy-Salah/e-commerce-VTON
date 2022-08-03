@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 
 // An interface that describes the properties
 // that are requried to create a new User
+// TODO: make customerId the primary key and no need for _id
 interface CustomerAttrs {
   customerId: string;
   name: string;
@@ -44,6 +45,7 @@ const customerSchema = new mongoose.Schema(
     customerId: {
       type: String,
       required: true,
+      unique: true,
     },
     name: {
       type: String,
