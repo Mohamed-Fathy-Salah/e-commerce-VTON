@@ -34,7 +34,7 @@ build:
           - src: "src/**/*.ts"
             dest: .
     - image: mofasa101/cart
-      context: garments
+      context: cart
       docker:
         dockerfile: Dockerfile
       sync:
