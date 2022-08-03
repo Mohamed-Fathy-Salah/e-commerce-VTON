@@ -1,7 +1,10 @@
 import {
+  GarmentClass,
+  Gender,
   NotFoundError,
   requireAdminAuth,
   validateRequest,
+  GarmentSize,
 } from "@mfsvton/common";
 import express, { Response, Request } from "express";
 import { body } from "express-validator";
@@ -12,8 +15,20 @@ const router = express.Router();
 router.put(
   "/api/garments/:garmentId",
   requireAdminAuth,
-  // TODO: validate all
-  [body("")],
+  [
+    body("garmentClass").custom((value) =>
+      Object.values(GarmentClass).includes(value)
+    ),
+    body("gender").custom((value) => Object.values(Gender).includes(value)),
+    body("price").isFloat({ gt: 0 }),
+    body("available").custom((value) =>
+      value.every(
+        (garment: { size: GarmentSize; quantity: number }) =>
+          Object.values(GarmentSize).includes(garment.size) &&
+          garment.quantity >= 0
+      )
+    ),
+  ],
   validateRequest,
   async (req: Request, res: Response) => {
     const adminId = req.currentUser!.id;
@@ -27,7 +42,6 @@ router.put(
 
     const { garmentClass, gender, price, available } = req.body;
 
-    // TODO: process available
     garment.set({ garmentClass, gender, price, available });
     await garment.save();
 

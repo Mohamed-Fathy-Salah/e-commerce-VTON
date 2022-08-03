@@ -1,10 +1,8 @@
 import {
   NotFoundError,
   requireAdminAuth,
-  validateRequest,
 } from "@mfsvton/common";
 import express, { Response, Request } from "express";
-import { body } from "express-validator";
 import { Garment } from "../models/garment";
 
 const router = express.Router();
@@ -12,9 +10,6 @@ const router = express.Router();
 router.delete(
   "/api/garments/:garmentId",
   requireAdminAuth,
-  // TODO: validate all
-  [body("")],
-  validateRequest,
   async (req: Request, res: Response) => {
     const adminId = req.currentUser!.id;
     const garmentId = req.params.garmentId;

@@ -2,7 +2,6 @@ import { app } from "../../app";
 import request from "supertest";
 import mongoose from "mongoose";
 import {
-  currentUser,
   GarmentClass,
   GarmentSize,
   Gender,
@@ -24,7 +23,36 @@ it("error not auth", async () => {
     .expect(401);
 });
 
-it.todo("error not valid data");
+it("error not valid data", async() => {
+  const adminId = new mongoose.Types.ObjectId().toHexString();
+  const cookie = global.signin(UserType.Admin, adminId);
+
+  const {body} = await request(app)
+    .post("/api/garments")
+    .set("Cookie", cookie)
+    .send({
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Neutral,
+      price: 15,
+      available: [
+        {
+          size: GarmentSize.Small,
+          quantity: 1,
+        },
+      ],
+    })
+    .expect(201);
+
+  await request(app)
+    .put("/api/garments/" + body.id)
+    .set("Cookie", cookie)
+    .send({
+      garmentClass: "hadf",
+      gender: "ad",
+      price: -1,
+    })
+    .expect(400);
+});
 
 it("error non existing garment", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
@@ -32,7 +60,17 @@ it("error non existing garment", async () => {
   await request(app)
     .put("/api/garments/" + garmentId)
     .set("Cookie", global.signin(UserType.Admin))
-    .send({})
+    .send({
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Neutral,
+      price: 15,
+      available: [
+        {
+          size: GarmentSize.Small,
+          quantity: 1,
+        },
+      ],
+    })
     .expect(404);
 });
 
@@ -40,11 +78,10 @@ it("good boi :)", async () => {
   const adminId = new mongoose.Types.ObjectId().toHexString();
   const cookie = global.signin(UserType.Admin, adminId);
 
-  const blah = await request(app)
+  await request(app)
     .post("/api/garments")
     .set("Cookie", cookie)
     .send({
-      adminId,
       garmentClass: GarmentClass.Shirt,
       gender: Gender.Neutral,
       price: 15,
@@ -65,7 +102,21 @@ it("good boi :)", async () => {
    await request(app)
     .put("/api/garments/" + body[0].id)
     .set("Cookie", cookie)
-    .send({gender: Gender.Male, price: 10})
+    .send({
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Male,
+      price: 10,
+      available: [
+        {
+          size: GarmentSize.Small,
+          quantity: 3,
+        },
+        {
+          size: GarmentSize.Large,
+          quantity: 2,
+        },
+      ],
+    })
     .expect(201);
 
    const {body: body1} = await request(app)
@@ -78,4 +129,6 @@ it("good boi :)", async () => {
   expect(body1[0].price).toEqual(10);
 });
 
-it.todo('correct data and update available')
+it('correct data and update available', async () => {
+
+})
