@@ -3,6 +3,8 @@ import request from "supertest";
 import { UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 
+// todo: fix tests
+
 it("error if user is not signed in ", async () => {
   await request(app).get("/api/customerdata").expect(401);
 });

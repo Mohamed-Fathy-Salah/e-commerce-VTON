@@ -45,6 +45,7 @@ const customerSchema = new mongoose.Schema(
     customerId: {
       type: String,
       required: true,
+      unique: true,
     },
     name: {
       type: String,
