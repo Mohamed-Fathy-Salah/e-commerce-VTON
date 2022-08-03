@@ -17,10 +17,7 @@ const newGarment = {
 };
 
 it("error when setting new garment with out login or with customer", async () => {
-  await request(app)
-    .post("/api/garments")
-    .send(newGarment)
-    .expect(401);
+  await request(app).post("/api/garments").send(newGarment).expect(401);
 
   await request(app)
     .post("/api/garments")

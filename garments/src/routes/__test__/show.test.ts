@@ -3,38 +3,36 @@ import request from "supertest";
 import mongoose from "mongoose";
 import { GarmentClass, GarmentSize, Gender, UserType } from "@mfsvton/common";
 
+it("get data of admin", async () => {
+  const adminId = new mongoose.Types.ObjectId().toHexString();
+  const cookie = global.signin(UserType.Admin, adminId);
 
-it("error if user is not signed in ", async () => {
-  await request(app).get("/api/garments").expect(401);
-});
-
-it("error if user is admin ", async () => {
   await request(app)
-    .get("/api/garments")
-    .set("Cookie", global.signin(UserType.Admin))
-    .expect(401);
-});
-
-it("error if user is not in DB ", async () => {
-  await request(app)
-    .get("/api/garments")
-    .set("Cookie", global.signin(UserType.Customer))
-    .expect(404);
-});
-
-it("correct data when user signin", async () => {
-  const customerId = new mongoose.Types.ObjectId().toHexString();
-  const cookie = global.signin(UserType.Customer, customerId);
-
-  const res = await request(app)
     .post("/api/garments")
     .set("Cookie", cookie)
     .send({
-      name: "blah",
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Male,
+      price: 20,
+      available: [
+        {
+          size: GarmentSize.Small,
+          quantity: 2,
+        },
+        {
+          size: GarmentSize.Large,
+          quantity: 3,
+        },
+      ],
     })
     .expect(201);
 
-  await request(app).get("/api/garments").set("Cookie", cookie).expect(200);
+  const { body } = await request(app)
+    .get("/api/garments/" + adminId)
+    .expect(200);
 
-  expect(res.body.customerId).toEqual(customerId);
+  expect(body[0].garmentClass).toEqual(GarmentClass.Shirt);
+  expect(body[0].gender).toEqual(Gender.Male);
+  expect(body[0].price).toEqual(20);
+  expect(body[0].available.length).toEqual(2);
 });
