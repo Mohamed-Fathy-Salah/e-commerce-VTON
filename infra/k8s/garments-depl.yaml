@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garments-deployment
+  labels:
+    app: garments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garments
+  template:
+    metadata:
+      labels:
+        app: garments
+    spec:
+      containers:
+        - name: garments
+          image: mofasa101/garments
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: "mongodb://garments-mongo-srv:27017/garments"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: garments-srv
+spec:
+  selector:
+    app: garments
+  ports:
+    - name: garments
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
