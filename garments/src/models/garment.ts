@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 // An interface that describes the properties
 // that are requried to create a new User
-// TODO: make adminId the primary key and no need for _id
 interface GarmentAttrs {
   adminId: string;
   garmentClass: GarmentClass;
@@ -72,7 +71,9 @@ const garmentSchema = new mongoose.Schema(
               required: true,
               default: 0
           }
-        },
+        }, {
+            _id: false
+        }
       ],
       required: true
     },
