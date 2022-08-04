@@ -1,3 +1,4 @@
+import { GarmentSize } from "@mfsvton/common";
 import mongoose from "mongoose";
 
 // An interface that describes the properties
@@ -19,7 +20,8 @@ export interface CartDoc extends mongoose.Document {
     garments: [{
         garmentId: string,
         quantity: number,
-        price: number
+        price: number,
+        size: GarmentSize
     }]
 }
 
@@ -39,6 +41,10 @@ const customerSchema = new mongoose.Schema(
         },
         price: {
             type: Number
+        },
+        size: {
+            type: String,
+            enum: Object.values(GarmentSize)
         }
     }, {
         _id: false 

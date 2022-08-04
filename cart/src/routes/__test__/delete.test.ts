@@ -1,6 +1,6 @@
 import { app } from "../../app";
 import request from "supertest";
-import { UserType } from "@mfsvton/common";
+import { GarmentSize, UserType } from "@mfsvton/common";
 import { Cart } from "../../models/cart";
 import mongoose from "mongoose";
 
@@ -32,7 +32,12 @@ it("deleted successfully", async () => {
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId: "adfdsaf", quantity: 1, price: 10 })
+    .send({
+      garmentId: "adfdsaf",
+      quantity: 1,
+      price: 10,
+      size: GarmentSize.Small,
+    })
     .expect(201);
 
   await request(app)
@@ -47,6 +52,6 @@ it("deleted successfully", async () => {
     .send()
     .expect(200);
 
-    expect(res.body.customerId).toEqual(customerId)
-    expect(res.body.garments.length).toEqual(0)
+  expect(res.body.customerId).toEqual(customerId);
+  expect(res.body.garments.length).toEqual(0);
 });
