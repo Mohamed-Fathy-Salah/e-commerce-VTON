@@ -25,7 +25,7 @@ export interface CartDoc extends mongoose.Document {
     }]
 }
 
-const customerSchema = new mongoose.Schema(
+const cartSchema = new mongoose.Schema(
   {
     customerId: {
       type: String,
@@ -59,13 +59,13 @@ const customerSchema = new mongoose.Schema(
   }
 );
 
-customerSchema.statics.build = (attrs: CartAttrs) => {
+cartSchema.statics.build = (attrs: CartAttrs) => {
   return new Cart(attrs);
 };
 
 const Cart = mongoose.model<CartDoc, CartModel>(
   "Cart",
-  customerSchema
+  cartSchema
 );
 
 export { Cart };
