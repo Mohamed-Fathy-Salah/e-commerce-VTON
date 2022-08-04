@@ -15,7 +15,7 @@ interface CartModel extends mongoose.Model<CartDoc> {
 
 // An interface that describes the properties
 // that a User Document has
-export interface CartDoc extends mongoose.Document {
+interface CartDoc extends mongoose.Document {
     customerId: string;
     garments: [{
         garmentId: string,
