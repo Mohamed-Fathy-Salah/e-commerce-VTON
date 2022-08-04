@@ -14,7 +14,7 @@ router.get(
   async (req: Request, res: Response) => {
     const orderId = req.params.orderId;
 
-    const order = await Order.findById(orderId).populate("cart");
+    const order = await Order.findById(orderId);
 
     if (!order) {
       throw new NotFoundError();
