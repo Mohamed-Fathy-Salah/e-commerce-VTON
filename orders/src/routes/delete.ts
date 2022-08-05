@@ -9,7 +9,7 @@ import { Order } from "../models/order";
 
 const router = express.Router();
 
-router.get(
+router.delete(
   "/api/orders/:orderId",
   requireCustomerAuth,
   async (req: Request, res: Response) => {
@@ -21,13 +21,14 @@ router.get(
       throw new NotFoundError();
     }
 
-    if (order.userId != req.currentUser!.id) {
+    if (order.customerId != req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
 
     order.status = OrderStatus.Cancelled;
+    await order.save()
 
-    res.status(204).send(order);
+    res.status(200).send(order);
   }
 );
 

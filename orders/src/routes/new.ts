@@ -1,12 +1,14 @@
 import {
   BadRequestError,
   GarmentSize,
+  NotFoundError,
   OrderStatus,
   requireCustomerAuth,
   validateRequest,
 } from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
+import mongoose from "mongoose";
 import { Garments } from "../models/garments";
 import { Order } from "../models/order";
 
@@ -19,8 +21,25 @@ const EXPIRATION_WINDOW_SECONDS = 60;
 router.post(
   "/api/orders",
   requireCustomerAuth,
-  //todo: validate
-  [body("")],
+  [
+    body("garments").custom((value) => {
+      return value.length > 0 && value.every(
+        (garment: {
+          garmentId: string;
+          quantity: number;
+          price: number;
+          size: GarmentSize;
+        }) => {
+          return (
+            mongoose.Types.ObjectId.isValid(garment.garmentId) &&
+            garment.quantity >= 0 &&
+            garment.price > 0 &&
+            Object.values(GarmentSize).includes(garment.size)
+          );
+        }
+      );
+    }),
+  ],
   validateRequest,
   async (req: Request, res: Response) => {
     const customerId = req.currentUser!.id;
@@ -29,32 +48,24 @@ router.post(
 
     const { garments } = req.body;
 
-    // todo: make sure it is reserved before creating order
-    const isReserved = garments.every(
-      async (stockedGarment: {
-        garmentId: string;
-        quantity: number;
-        price: number;
-        size: GarmentSize;
-      }) => {
-        const garment = await Garments.findById(stockedGarment.garmentId);
+    const isReserved = async() => {
+        for(let i = 0; i< garments.length; i++) {
+            const garment = await Garments.findById(garments[i].garmentId);
 
-        if (!garment) {
-          return false;
+            if(!garment) {
+                throw new NotFoundError();
+            }
+
+            const idx = garment.available.findIndex( (val) => val.size === garments[i].size)
+
+            if(idx === -1 || garment.available[idx].quantity < garments[i].quantity) {
+                return true;
+            }
+
         }
+    }
 
-        const idx = garment.available.findIndex(
-          (val) => val.size === stockedGarment.size
-        );
-
-        return (
-          idx !== -1 &&
-          garment.available[idx].quantity >= stockedGarment.quantity
-        );
-      }
-    );
-
-    if (isReserved) {
+    if (await isReserved()) {
       // todo: specify what garment is not valid
       throw new BadRequestError("garment is already reserved");
     }

@@ -1,6 +1,5 @@
 import { GarmentSize, OrderStatus } from "@mfsvton/common";
 import mongoose from "mongoose";
-import { CartDoc } from "./cart";
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -47,9 +46,8 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     status: {
-      typd: String,
+      type: String,
       enum: Object.values(OrderStatus),
-      required: true,
     },
     expiresAt: {
       type: mongoose.Schema.Types.Date,
