@@ -1,4 +1,10 @@
-import { GarmentClass, GarmentSize, Gender, OrderStatus, UserType } from "@mfsvton/common";
+import {
+  GarmentClass,
+  GarmentSize,
+  Gender,
+  OrderStatus,
+  UserType,
+} from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -21,7 +27,7 @@ it("no orders created", async () => {
     .send()
     .expect(200);
 
-    expect(res.body.length).toEqual(0);
+  expect(res.body.length).toEqual(0);
 });
 
 it("orders created", async () => {
@@ -55,7 +61,8 @@ it("orders created", async () => {
           size: GarmentSize.Small,
         },
       ],
-    }).expect(201);
+    })
+    .expect(201);
 
   const res = await request(app)
     .get("/api/orders/")

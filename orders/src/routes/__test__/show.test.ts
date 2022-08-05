@@ -92,7 +92,7 @@ it("show order", async () => {
   });
   await garment.save();
 
-  const {body: order} = await request(app)
+  const { body: order } = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
@@ -104,7 +104,8 @@ it("show order", async () => {
           size: GarmentSize.Small,
         },
       ],
-    }).expect(201);
+    })
+    .expect(201);
 
   const res = await request(app)
     .get("/api/orders/" + order.id)

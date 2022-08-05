@@ -1,4 +1,10 @@
-import { GarmentClass, GarmentSize, Gender, OrderStatus, UserType } from "@mfsvton/common";
+import {
+  GarmentClass,
+  GarmentSize,
+  Gender,
+  OrderStatus,
+  UserType,
+} from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -48,7 +54,7 @@ it("customer not current user", async () => {
   });
   await garment.save();
 
-  const {body: order} = await request(app)
+  const { body: order } = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
@@ -60,7 +66,8 @@ it("customer not current user", async () => {
           size: GarmentSize.Small,
         },
       ],
-    }).expect(201);
+    })
+    .expect(201);
 
   await request(app)
     .delete("/api/orders/" + order.id)
@@ -88,7 +95,7 @@ it("delete order", async () => {
   });
   await garment.save();
 
-  const {body: order} = await request(app)
+  const { body: order } = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
@@ -100,7 +107,8 @@ it("delete order", async () => {
           size: GarmentSize.Small,
         },
       ],
-    }).expect(201);
+    })
+    .expect(201);
 
   const res = await request(app)
     .delete("/api/orders/" + order.id)

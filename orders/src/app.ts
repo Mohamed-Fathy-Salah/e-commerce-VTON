@@ -22,10 +22,10 @@ app.use(
 
 app.use(currentUser);
 
-app.use(newOrderRouter)
-app.use(showOrderRouter)
-app.use(showAllOrdersRouter)
-app.use(deleteOrderRouter)
+app.use(newOrderRouter);
+app.use(showOrderRouter);
+app.use(showAllOrdersRouter);
+app.use(deleteOrderRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();

@@ -23,20 +23,23 @@ router.post(
   requireCustomerAuth,
   [
     body("garments").custom((value) => {
-      return value.length > 0 && value.every(
-        (garment: {
-          garmentId: string;
-          quantity: number;
-          price: number;
-          size: GarmentSize;
-        }) => {
-          return (
-            mongoose.Types.ObjectId.isValid(garment.garmentId) &&
-            garment.quantity >= 0 &&
-            garment.price > 0 &&
-            Object.values(GarmentSize).includes(garment.size)
-          );
-        }
+      return (
+        value.length > 0 &&
+        value.every(
+          (garment: {
+            garmentId: string;
+            quantity: number;
+            price: number;
+            size: GarmentSize;
+          }) => {
+            return (
+              mongoose.Types.ObjectId.isValid(garment.garmentId) &&
+              garment.quantity >= 0 &&
+              garment.price > 0 &&
+              Object.values(GarmentSize).includes(garment.size)
+            );
+          }
+        )
       );
     }),
   ],
@@ -48,22 +51,26 @@ router.post(
 
     const { garments } = req.body;
 
-    const isReserved = async() => {
-        for(let i = 0; i< garments.length; i++) {
-            const garment = await Garments.findById(garments[i].garmentId);
+    const isReserved = async () => {
+      for (let i = 0; i < garments.length; i++) {
+        const garment = await Garments.findById(garments[i].garmentId);
 
-            if(!garment) {
-                throw new NotFoundError();
-            }
-
-            const idx = garment.available.findIndex( (val) => val.size === garments[i].size)
-
-            if(idx === -1 || garment.available[idx].quantity < garments[i].quantity) {
-                return true;
-            }
-
+        if (!garment) {
+          throw new NotFoundError();
         }
-    }
+
+        const idx = garment.available.findIndex(
+          (val) => val.size === garments[i].size
+        );
+
+        if (
+          idx === -1 ||
+          garment.available[idx].quantity < garments[i].quantity
+        ) {
+          return true;
+        }
+      }
+    };
 
     if (await isReserved()) {
       // todo: specify what garment is not valid
