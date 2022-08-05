@@ -1,3 +1,4 @@
+import { GarmentSize } from "@mfsvton/common";
 import mongoose from "mongoose";
 
 // An interface that describes the properties
@@ -14,16 +15,17 @@ interface CartModel extends mongoose.Model<CartDoc> {
 
 // An interface that describes the properties
 // that a User Document has
-export interface CartDoc extends mongoose.Document {
+interface CartDoc extends mongoose.Document {
     customerId: string;
     garments: [{
         garmentId: string,
         quantity: number,
-        price: number
+        price: number,
+        size: GarmentSize
     }]
 }
 
-const customerSchema = new mongoose.Schema(
+const cartSchema = new mongoose.Schema(
   {
     customerId: {
       type: String,
@@ -39,6 +41,10 @@ const customerSchema = new mongoose.Schema(
         },
         price: {
             type: Number
+        },
+        size: {
+            type: String,
+            enum: Object.values(GarmentSize)
         }
     }, {
         _id: false 
@@ -53,13 +59,13 @@ const customerSchema = new mongoose.Schema(
   }
 );
 
-customerSchema.statics.build = (attrs: CartAttrs) => {
+cartSchema.statics.build = (attrs: CartAttrs) => {
   return new Cart(attrs);
 };
 
 const Cart = mongoose.model<CartDoc, CartModel>(
   "Cart",
-  customerSchema
+  cartSchema
 );
 
 export { Cart };

@@ -1,4 +1,5 @@
 import {
+    GarmentSize,
   NotFoundError,
   requireCustomerAuth,
   validateRequest,
@@ -19,7 +20,9 @@ router.put(
     body("price")
     .isFloat({ gt: 0}),
     body("quantity")
-    .isFloat({ gt: -1})
+    .isFloat({ gt: -1}),
+    body("size")
+    .custom((value) => Object.values(GarmentSize).includes(value))
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -31,14 +34,14 @@ router.put(
       throw new NotFoundError();
     }
 
-    const {garmentId, price, quantity} = req.body;
+    const {garmentId, price, quantity, size} = req.body;
 
     const idx = cart.garments.findIndex(i => i.garmentId === garmentId)
     
     if(idx === -1) {
         cart.garments.push(req.body)
     }else {
-        cart.garments[idx] = {garmentId, price, quantity} 
+        cart.garments[idx] = {garmentId, price, quantity, size} 
     }
     await cart.save();
 
