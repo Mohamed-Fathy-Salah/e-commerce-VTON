@@ -42,6 +42,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: cart-srv
+                name: orders-srv
                 port:
                   number: 3000

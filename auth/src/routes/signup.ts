@@ -41,7 +41,9 @@ router.post(
     req.session = {
       jwt: userJwt,
     };
-
+    
+    // publish event
+    
     res.status(201).send({ email, password, type });
   }
 );
