@@ -21,24 +21,25 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { customerId, name, age, gender} = req.body;
+    const { customerId, name, age, gender } = req.body;
 
-    const data = Customer.build({
+    const customer = Customer.build({
       customerId,
       name,
-      age, 
-      gender
+      age,
+      gender,
     });
-    await data.save();
+    await customer.save();
 
     new CustomerDataCreatedPublisher(natsWrapper.client).publish({
-        customerId,
-        name,
-        age,
-        gender,
+      customerId,
+      name,
+      age,
+      gender,
+      version: customer.version,
     });
 
-    res.status(201).send(data);
+    res.status(201).send(customer);
   }
 );
 
