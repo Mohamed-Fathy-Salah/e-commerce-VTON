@@ -8,7 +8,9 @@ import {
 } from "@mfsvton/common";
 import express, { Response, Request } from "express";
 import { body } from "express-validator";
+import { GarmentUpdatedPublisher } from "../events/publishers/garment-updated-publisher";
 import { Garment } from "../models/garment";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -44,6 +46,16 @@ router.put(
 
     garment.set({ garmentClass, gender, price, available });
     await garment.save();
+
+    new GarmentUpdatedPublisher(natsWrapper.client).publish({
+        garmentId: garment.id,
+        adminId: garment.adminId,
+        garmentClass: garment.garmentClass,
+        gender: garment.gender,
+        available: garment.available,
+        price: garment.price,
+        version: garment.version
+    })
 
     res.status(201).send(garment);
   }

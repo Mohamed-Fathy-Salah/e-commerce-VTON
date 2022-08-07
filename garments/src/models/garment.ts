@@ -1,5 +1,6 @@
 import { GarmentClass, GarmentSize, Gender } from "@mfsvton/common";
 import mongoose from "mongoose";
+import {updateIfCurrentPlugin} from 'mongoose-update-if-current'
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -35,6 +36,7 @@ export interface GarmentDoc extends mongoose.Document {
       quantity: number;
     }
   ];
+  version: number;
 }
 
 const garmentSchema = new mongoose.Schema(
@@ -87,6 +89,9 @@ const garmentSchema = new mongoose.Schema(
     },
   }
 );
+
+garmentSchema.set('versionKey', 'version');
+garmentSchema.plugin(updateIfCurrentPlugin);
 
 garmentSchema.statics.build = (attrs: GarmentAttrs) => {
   return new Garment(attrs);
