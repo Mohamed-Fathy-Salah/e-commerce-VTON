@@ -2,7 +2,9 @@ import { BadRequestError, UserType, validateRequest } from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
+import { CustomerCreatedPublisher } from "../events/publishers/customer-created-publisher";
 import { User } from "../models/user";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -41,9 +43,11 @@ router.post(
     req.session = {
       jwt: userJwt,
     };
-    
-    // publish event
-    
+
+    if (user.type === UserType.Customer) {
+      new CustomerCreatedPublisher(natsWrapper.client).publish({ customerId: user.id });
+    }
+
     res.status(201).send({ email, password, type });
   }
 );
