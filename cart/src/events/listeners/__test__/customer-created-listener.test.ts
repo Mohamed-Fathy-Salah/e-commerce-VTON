@@ -2,7 +2,7 @@ import { natsWrapper } from "../../../nats-wrapper";
 import mongoose from "mongoose";
 import { Message } from "node-nats-streaming";
 import { CustomerCreatedListener } from "../customer-created-listener";
-import { CustomerCreatedEvent } from "@mfsvton/common";
+import { CustomerCreatedEvent, Gender } from "@mfsvton/common";
 import { Cart } from "../../../models/cart";
 
 const setup = async () => {
@@ -11,7 +11,10 @@ const setup = async () => {
 
   // create a fake data event
   const data: CustomerCreatedEvent["data"] = {
-      customerId: new mongoose.Types.ObjectId().toHexString()
+      customerId: new mongoose.Types.ObjectId().toHexString(),
+      name: "blah",
+      age: 15,
+      gender: Gender.Male
   };
 
   // create a fake message object
