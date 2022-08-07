@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mfsvton/common": "^1.0.2",
+    "@mfsvton/common": "^1.0.10",
     "@types/cookie-session": "^2.0.44",
     "@types/jsonwebtoken": "^8.5.8",
     "cookie-session": "^2.0.0",
