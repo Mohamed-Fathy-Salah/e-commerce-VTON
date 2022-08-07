@@ -20,14 +20,14 @@ const start = async () => {
     console.error(err);
   }
 
-    natsWrapper.client.on("close", () => {
-      console.log("nats connection closed");
-      process.exit();
-    });
-    process.on("SIGINT", () => natsWrapper.client.close());
-    process.on("SIGTERM", () => natsWrapper.client.close());
+  natsWrapper.client.on("close", () => {
+    console.log("nats connection closed");
+    process.exit();
+  });
+  process.on("SIGINT", () => natsWrapper.client.close());
+  process.on("SIGTERM", () => natsWrapper.client.close());
 
-    new CustomerCreatedListener(natsWrapper.client).listen();
+  new CustomerCreatedListener(natsWrapper.client).listen();
 
   app.listen(3000, () => {
     console.log("Listening on port 3000!!!!!!!!");
