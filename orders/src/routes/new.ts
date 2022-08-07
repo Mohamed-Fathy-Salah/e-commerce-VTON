@@ -51,6 +51,7 @@ router.post(
 
     const { garments } = req.body;
 
+    // todo: search in the database
     const isReserved = async () => {
       for (let i = 0; i < garments.length; i++) {
         const garment = await Garments.findById(garments[i].garmentId);

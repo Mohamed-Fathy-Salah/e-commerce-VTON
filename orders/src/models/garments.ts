@@ -1,6 +1,6 @@
 import { GarmentClass, GarmentSize, Gender } from "@mfsvton/common";
 import mongoose from "mongoose";
-import { Order } from "./order";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -35,6 +35,7 @@ interface GarmentsDoc extends mongoose.Document {
     }
   ];
   price: number;
+  version: number;
   isReserved(): Promise<boolean>;
 }
 
@@ -76,6 +77,9 @@ const garmentsSchema = new mongoose.Schema(
   }
 );
 
+garmentsSchema.set('versionKey', 'version');
+garmentsSchema.plugin(updateIfCurrentPlugin);
+
 garmentsSchema.statics.build = (attrs: GarmentsAttrs) => {
   return new Garments({
       _id: attrs.id,
@@ -85,6 +89,13 @@ garmentsSchema.statics.build = (attrs: GarmentsAttrs) => {
       price: attrs.price
   });
 };
+
+garmentsSchema.statics.findByEvent = (event: {id: string, version: number}) => {
+    return Garments.findOne({
+        _id: event.id,
+        version: event.version - 1
+    })
+}
 
 garmentsSchema.methods.isReserved = async function () {
     //TODO: implement
