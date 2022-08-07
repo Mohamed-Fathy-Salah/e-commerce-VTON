@@ -11,6 +11,7 @@ const router = express.Router();
 router.post(
   "/api/users/signup",
   [
+    body("name").not().isEmpty().withMessage("name must be valid"),
     body("email").isEmail().withMessage("email must be valid"),
     body("password")
       .trim()
@@ -20,7 +21,7 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { email, password, type } = req.body;
+    const {name, email, password, type } = req.body;
 
     const existingUser = await User.findOne({ email, type });
 
@@ -28,7 +29,7 @@ router.post(
       throw new BadRequestError("email is used");
     }
 
-    const user = User.build({ email, password, type });
+    const user = User.build({email, password, type });
     await user.save();
 
     const userJwt = jwt.sign(
@@ -45,10 +46,10 @@ router.post(
     };
 
     if (user.type === UserType.Customer) {
-      new CustomerCreatedPublisher(natsWrapper.client).publish({ customerId: user.id });
+      new CustomerCreatedPublisher(natsWrapper.client).publish({ customerId: user.id, name});
     }
 
-    res.status(201).send({ email, password, type });
+    res.status(201).send({name, email, password, type });
   }
 );
 

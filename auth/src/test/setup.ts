@@ -8,7 +8,7 @@ declare global {
   var signin: (type: UserType) => Promise<string[]>;
 }
 
-jest.mock('../nats-wrapper')
+jest.mock("../nats-wrapper");
 
 let mongo: any;
 beforeAll(async () => {
@@ -37,12 +37,14 @@ afterAll(async () => {
 });
 
 global.signin = async (type: UserType) => {
+  const name = "test";
   const email = "test@test.com";
   const password = "password";
 
   const response = await request(app)
     .post("/api/users/signup")
     .send({
+      name,
       email,
       password,
       type,

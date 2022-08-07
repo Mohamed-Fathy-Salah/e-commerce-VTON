@@ -8,7 +8,7 @@ it("fails when a email that does not exist is supplied", async () => {
     .send({
       email: "test@test.com",
       password: "password",
-      type: UserType.Admin
+      type: UserType.Admin,
     })
     .expect(400);
 });
@@ -17,9 +17,10 @@ it("fails when an incorrect password is supplied", async () => {
   const res = await request(app)
     .post("/api/users/signup")
     .send({
+      name: "hi",
       email: "test@test.com",
       password: "password",
-      type: UserType.Admin
+      type: UserType.Admin,
     })
     .expect(201);
 
@@ -28,7 +29,7 @@ it("fails when an incorrect password is supplied", async () => {
     .send({
       email: "test@test.com",
       password: "aslkdfkdfj",
-      type: UserType.Admin
+      type: UserType.Admin,
     })
     .expect(400);
 });
@@ -37,9 +38,10 @@ it("fails when an incorrect type is supplied", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      name: "hi",
       email: "test@test.com",
       password: "password",
-      type: UserType.Admin
+      type: UserType.Admin,
     })
     .expect(201);
 
@@ -48,7 +50,7 @@ it("fails when an incorrect type is supplied", async () => {
     .send({
       email: "test@test.com",
       password: "password",
-      type: UserType.Customer
+      type: UserType.Customer,
     })
     .expect(400);
 });
@@ -57,9 +59,10 @@ it("responds with a cookie when given valid credentials", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      name: "hi",
       email: "test@test.com",
       password: "password",
-      type: UserType.Admin
+      type: UserType.Admin,
     })
     .expect(201);
 
@@ -68,7 +71,7 @@ it("responds with a cookie when given valid credentials", async () => {
     .send({
       email: "test@test.com",
       password: "password",
-      type: UserType.Admin
+      type: UserType.Admin,
     })
     .expect(200);
 

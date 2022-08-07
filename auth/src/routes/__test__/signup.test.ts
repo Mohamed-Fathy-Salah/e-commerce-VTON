@@ -6,6 +6,7 @@ it("returns a 201 on successful signup", async () => {
   return request(app)
     .post("/api/users/signup")
     .send({
+      name: "blah",
       email: "test@test.com",
       password: "password",
       type: UserType.Admin,
@@ -17,6 +18,7 @@ it("returns a 400 with an invalid email", async () => {
   return request(app)
     .post("/api/users/signup")
     .send({
+      name: "blah",
       email: "alskdflaskjfd",
       password: "password",
       type: UserType.Admin,
@@ -28,6 +30,7 @@ it("returns a 400 with an invalid password", async () => {
   return request(app)
     .post("/api/users/signup")
     .send({
+      name: "adf",
       email: "alskdflaskjfd",
       password: "p",
       type: UserType.Customer,
@@ -39,6 +42,7 @@ it("returns a 400 with an invalid type", async () => {
   return request(app)
     .post("/api/users/signup")
     .send({
+      name: "dasf",
       email: "test@test.com",
       password: "password",
       type: "blah",
@@ -46,7 +50,7 @@ it("returns a 400 with an invalid type", async () => {
     .expect(400);
 });
 
-it("returns a 400 with missing email and password and type", async () => {
+it("returns a 400 with missing name and email and password and type", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
@@ -76,6 +80,7 @@ it("disallows duplicate emails", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      name: "hi",
       email: "test@test.com",
       password: "password",
       type: UserType.Customer,
@@ -85,6 +90,7 @@ it("disallows duplicate emails", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      name: "bye",
       email: "test@test.com",
       password: "password",
       type: UserType.Customer,
@@ -96,6 +102,7 @@ it("allows same email to be defined on admin and user", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      name: "hi",
       email: "test@test.com",
       password: "password",
       type: UserType.Customer,
@@ -105,6 +112,7 @@ it("allows same email to be defined on admin and user", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      name: "bye",
       email: "test@test.com",
       password: "password",
       type: UserType.Admin,
@@ -116,6 +124,7 @@ it("sets a cookie after successful signup", async () => {
   const response = await request(app)
     .post("/api/users/signup")
     .send({
+      name: "hi",
       email: "test@test.com",
       password: "password",
       type: UserType.Customer,
