@@ -1,4 +1,4 @@
-import { UserType } from "@mfsvton/common";
+import { Gender, UserType } from "@mfsvton/common";
 import request from "supertest";
 import { app } from "../../app";
 
@@ -10,6 +10,8 @@ it("clears the cookie after signing out", async () => {
       email: "test@test.com",
       password: "password",
       type: UserType.Admin,
+      age: 15,
+      gender: Gender.Male
     })
     .expect(201);
 

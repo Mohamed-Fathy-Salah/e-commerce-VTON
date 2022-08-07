@@ -1,4 +1,4 @@
-import { UserType } from "@mfsvton/common";
+import { Gender, UserType } from "@mfsvton/common";
 import request from "supertest";
 import { app } from "../../app";
 
@@ -17,6 +17,8 @@ it("fails when an incorrect password is supplied", async () => {
   const res = await request(app)
     .post("/api/users/signup")
     .send({
+      age: 15,
+      gender: Gender.Male,
       name: "hi",
       email: "test@test.com",
       password: "password",
@@ -38,6 +40,8 @@ it("fails when an incorrect type is supplied", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      age: 15,
+      gender: Gender.Male,
       name: "hi",
       email: "test@test.com",
       password: "password",
@@ -59,6 +63,8 @@ it("responds with a cookie when given valid credentials", async () => {
   await request(app)
     .post("/api/users/signup")
     .send({
+      age: 15,
+      gender: Gender.Male,
       name: "hi",
       email: "test@test.com",
       password: "password",

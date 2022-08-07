@@ -14,10 +14,6 @@ interface CustomerAttrs {
   name: string;
   gender?: Gender;
   age?: number;
-  skinTone?: SkinTone;
-  measurements?: Measurements;
-  photo?: string; // TODO: add actual image
-  sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
 }
 
 // An interface that describes the properties
@@ -54,9 +50,11 @@ const customerSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(Gender),
       default: Gender.Female, // TODO: add neutral
+      required: true
     },
     age: {
       type: Number,
+      required: true
     },
     skinTone: {
       type: String,

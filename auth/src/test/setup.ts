@@ -1,4 +1,4 @@
-import { UserType } from "@mfsvton/common";
+import { Gender, UserType } from "@mfsvton/common";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
@@ -48,6 +48,8 @@ global.signin = async (type: UserType) => {
       email,
       password,
       type,
+      age: 15,
+      gender: Gender.Male
     })
     .expect(201);
 

@@ -6,7 +6,7 @@ import { queueGroupName } from "./queue-group-name";
 export class CustomerCreatedListener extends Listener<CustomerCreatedEvent> {
     subject: Subjects.CustomerCreated = Subjects.CustomerCreated;
     queueGroupName = queueGroupName;
-    async onMessage(data: { customerId: string; }, msg: Message): Promise<void> {
+    async onMessage(data: CustomerCreatedEvent['data'], msg: Message): Promise<void> {
         const cart = Cart.build({customerId: data.customerId});
         await cart.save();
 
