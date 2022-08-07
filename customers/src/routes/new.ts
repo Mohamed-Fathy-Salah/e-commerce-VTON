@@ -2,7 +2,9 @@ import { Gender, requireCustomerAuth, validateRequest } from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import mongoose from "mongoose";
+import { CustomerDataCreatedPublisher } from "../events/publishers/customer-data-created-publisher";
 import { Customer } from "../models/customer";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -28,6 +30,13 @@ router.post(
       gender
     });
     await data.save();
+
+    new CustomerDataCreatedPublisher(natsWrapper.client).publish({
+        customerId,
+        name,
+        age,
+        gender,
+    });
 
     res.status(201).send(data);
   }

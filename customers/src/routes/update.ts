@@ -7,7 +7,9 @@ import {
 } from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
+import { CustomerDataUpdatedPublisher } from "../events/publishers/customer-data-updated-publisher";
 import { Customer } from "../models/customer";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -39,6 +41,9 @@ router.put(
     // TODO: check if data is right
     customer.set(req.body);
     await customer.save();
+
+    // todo: put each item 
+    new CustomerDataUpdatedPublisher(natsWrapper.client).publish(req.body);
 
     res.status(201).send(customer);
   }
