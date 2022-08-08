@@ -9,8 +9,10 @@ import {
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import mongoose from "mongoose";
+import { OrderCreatedPublisher } from "../events/publishers/order-created-publisher";
 import { Garments } from "../models/garments";
 import { Order } from "../models/order";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -86,7 +88,14 @@ router.post(
     });
     await order.save();
 
-    // todo : publish order created
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+        orderId: order.id,
+        customerId: order.customerId,
+        garments: order.garments,
+        status: order.status,
+        expiresAt: order.expiresAt.toISOString(),
+        version: order.version
+    });
 
     res.status(201).send(order);
   }

@@ -7,6 +7,8 @@ declare global {
   var signin: (type: UserType, id?: string) => string[];
 }
 
+jest.mock("../nats-wrapper")
+
 let mongo: any;
 beforeAll(async () => {
   process.env.JWT_KEY = "asdfasdf";

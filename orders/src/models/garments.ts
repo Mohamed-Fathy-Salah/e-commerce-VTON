@@ -8,12 +8,10 @@ interface GarmentsAttrs {
   id: string;
   garmentClass: GarmentClass;
   gender: Gender;
-  available: [
-    {
+  available: {
       size: GarmentSize;
       quantity: number;
-    }
-  ];
+    } [];
   price: number;
 }
 
@@ -21,6 +19,7 @@ interface GarmentsAttrs {
 // that a User Model has
 interface GarmentsModel extends mongoose.Model<GarmentsDoc> {
   build(attrs: GarmentsAttrs): GarmentsDoc;
+  findByEvent(event: {id: string, version: number}): Promise<GarmentsDoc|null>;
 }
 
 // An interface that describes the properties
@@ -28,12 +27,10 @@ interface GarmentsModel extends mongoose.Model<GarmentsDoc> {
 interface GarmentsDoc extends mongoose.Document {
   garmentClass: GarmentClass;
   gender: Gender;
-  available: [
-    {
+  available: {
       size: GarmentSize;
       quantity: number;
-    }
-  ];
+    } [];
   price: number;
   version: number;
   isReserved(): Promise<boolean>;
@@ -54,6 +51,7 @@ const garmentsSchema = new mongoose.Schema(
         size: {
           type: String,
           enum: Object.values(GarmentSize),
+          unique: true
         },
         quantity: {
           type: Number,
