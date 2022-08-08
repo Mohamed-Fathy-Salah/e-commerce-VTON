@@ -32,6 +32,9 @@ it("correct data when user signin", async () => {
     .set("Cookie", cookie)
     .send({
       name: "blah",
+      age: 15,
+      customerId,
+      gender: Gender.Male
     })
     .expect(201);
 

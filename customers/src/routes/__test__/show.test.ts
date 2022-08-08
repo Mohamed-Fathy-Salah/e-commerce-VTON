@@ -1,6 +1,6 @@
 import { app } from "../../app";
 import request from "supertest";
-import { UserType } from "@mfsvton/common";
+import { Gender, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 
 // todo: fix tests
@@ -20,7 +20,10 @@ it("correct data when user signin", async () => {
     .post("/api/customerdata")
     .set("Cookie", global.signin(UserType.Customer, customerId))
     .send({
+        customerId,
       name: "blah",
+      age: 15,
+      gender: Gender.Male
     })
     .expect(201);
 

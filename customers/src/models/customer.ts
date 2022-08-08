@@ -6,6 +6,7 @@ import {
   SkinTone,
 } from "@mfsvton/common";
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -14,10 +15,6 @@ interface CustomerAttrs {
   name: string;
   gender?: Gender;
   age?: number;
-  skinTone?: SkinTone;
-  measurements?: Measurements;
-  photo?: string; // TODO: add actual image
-  sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
 }
 
 // An interface that describes the properties
@@ -37,6 +34,7 @@ interface CustomerDoc extends mongoose.Document {
   measurements?: Measurements;
   photo?: string; // TODO: add actual image
   sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
+  version: number;
 }
 
 const customerSchema = new mongoose.Schema(
@@ -54,9 +52,11 @@ const customerSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(Gender),
       default: Gender.Female, // TODO: add neutral
+      required: true
     },
     age: {
       type: Number,
+      required: true
     },
     skinTone: {
       type: String,
@@ -119,6 +119,9 @@ const customerSchema = new mongoose.Schema(
     },
   }
 );
+
+customerSchema.set('versionKey', 'version');
+customerSchema.plugin(updateIfCurrentPlugin);
 
 customerSchema.statics.build = (attrs: CustomerAttrs) => {
   return new Customer(attrs);

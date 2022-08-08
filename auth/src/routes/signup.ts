@@ -1,14 +1,24 @@
-import { BadRequestError, UserType, validateRequest } from "@mfsvton/common";
+import {
+  BadRequestError,
+  Gender,
+  UserType,
+  validateRequest,
+} from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
+import { CustomerCreatedPublisher } from "../events/publishers/customer-created-publisher";
 import { User } from "../models/user";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
 router.post(
   "/api/users/signup",
   [
+    body("name").not().isEmpty().withMessage("name must be valid"),
+    body("age").isFloat({ gt: 13, lt: 120 }),
+    body("gender").custom((value) => Object.values(Gender).includes(value)),
     body("email").isEmail().withMessage("email must be valid"),
     body("password")
       .trim()
@@ -18,7 +28,7 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { email, password, type } = req.body;
+    const { name, age, gender, email, password, type } = req.body;
 
     const existingUser = await User.findOne({ email, type });
 
@@ -41,10 +51,17 @@ router.post(
     req.session = {
       jwt: userJwt,
     };
-    
-    // publish event
-    
-    res.status(201).send({ email, password, type });
+
+    if (user.type === UserType.Customer) {
+      new CustomerCreatedPublisher(natsWrapper.client).publish({
+        customerId: user.id,
+        name,
+        age,
+        gender,
+      });
+    }
+
+    res.status(201).send({ name, age, gender, email, password, type });
   }
 );
 

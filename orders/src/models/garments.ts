@@ -1,6 +1,6 @@
 import { GarmentClass, GarmentSize, Gender } from "@mfsvton/common";
 import mongoose from "mongoose";
-import { Order } from "./order";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -8,12 +8,10 @@ interface GarmentsAttrs {
   id: string;
   garmentClass: GarmentClass;
   gender: Gender;
-  available: [
-    {
+  available: {
       size: GarmentSize;
       quantity: number;
-    }
-  ];
+    } [];
   price: number;
 }
 
@@ -21,6 +19,7 @@ interface GarmentsAttrs {
 // that a User Model has
 interface GarmentsModel extends mongoose.Model<GarmentsDoc> {
   build(attrs: GarmentsAttrs): GarmentsDoc;
+  findByEvent(event: {id: string, version: number}): Promise<GarmentsDoc|null>;
 }
 
 // An interface that describes the properties
@@ -28,13 +27,12 @@ interface GarmentsModel extends mongoose.Model<GarmentsDoc> {
 interface GarmentsDoc extends mongoose.Document {
   garmentClass: GarmentClass;
   gender: Gender;
-  available: [
-    {
+  available: {
       size: GarmentSize;
       quantity: number;
-    }
-  ];
+    } [];
   price: number;
+  version: number;
   isReserved(): Promise<boolean>;
 }
 
@@ -53,6 +51,7 @@ const garmentsSchema = new mongoose.Schema(
         size: {
           type: String,
           enum: Object.values(GarmentSize),
+          unique: true
         },
         quantity: {
           type: Number,
@@ -76,6 +75,9 @@ const garmentsSchema = new mongoose.Schema(
   }
 );
 
+garmentsSchema.set('versionKey', 'version');
+garmentsSchema.plugin(updateIfCurrentPlugin);
+
 garmentsSchema.statics.build = (attrs: GarmentsAttrs) => {
   return new Garments({
       _id: attrs.id,
@@ -85,6 +87,13 @@ garmentsSchema.statics.build = (attrs: GarmentsAttrs) => {
       price: attrs.price
   });
 };
+
+garmentsSchema.statics.findByEvent = (event: {id: string, version: number}) => {
+    return Garments.findOne({
+        _id: event.id,
+        version: event.version - 1
+    })
+}
 
 garmentsSchema.methods.isReserved = async function () {
     //TODO: implement

@@ -5,7 +5,9 @@ import {
   requireCustomerAuth,
 } from "@mfsvton/common";
 import express, { Request, Response } from "express";
+import { OrderCancelledPublisher } from "../events/publishers/order-cancelled-publisher";
 import { Order } from "../models/order";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -27,6 +29,13 @@ router.delete(
 
     order.status = OrderStatus.Cancelled;
     await order.save();
+
+    new OrderCancelledPublisher(natsWrapper.client).publish({
+        orderId: order.id,
+        customerId: order.customerId,
+        garments: order.garments,
+        version: order.version
+    });
 
     res.status(200).send(order);
   }

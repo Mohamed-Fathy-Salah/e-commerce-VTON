@@ -1,4 +1,4 @@
-import { UserType } from "@mfsvton/common";
+import { Gender, UserType } from "@mfsvton/common";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
@@ -7,6 +7,8 @@ import { app } from "../app";
 declare global {
   var signin: (type: UserType) => Promise<string[]>;
 }
+
+jest.mock("../nats-wrapper");
 
 let mongo: any;
 beforeAll(async () => {
@@ -35,15 +37,19 @@ afterAll(async () => {
 });
 
 global.signin = async (type: UserType) => {
+  const name = "test";
   const email = "test@test.com";
   const password = "password";
 
   const response = await request(app)
     .post("/api/users/signup")
     .send({
+      name,
       email,
       password,
       type,
+      age: 15,
+      gender: Gender.Male
     })
     .expect(201);
 

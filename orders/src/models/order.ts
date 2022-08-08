@@ -1,5 +1,6 @@
 import { GarmentSize, OrderStatus } from "@mfsvton/common";
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -37,6 +38,7 @@ interface OrderDoc extends mongoose.Document {
   ];
   status: OrderStatus;
   expiresAt: Date;
+  version: number;
 }
 
 const orderSchema = new mongoose.Schema(
@@ -82,6 +84,9 @@ const orderSchema = new mongoose.Schema(
     },
   }
 );
+
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
