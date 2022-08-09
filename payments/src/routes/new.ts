@@ -6,12 +6,13 @@ import { Order } from "../models/orders";
 import { Payment } from "../models/payments";
 import { natsWrapper } from "../nats-wrapper";
 import { PaymentCreatedPublisher } from "../events/publishers/payment-created-publisher";
+import mongoose from "mongoose";
 
 const router = express.Router();
 router.post(
   "/api/payments",
   requireCustomerAuth,
-  [body("token").not().isEmpty(), body("orderId").not().isEmpty()],
+  [body("token").not().isEmpty(), body("orderId").custom((value) => mongoose.Types.ObjectId.isValid(value))],
   validateRequest,
   async (req: Request, res: Response) => {
     const { token, orderId } = req.body;
@@ -37,7 +38,7 @@ router.post(
     });
 
     const payment = Payment.build({
-        orderId,
+        orderId: order.id,
         stripeId: charge.id
     })
     await payment.save()

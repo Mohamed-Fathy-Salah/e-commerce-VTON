@@ -7,7 +7,7 @@ declare global {
   var signin: (type: UserType, id?: string) => string[];
 }
 
-jest.mock("../nats-wrapper")
+jest.mock("../nats-wrapper");
 
 let mongo: any;
 beforeAll(async () => {
@@ -21,6 +21,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.clearAllMocks();
   const collections = await mongoose.connection.db.collections();
 
   for (let collection of collections) {
@@ -39,7 +40,7 @@ global.signin = (type: UserType, id?: string) => {
   const payload = {
     id: id || new mongoose.Types.ObjectId().toHexString(),
     email: "test@test.com",
-    type
+    type,
   };
   const token = jwt.sign(payload, process.env.JWT_KEY!);
   const session = { jwt: token };
