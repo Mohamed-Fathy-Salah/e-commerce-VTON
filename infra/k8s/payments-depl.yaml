@@ -1,22 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cart-deployment
-  labels:
-    app: cart
+  name: payments-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cart
+      app: payments
   template:
     metadata:
       labels:
-        app: cart
+        app: payments
     spec:
       containers:
-        - name: cart
-          image: mofasa101/cart
+        - name: payments
+          image: mofasa101/payments:latest
           env:
             - name: NATS_URI
               value: "http://nats-srv:4222"
@@ -31,18 +29,23 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: STRIPE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_KEY
             - name: MONGO_URI
-              value: "mongodb://cart-mongo-srv:27017/cart"
+              value: "mongodb://payments-mongo-srv:27017/payments"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: cart-srv
+  name: payments-srv
 spec:
   selector:
-    app: cart
+    app: payments
   ports:
-    - name: cart
+    - name: payments
       protocol: TCP
       port: 3000
       targetPort: 3000
