@@ -4,6 +4,7 @@ import { natsWrapper } from "./nats-wrapper";
 import { GarmentCreatedListener } from "./events/listeners/garment-created-listener";
 import { GarmentDeletedListener } from "./events/listeners/garment-deleted-listener";
 import { GarmentUpdatedListener } from "./events/listeners/garment-updated-listener";
+import { ExpirationCompletedListener } from "./events/listeners/expiration-complete-listener";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -44,6 +45,7 @@ const start = async () => {
     new GarmentCreatedListener(natsWrapper.client).listen();
     new GarmentDeletedListener(natsWrapper.client).listen();
     new GarmentUpdatedListener(natsWrapper.client).listen();
+    new ExpirationCompletedListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI, {});
     console.log("Connected to MongoDb");
