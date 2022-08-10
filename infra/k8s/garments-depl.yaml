@@ -25,6 +25,14 @@ spec:
                   key: JWT_KEY
             - name: MONGO_URI
               value: "mongodb://garments-mongo-srv:27017/garments"
+            - name: NATS_URI
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: vton
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
 ---
 apiVersion: v1
 kind: Service
