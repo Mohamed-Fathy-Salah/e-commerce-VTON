@@ -1,16 +1,18 @@
 import Head from 'next/head';
-import Image from 'next/image';
+import GarmentList from '../components/GarmentList';
+import SearchBar from '../components/SearchBar';
 
 const Home = () => {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
-        <title>Smart Fasion</title>
+        <title>SmartFasion</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main className='flex w-full flex-1 flex-col items-center justify-center px-20 text-center'>
-        <h1 className='text-6xl font-bold'>Smart Fasion</h1>
+      <main className='w-full items-center justify-center px-10 '>
+        <SearchBar />
+        <GarmentList />
       </main>
 
       <footer className='flex h-24 w-full items-center justify-center border-t'>
