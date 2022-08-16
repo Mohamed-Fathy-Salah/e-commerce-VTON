@@ -1,6 +1,8 @@
 import { Listener, CustomerCreatedEvent, Subjects } from "@mfsvton/common";
 import { Message } from "node-nats-streaming";
 import { Customer } from "../../models/customer";
+import { natsWrapper } from "../../nats-wrapper";
+import { CustomerDataCreatedPublisher } from "../publishers/customer-data-created-publisher";
 import { queueGroupName } from "./queue-group-name";
 
 export class CustomerCreatedListener extends Listener<CustomerCreatedEvent> {
@@ -17,6 +19,14 @@ export class CustomerCreatedListener extends Listener<CustomerCreatedEvent> {
       gender: data.gender,
     });
     await customer.save();
+
+    new CustomerDataCreatedPublisher(natsWrapper.client).publish({
+      customerId: customer.customerId,
+      name: customer.name,
+      age: customer.age,
+      gender: customer.gender,
+      version: customer.version,
+    });
 
     msg.ack();
   }

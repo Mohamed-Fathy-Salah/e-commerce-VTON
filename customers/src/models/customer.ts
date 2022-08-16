@@ -28,8 +28,8 @@ interface CustomerModel extends mongoose.Model<CustomerDoc> {
 interface CustomerDoc extends mongoose.Document {
   customerId: string;
   name: string;
-  gender?: Gender;
-  age?: number;
+  gender: Gender;
+  age: number;
   skinTone?: SkinTone;
   measurements?: Measurements;
   photo?: string; // TODO: add actual image
