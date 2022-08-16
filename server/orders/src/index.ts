@@ -4,7 +4,7 @@ import { natsWrapper } from "./nats-wrapper";
 import { GarmentCreatedListener } from "./events/listeners/garment-created-listener";
 import { GarmentDeletedListener } from "./events/listeners/garment-deleted-listener";
 import { GarmentUpdatedListener } from "./events/listeners/garment-updated-listener";
-import { ExpirationCompletedListener } from "./events/listeners/expiration-complete-listener";
+import { ExpirationCompletedListener } from "./events/listeners/expiration-completed-listener";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
