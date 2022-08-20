@@ -2,7 +2,6 @@ import { app } from "../../app";
 import request from "supertest";
 import { GarmentClass, GarmentSize, Gender, SkinTone, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
-import { Customer } from "../../models/customer";
 
 it("error if user is not signed in ", async () => {
   await request(app).put("/api/customerdata").expect(401);
@@ -20,6 +19,13 @@ it("error if user is not in DB ", async () => {
   await request(app)
     .put("/api/customerdata")
     .set("Cookie", global.signin(UserType.Customer))
+    .send({
+      name : 'hihi',
+      gender: Gender.Male,
+      age: 15,
+      skinTone: SkinTone.White,
+      sizePreferences: [{ garmentClass: GarmentClass.Shirt, garmentSize: GarmentSize.Large }]
+    })
     .expect(404);
 });
 
