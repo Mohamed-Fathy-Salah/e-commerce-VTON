@@ -20,8 +20,8 @@ const upload = multer({ storage:Storage });
 
 router.put(
   "/api/customerdata",
-  upload.single('file'),
   requireCustomerAuth,
+  upload.single('file'),
   [
       // todo: add messages
     body("name").custom((value) => {
