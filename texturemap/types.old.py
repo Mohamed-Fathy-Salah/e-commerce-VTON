@@ -17,5 +17,5 @@ class GarmentClass(Enum):
     SHORT_PANT = 'short-pant'
 
 class Subjects(Enum):
-    GARMENT_CREATED = "Garment:created"
+    GARMENT_CREATED = "garment:created"
     TEXTUREMAP_CREATED = "texturemap:created"

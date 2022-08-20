@@ -1,7 +1,7 @@
 import asyncio
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
-from .types import Subjects
+# from .types import Subjects
 from os import environ
 from events.listeners.garment_created_listener import garment_created_listener
 
@@ -29,7 +29,7 @@ async def run():
     sc = STAN()
     await sc.connect(cluster_id, client_id, nats=nats_uri)
 
-    await sc.subscribe(Subjects.GARMENT_CREATED, cb=garment_created_listener)
+    await sc.subscribe("garment:created", cb=garment_created_listener)
 
 # def connect():
     # check_environment_vars()
