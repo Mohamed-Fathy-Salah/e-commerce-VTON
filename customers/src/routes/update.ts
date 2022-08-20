@@ -10,8 +10,13 @@ import { body } from "express-validator";
 import { CustomerDataUpdatedPublisher } from "../events/publishers/customer-data-updated-publisher";
 import { Customer } from "../models/customer";
 import { natsWrapper } from "../nats-wrapper";
+import multer from 'multer';
 
 const router = express.Router();
+
+const Storage = multer.memoryStorage()
+
+const upload = multer({ storage:Storage }).single('photo');
 
 router.put(
   "/api/customerdata",
@@ -38,8 +43,24 @@ router.put(
       throw new NotFoundError();
     }
 
+    upload(req, res, (err)=> {
+        if(err){
+            console.log(err)
+        } else {
+            customer.set({photo: {
+                data: req.body.file,
+                contentType: 'image/png'
+            }});
+        }
+    })
+
     // TODO: check if data is right
-    customer.set(req.body);
+    customer.set({name: req.body.name});
+    customer.set({gender: req.body.gender});
+    customer.set({age: req.body.age});
+    customer.set({skinTone: req.body.skinTone});
+    customer.set({measurements: req.body.measurements});
+    customer.set({sizePreferences: req.body.sizePreferences});
     await customer.save();
 
     // todo: put each item 
