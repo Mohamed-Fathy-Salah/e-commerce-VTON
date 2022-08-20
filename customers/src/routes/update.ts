@@ -27,10 +27,7 @@ router.put(
     body("name").custom((value) => {
       return value.length > 0;
     }),
-  body("gender").custom(value => {
-      console.log(value);
-      return Object.values(Gender).includes(value)
-  }),
+  body("gender").custom(value => Object.values(Gender).includes(value)),
   body("age").custom(value => value > 13 && value < 120),
   body("skinTone").custom(value => Object.values(SkinTone).includes(value)),
   // todo: validate every field 
@@ -54,7 +51,6 @@ router.put(
     customer.set({measurements: req.body.measurements});
     customer.set({sizePreferences: req.body.sizePreferences});
     if(req.file) {
-        console.log("photo updated")
         customer.set({photo:{
             data: req.file.buffer,
             contentType: "image/png"
