@@ -13,8 +13,8 @@ import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 interface CustomerAttrs {
   customerId: string;
   name: string;
-  gender?: Gender;
-  age?: number;
+  gender: Gender;
+  age: number;
 }
 
 // An interface that describes the properties
@@ -32,7 +32,10 @@ interface CustomerDoc extends mongoose.Document {
   age: number;
   skinTone?: SkinTone;
   measurements?: Measurements;
-  photo?: string; // TODO: add actual image
+  photo?: {
+      data: Buffer,
+      contentType: string
+  },
   sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
   version: number;
 }
@@ -51,7 +54,7 @@ const customerSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: Object.values(Gender),
-      default: Gender.Female, // TODO: add neutral
+      default: Gender.Neutral, 
       required: true
     },
     age: {
@@ -93,7 +96,8 @@ const customerSchema = new mongoose.Schema(
       },
     },
     photo: {
-      type: String, // todo: change
+        data: Buffer,
+        contentType: String
     },
     sizePreferences: [
       {
