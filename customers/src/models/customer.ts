@@ -32,7 +32,7 @@ interface CustomerDoc extends mongoose.Document {
   age: number;
   skinTone?: SkinTone;
   measurements?: Measurements;
-  photo?: Buffer,
+  photo?: string,
   sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
   version: number;
 }
@@ -74,7 +74,7 @@ const customerSchema = new mongoose.Schema(
       neckline: Number,
       shoulder: Number,
     },
-    photo: Buffer,
+    photo: String,
     sizePreferences: [
       {
         garmentClass: {

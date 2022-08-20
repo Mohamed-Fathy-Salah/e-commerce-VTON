@@ -51,7 +51,7 @@ router.put(
     customer.set({measurements: req.body.measurements});
     customer.set({sizePreferences: req.body.sizePreferences});
     if(req.file) {
-        customer.set({photo: req.file.buffer});
+        customer.set({photo: req.file.buffer.toString('base64')});
     }
 
     await customer.save();
