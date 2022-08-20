@@ -16,19 +16,23 @@ const router = express.Router();
 
 const Storage = multer.memoryStorage()
 
-const upload = multer({ storage:Storage }).single('photo');
+const upload = multer({ storage:Storage });
 
 router.put(
   "/api/customerdata",
+  upload.single('file'),
   requireCustomerAuth,
   [
       // todo: add messages
     body("name").custom((value) => {
-      return !value || value.length > 0;
+      return value.length > 0;
     }),
-  body("gender").custom((value) => {return !value || Object.values(Gender).includes(value) }),
-  body("age").custom((value) => { return !value || (value > 13 && value < 120);}),
-  body("skinTone").custom((value) => { return !value || Object.values(SkinTone).includes(value);}),
+  body("gender").custom(value => {
+      console.log(value);
+      return Object.values(Gender).includes(value)
+  }),
+  body("age").custom(value => value > 13 && value < 120),
+  body("skinTone").custom(value => Object.values(SkinTone).includes(value)),
   // todo: validate every field 
   //body("measurements").custom((value) => { return !value || ;}),
   //body("photo").custom((value) => { return !value || ;}),
@@ -43,24 +47,20 @@ router.put(
       throw new NotFoundError();
     }
 
-    upload(req, res, (err)=> {
-        if(err){
-            console.log(err)
-        } else {
-            customer.set({photo: {
-                data: req.body.file,
-                contentType: 'image/png'
-            }});
-        }
-    })
-
-    // TODO: check if data is right
-    customer.set({name: req.body.name});
-    customer.set({gender: req.body.gender});
-    customer.set({age: req.body.age});
-    customer.set({skinTone: req.body.skinTone});
+    customer.set({name: req.body.name || customer.name});
+    customer.set({gender: req.body.gender || customer.gender});
+    customer.set({age: req.body.age || customer.age});
+    customer.set({skinTone: req.body.skinTone || customer.skinTone});
     customer.set({measurements: req.body.measurements});
     customer.set({sizePreferences: req.body.sizePreferences});
+    if(req.file) {
+        console.log("photo updated")
+        customer.set({photo:{
+            data: req.file.buffer,
+            contentType: "image/png"
+        }});
+    }
+
     await customer.save();
 
     // todo: put each item 

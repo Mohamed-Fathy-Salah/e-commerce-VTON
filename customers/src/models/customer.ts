@@ -33,7 +33,7 @@ interface CustomerDoc extends mongoose.Document {
   skinTone?: SkinTone;
   measurements?: Measurements;
   photo?: {
-      data: string,
+      data: Buffer,
       contentType: string
   },
   sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];

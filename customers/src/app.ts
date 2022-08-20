@@ -9,8 +9,12 @@ import { updateCustomerDataRoute } from "./routes/update";
 import { showCustomerDataRoute } from "./routes/show";
 
 const app = express();
+//const upload = multer();
+
 app.set("trust proxy", true);
 app.use(json());
+
+
 app.use(
   cookieSession({
     signed: false,
@@ -22,8 +26,8 @@ app.use(
 app.use(currentUser);
 
 app.use(newCustomerDataRoute);
-app.use(updateCustomerDataRoute);
 app.use(showCustomerDataRoute);
+app.use(updateCustomerDataRoute);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
