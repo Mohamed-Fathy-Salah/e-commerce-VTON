@@ -51,10 +51,7 @@ router.put(
     customer.set({measurements: req.body.measurements});
     customer.set({sizePreferences: req.body.sizePreferences});
     if(req.file) {
-        customer.set({photo:{
-            data: req.file.buffer,
-            contentType: "image/png"
-        }});
+        customer.set({photo: req.file.buffer});
     }
 
     await customer.save();

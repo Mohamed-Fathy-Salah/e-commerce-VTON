@@ -32,10 +32,7 @@ interface CustomerDoc extends mongoose.Document {
   age: number;
   skinTone?: SkinTone;
   measurements?: Measurements;
-  photo?: {
-      data: Buffer,
-      contentType: string
-  },
+  photo?: Buffer,
   sizePreferences?: [{ garmentClass: GarmentClass; garmentSize: GarmentSize }];
   version: number;
 }
@@ -67,38 +64,17 @@ const customerSchema = new mongoose.Schema(
       default: SkinTone.MiddleEastern,
     },
     measurements: {
-      height: {
-        type: Number,
-      },
-      weight: {
-        type: Number,
-      },
-      chest: {
-        type: Number,
-      },
-      waist: {
-        type: Number,
-      },
-      hips: {
-        type: Number,
-      },
-      arm: {
-        type: Number,
-      },
-      inseam: {
-        type: Number,
-      },
-      neckline: {
-        type: Number,
-      },
-      shoulder: {
-        type: Number,
-      },
+      height: Number,
+      weight: Number,
+      chest: Number,
+      waist: Number,
+      hips: Number,
+      arm: Number,
+      inseam: Number,
+      neckline: Number,
+      shoulder: Number,
     },
-    photo: {
-        data: Buffer,
-        contentType: String
-    },
+    photo: Buffer,
     sizePreferences: [
       {
         garmentClass: {
