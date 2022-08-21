@@ -15,6 +15,9 @@ interface GarmentAttrs {
       quantity: number;
     }
   ];
+  frontPhoto: string;
+  backPhoto: string;
+  photos?: string[];
 }
 
 // An interface that describes the properties
@@ -36,6 +39,9 @@ export interface GarmentDoc extends mongoose.Document {
       quantity: number;
     }
   ];
+  frontPhoto: string;
+  backPhoto: string;
+  photos?: string[];
   version: number;
 }
 
@@ -79,6 +85,15 @@ const garmentSchema = new mongoose.Schema(
       ],
       required: true
     },
+    frontPhoto:{
+        type: String,
+        required: true
+    },
+    backPhoto: {
+        type: String,
+        required: true
+    },
+    photos: [String]
   },
   {
     toJSON: {
