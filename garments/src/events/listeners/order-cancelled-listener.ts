@@ -17,24 +17,28 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
                 throw new NotFoundError();
             }
 
-            const idx = garment.available.findIndex((value) => value.size === orderGarment.size)
+            // todo: fix
+            //const idx = garment.available.findIndex((value) => value.size === orderGarment.size)
 
-            if(idx === -1) {
-                throw new NotFoundError();
-            }
+            //if(idx === -1) {
+                //throw new NotFoundError();
+            //}
 
-            garment.available[idx].quantity += orderGarment.quantity;
+            //garment.available[idx].quantity += orderGarment.quantity;
             await garment.save();
         
-            // todo: send all at once ?
             new GarmentUpdatedPublisher(natsWrapper.client).publish({
                 garmentId: garment.id,
                 adminId: garment.adminId,
                 garmentClass: garment.garmentClass,
                 gender: garment.gender,
-                available: garment.available,
                 price: garment.price,
-                version: garment.version
+                version: garment.version,
+                small: garment.small,
+                medium: garment.medium,
+                large: garment.large,
+                xlarge: garment.xlarge,
+                xxlarge: garment.xxlarge
             })
         }
         

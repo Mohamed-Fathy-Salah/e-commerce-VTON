@@ -1,12 +1,10 @@
 import {
-    BadRequestError,
   GarmentClass,
-  GarmentSize,
   Gender,
   requireAdminAuth,
   validateRequest,
 } from "@mfsvton/common";
-import express, { Response, Request } from "express";
+import express, { Response, Request} from "express";
 import { body, check } from "express-validator";
 import { GarmentCreatedPublisher } from "../events/publishers/garment-created-publisher";
 import { Garment } from "../models/garment";
@@ -33,36 +31,38 @@ router.post(
     ),
     body("gender").custom((value) => Object.values(Gender).includes(value)),
     body("price").isFloat({ gt: 0 }),
-    body("available").custom((value) => {
-        value = JSON.parse(value);
-        return value.every(
-            (garment: { size: GarmentSize; quantity: number }) =>
-            Object.values(GarmentSize).includes(garment.size) &&
-                garment.quantity >= 0
-        )
-    }
-    ),
+    body("small").isFloat({ gt: 0 }),
+    body("medium").isFloat({ gt: 0 }),
+    body("large").isFloat({ gt: 0 }),
+    body("xlarge").isFloat({ gt: 0 }),
+    body("xxlarge").isFloat({ gt: 0 }),
     check('frontPhoto').custom((val, {req}) =>  req.files.frontPhoto ),
     check('backPhoto').custom((val, {req}) =>  req.files.backPhoto ),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
     const adminId = req.currentUser!.id;
-    const { garmentClass, gender, price, available } = req.body;
+    const { garmentClass, gender, price, small, medium, large, xlarge, xxlarge } = req.body;
 
-    if(req.files!.frontPhoto || req.files!.backPhoto) {
-        throw new BadRequestError();
-    }
+    //@ts-ignore
+    const {frontPhoto, backPhoto, photos} = req.files;
 
     const garment = Garment.build({
         adminId,
         garmentClass,
         gender,
         price,
-        available,
-        frontPhoto: req.files.frontPhoto,
-        backPhoto: req.files.backPhoto,
+        small,
+        medium,
+        large,
+        xlarge,
+        xxlarge,
+        frontPhoto: frontPhoto[0].buffer.toString('base64'),
+        backPhoto: backPhoto[0].buffer.toString('base64'),
     });
+    if(photos) {
+        garment.set({photos});
+    }
     await garment.save();
 
     new GarmentCreatedPublisher(natsWrapper.client).publish({
@@ -70,9 +70,15 @@ router.post(
         adminId: garment.adminId,
         garmentClass: garment.garmentClass,
         gender: garment.gender,
-        available: garment.available,
+        small: garment.small,
+        medium: garment.medium,
+        large: garment.large,
+        xlarge: garment.xlarge,
+        xxlarge: garment.xxlarge,
         price: garment.price,
-        version: garment.version
+        version: garment.version,
+        frontPhoto: garment.frontPhoto,
+        backPhoto: garment.backPhoto
     });
 
     res.status(201).send(garment);

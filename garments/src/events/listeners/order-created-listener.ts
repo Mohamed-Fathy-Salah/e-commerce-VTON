@@ -23,32 +23,36 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
         throw new NotFoundError();
       }
 
-      const idx = garment.available.findIndex(
-        (value) => value.size === orderGarment.size
-      );
+      //todo: fix
+      //const idx = garment.available.findIndex(
+        //(value) => value.size === orderGarment.size
+      //);
 
-      if (idx === -1) {
-        throw new NotFoundError();
-      }
+      //if (idx === -1) {
+        //throw new NotFoundError();
+      //}
 
-      if (garment.available[idx].quantity < orderGarment.quantity) {
-        throw new BadRequestError(
-          `garment ${garment.id} does not have enough pieces`
-        );
-      }
+      //if (garment.available[idx].quantity < orderGarment.quantity) {
+        //throw new BadRequestError(
+          //`garment ${garment.id} does not have enough pieces`
+        //);
+      //}
 
-      garment.available[idx].quantity -= orderGarment.quantity;
+      //garment.available[idx].quantity -= orderGarment.quantity;
       await garment.save();
 
-      // todo: send all at once ?
       new GarmentUpdatedPublisher(natsWrapper.client).publish({
-        garmentId: garment.id,
-        adminId: garment.adminId,
-        garmentClass: garment.garmentClass,
-        gender: garment.gender,
-        available: garment.available,
-        price: garment.price,
-        version: garment.version,
+          garmentId: garment.id,
+          adminId: garment.adminId,
+          garmentClass: garment.garmentClass,
+          gender: garment.gender,
+          price: garment.price,
+          version: garment.version,
+          small: garment.small,
+          medium: garment.medium,
+          large: garment.large,
+          xlarge: garment.xlarge,
+          xxlarge: garment.xxlarge
       });
     }
 

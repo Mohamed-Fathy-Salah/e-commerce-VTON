@@ -17,6 +17,7 @@ spec:
       containers:
         - name: garments
           image: mofasa101/garments
+          imagePullPolicy: Never
           env:
             - name: JWT_KEY
               valueFrom:
