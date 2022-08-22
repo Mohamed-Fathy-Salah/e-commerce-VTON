@@ -5,7 +5,6 @@ import { GarmentCreatedListener } from "../garment-created-listener";
 import {
   GarmentClass,
   GarmentCreatedEvent,
-  GarmentSize,
   Gender,
 } from "@mfsvton/common";
 import { Garments } from "../../../models/garments";
@@ -16,18 +15,19 @@ const setup = async () => {
 
   // create a fake data event
   const data: GarmentCreatedEvent["data"] = {
-    garmentId: new mongoose.Types.ObjectId().toHexString(),
-    adminId: new mongoose.Types.ObjectId().toHexString(),
-    garmentClass: GarmentClass.Shirt,
-    gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 3,
-      },
-    ],
-    price: 20,
-    version: 0,
+      garmentId: new mongoose.Types.ObjectId().toHexString(),
+      adminId: new mongoose.Types.ObjectId().toHexString(),
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Male,
+      small: 2,
+      medium: 2,
+      large: 2,
+      xlarge: 2,
+      xxlarge: 2,
+      price: 20,
+      version: 0,
+      frontPhoto: "blah",
+      backPhoto: "blah"
   };
 
   // create a fake message object
@@ -52,7 +52,11 @@ it("creates , saves a garment, ack msg", async () => {
   expect(garment!.price).toEqual(data.price);
   expect(garment!.gender).toEqual(data.gender);
   expect(garment!.garmentClass).toEqual(data.garmentClass);
-  expect(garment!.available.length).toEqual(1);
+  expect(garment!.small).toEqual(data.small);
+  expect(garment!.medium).toEqual(data.medium);
+  expect(garment!.large).toEqual(data.large);
+  expect(garment!.xlarge).toEqual(data.xlarge);
+  expect(garment!.xxlarge).toEqual(data.xxlarge);
 
   expect(msg.ack).toHaveBeenCalled();
 });

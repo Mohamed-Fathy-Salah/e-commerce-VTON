@@ -1,6 +1,5 @@
 import {
   BadRequestError,
-  GarmentSize,
   NotFoundError,
   OrderStatus,
   requireCustomerAuth,
@@ -8,7 +7,6 @@ import {
 } from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
-import mongoose from "mongoose";
 import { OrderCreatedPublisher } from "../events/publishers/order-created-publisher";
 import { Garments } from "../models/garments";
 import { Order } from "../models/order";
@@ -16,8 +14,6 @@ import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
-// body = {garments:[{garmentId:string, quantity: number, price: number, size:
-// (sml..)}]}
 const EXPIRATION_WINDOW_SECONDS = 60;
 
 router.post(
@@ -29,16 +25,15 @@ router.post(
         value.length > 0 &&
         value.every(
           (garment: {
-            garmentId: string;
-            quantity: number;
             price: number;
-            size: GarmentSize;
+            small: number;
+            medium: number;
+            large: number;
+            xlarge: number;
+            xxlarge: number;
           }) => {
             return (
-              mongoose.Types.ObjectId.isValid(garment.garmentId) &&
-              garment.quantity >= 0 &&
-              garment.price > 0 &&
-              Object.values(GarmentSize).includes(garment.size)
+              garment.small + garment.medium + garment.large + garment.xlarge + garment.xxlarge > 0 && garment.price > 0
             );
           }
         )
@@ -62,16 +57,13 @@ router.post(
           throw new NotFoundError();
         }
 
-        const idx = garment.available.findIndex(
-          (val) => val.size === garments[i].size
+        return (
+          garments[i].small > garment.small ||
+          garments[i].medium > garment.medium ||
+          garments[i].large > garment.large ||
+          garments[i].xlarge > garment.xlarge ||
+          garments[i].xxlarge > garment.xxlarge
         );
-
-        if (
-          idx === -1 ||
-          garment.available[idx].quantity < garments[i].quantity
-        ) {
-          return true;
-        }
       }
     };
 
@@ -89,12 +81,12 @@ router.post(
     await order.save();
 
     new OrderCreatedPublisher(natsWrapper.client).publish({
-        orderId: order.id,
-        customerId: order.customerId,
-        garments: order.garments,
-        status: order.status,
-        expiresAt: order.expiresAt.toISOString(),
-        version: order.version
+      orderId: order.id,
+      customerId: order.customerId,
+      garments: order.garments,
+      status: order.status,
+      expiresAt: order.expiresAt.toISOString(),
+      version: order.version,
     });
 
     res.status(201).send(order);

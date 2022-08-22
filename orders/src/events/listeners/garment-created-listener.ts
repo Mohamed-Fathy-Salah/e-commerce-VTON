@@ -11,8 +11,12 @@ export class GarmentCreatedListener extends Listener<GarmentCreatedEvent> {
         id: data.garmentId,
         garmentClass: data.garmentClass,
         gender: data.gender,
-        available: data.available,
-        price: data.price
+        price: data.price,
+        small: data.small,
+        medium: data.medium,
+        large: data.medium,
+        xlarge: data.xlarge,
+        xxlarge: data.xxlarge
     })
     await garment.save();
 

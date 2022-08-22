@@ -28,8 +28,12 @@ export class GarmentUpdatedListener extends Listener<GarmentUpdatedEvent> {
     garment.set({
       garmentClass: data.garmentClass,
       gender: data.gender,
-      available: data.available,
       price: data.price,
+      small: data.small,
+      medium: data.medium,
+      large: data.large,
+      xlarge: data.xlarge,
+      xxlarge: data.xxlarge,
     });
     await garment.save();
 

@@ -33,7 +33,6 @@ it("creates, saves a ticket and acks msg", async () => {
   await listener.onMessage(data, msg);
 
   // write assertions to make sure a ticket was created
-  // todo: change to findbyid
   const customer = await Customer.findOne({customerId: data.customerId});
 
   expect(customer).toBeDefined();

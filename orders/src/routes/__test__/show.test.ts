@@ -42,12 +42,11 @@ it("customer not current user", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
@@ -59,9 +58,12 @@ it("customer not current user", async () => {
       garments: [
         {
           garmentId,
-          quantity: 1,
           price: 2,
-          size: GarmentSize.Small,
+          small: 2,
+          medium: 2,
+          large: 2,
+          xlarge: 2,
+          xxlarge: 2,
         },
       ],
     });
@@ -82,12 +84,11 @@ it("show order", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
@@ -99,9 +100,12 @@ it("show order", async () => {
       garments: [
         {
           garmentId,
-          quantity: 2,
           price: 2,
-          size: GarmentSize.Small,
+          small: 2,
+          medium: 2,
+          large: 2,
+          xlarge: 2,
+          xxlarge: 2,
         },
       ],
     })

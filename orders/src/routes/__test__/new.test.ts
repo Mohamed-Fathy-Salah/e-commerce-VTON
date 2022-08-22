@@ -1,11 +1,4 @@
-import {
-  currentUser,
-  GarmentClass,
-  GarmentSize,
-  Gender,
-  OrderStatus,
-  UserType,
-} from "@mfsvton/common";
+import { GarmentClass, Gender, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -41,7 +34,7 @@ it("wrong data", async () => {
       garments: [
         {
           garmentId: new mongoose.Types.ObjectId().toHexString(),
-          quantity: -1,
+          small: -1,
           price: 0,
         },
       ],
@@ -71,12 +64,11 @@ it("order reserved garments", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
@@ -88,9 +80,12 @@ it("order reserved garments", async () => {
       garments: [
         {
           garmentId,
-          quantity: 3,
           price: 2,
-          size: GarmentSize.Small,
+          small: 3,
+          medium: 0,
+          large: 0,
+          xlarge: 0,
+          xxlarge: 0,
         },
       ],
     })
@@ -106,12 +101,11 @@ it("order success", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
@@ -123,9 +117,12 @@ it("order success", async () => {
       garments: [
         {
           garmentId,
-          quantity: 1,
           price: 2,
-          size: GarmentSize.Small,
+          small: 2,
+          medium: 1,
+          large: 0,
+          xlarge: 1,
+          xxlarge: 1,
         },
       ],
     })
