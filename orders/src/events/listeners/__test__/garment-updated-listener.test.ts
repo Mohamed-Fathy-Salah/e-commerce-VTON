@@ -1,4 +1,4 @@
-import { GarmentClass, GarmentSize, GarmentUpdatedEvent, Gender } from "@mfsvton/common";
+import { GarmentClass, GarmentUpdatedEvent, Gender } from "@mfsvton/common";
 import mongoose from "mongoose";
 import { Message } from "node-nats-streaming";
 import { Garments } from "../../../models/garments";
@@ -14,13 +14,11 @@ const setup = async () => {
         id: new mongoose.Types.ObjectId().toHexString(),
         garmentClass: GarmentClass.Shirt,
         gender: Gender.Male,
-        available: [{
-            size: GarmentSize.Small,
-            quantity: 3
-        }, {
-            size: GarmentSize.Small,
-            quantity: 3
-        }],
+        small: 2,
+        medium: 2,
+        large: 2,
+        xlarge: 2,
+        xxlarge: 2,
         price: 20
     })
     await garment.save();
@@ -31,13 +29,11 @@ const setup = async () => {
         adminId: "adfadf",
         garmentClass: garment.garmentClass,
         gender: garment.gender,
-        available: [{
-            size: GarmentSize.Small,
-            quantity: 2
-        },{
-            size: GarmentSize.Large,
-            quantity: 10
-        }],
+        small: 3,
+        medium: 1,
+        large: 4,
+        xlarge: 4,
+        xxlarge: 0,
         price: garment.price,
         version: garment.version + 1
     };
@@ -59,9 +55,11 @@ it('finds, updates and saves a ticket', async () => {
 
     const updatedGarment = await Garments.findById(garment.id);
 
-    expect(updatedGarment!.available.length).toEqual(data.available.length);
-    expect(updatedGarment!.available[0].quantity).toEqual(data.available[0].quantity);
-    expect(updatedGarment!.available[1].quantity).toEqual(data.available[1].quantity);
+    expect(updatedGarment!.small).toEqual(data.small);
+    expect(updatedGarment!.medium).toEqual(data.medium);
+    expect(updatedGarment!.large).toEqual(data.large);
+    expect(updatedGarment!.xlarge).toEqual(data.xlarge);
+    expect(updatedGarment!.xxlarge).toEqual(data.xxlarge);
     expect(updatedGarment!.version).toEqual(data.version);
 })
 
