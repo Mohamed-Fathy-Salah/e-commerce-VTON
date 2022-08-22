@@ -1,4 +1,3 @@
-import asyncio
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 # from .types import Subjects
@@ -20,16 +19,18 @@ def check_environment_vars():
         raise Exception("NATS_URI not defined")
 
 # async def run(loop):
-async def run():
+async def run(loop):
     check_environment_vars()
     nc = NATS()
-    # await nc.connect(io_loop=loop)
-    await nc.connect()
+    await nc.connect(io_loop=loop, servers=[nats_uri])
 
     sc = STAN()
-    await sc.connect(cluster_id, client_id, nats=nats_uri)
+    await sc.connect(cluster_id, client_id, nats=nc, loop=loop)
 
     await sc.subscribe("garment:created", cb=garment_created_listener)
+    for i in range(10):
+        print("send msg")
+        await sc.publish("garment:created", b'hello')
 
 # def connect():
     # check_environment_vars()

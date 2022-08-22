@@ -1,10 +1,7 @@
 import asyncio
-import uvicorn
-
-async def main():
-    config = uvicorn.Config("natsWrapper:run", port=5000, log_level="info")
-    server = uvicorn.Server(config)
-    await server.serve()
+from natsWrapper import run
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run(loop))
+    loop.run_forever()

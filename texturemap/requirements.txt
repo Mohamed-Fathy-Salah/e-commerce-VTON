@@ -1,0 +1,7 @@
+asyncio-nats-client
+asyncio-nats-streaming
+numpy
+uvicorn[standard]
+opencv-python
+websockets
+protobuf==3.20.0
