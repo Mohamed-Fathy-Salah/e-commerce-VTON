@@ -1,10 +1,4 @@
-import {
-  GarmentClass,
-  GarmentSize,
-  Gender,
-  OrderStatus,
-  UserType,
-} from "@mfsvton/common";
+import { GarmentClass, Gender, OrderStatus, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -44,30 +38,31 @@ it("customer not current user", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
 
-  const { body: order } = await request(app)
+  const {body: order} = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
       garments: [
         {
           garmentId,
-          quantity: 2,
           price: 2,
-          size: GarmentSize.Small,
+          small: 2,
+          medium: 2,
+          large: 2,
+          xlarge: 2,
+          xxlarge: 2,
         },
       ],
-    })
-    .expect(201);
+    }).expect(201);
 
   await request(app)
     .delete("/api/orders/" + order.id)
@@ -85,30 +80,31 @@ it("delete order", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
 
-  const { body: order } = await request(app)
+  const {body: order} = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
       garments: [
         {
           garmentId,
-          quantity: 2,
           price: 2,
-          size: GarmentSize.Small,
+          small: 2,
+          medium: 2,
+          large: 2,
+          xlarge: 2,
+          xxlarge: 2,
         },
       ],
-    })
-    .expect(201);
+    }).expect(201);
 
   const res = await request(app)
     .delete("/api/orders/" + order.id)

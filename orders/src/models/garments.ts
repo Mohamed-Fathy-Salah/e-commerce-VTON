@@ -1,4 +1,4 @@
-import { GarmentClass, GarmentSize, Gender } from "@mfsvton/common";
+import { GarmentClass, Gender } from "@mfsvton/common";
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
@@ -8,10 +8,11 @@ interface GarmentsAttrs {
   id: string;
   garmentClass: GarmentClass;
   gender: Gender;
-  available: {
-      size: GarmentSize;
-      quantity: number;
-    } [];
+  small: number;
+  medium: number;
+  large: number;
+  xlarge: number;
+  xxlarge: number;
   price: number;
 }
 
@@ -27,10 +28,11 @@ interface GarmentsModel extends mongoose.Model<GarmentsDoc> {
 interface GarmentsDoc extends mongoose.Document {
   garmentClass: GarmentClass;
   gender: Gender;
-  available: {
-      size: GarmentSize;
-      quantity: number;
-    } [];
+  small: number;
+  medium: number;
+  large: number;
+  xlarge: number;
+  xxlarge: number;
   price: number;
   version: number;
   isReserved(): Promise<boolean>;
@@ -46,24 +48,12 @@ const garmentsSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(Gender),
     },
-    available: [
-      {
-        size: {
-          type: String,
-          enum: Object.values(GarmentSize),
-          unique: true
-        },
-        quantity: {
-          type: Number,
-        },
-      },
-      {
-        _id: false,
-      },
-    ],
-    price: {
-      type: Number,
-    },
+    small: Number,
+    medium: Number,
+    large: Number,
+    xlarge: Number,
+    xxlarge: Number,
+    price: Number,
   },
   {
     toJSON: {
@@ -83,7 +73,11 @@ garmentsSchema.statics.build = (attrs: GarmentsAttrs) => {
       _id: attrs.id,
       garmentClass: attrs.garmentClass,
       gender: attrs.gender,
-      available: attrs.available,
+      small: attrs.small,
+      medium: attrs.medium,
+      large: attrs.large,
+      xlarge: attrs.xlarge,
+      xxlarge: attrs.xxlarge,
       price: attrs.price
   });
 };
