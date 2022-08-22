@@ -61,7 +61,8 @@ router.post(
         backPhoto: backPhoto[0].buffer.toString('base64'),
     });
     if(photos) {
-        garment.set({photos});
+        //@ts-ignore
+        garment.set({photos: photos.map(val => val.buffer.toString('base64'))});
     }
     await garment.save();
 

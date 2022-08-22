@@ -1,7 +1,7 @@
 import { app } from "../../app";
 import request from "supertest";
 import mongoose from "mongoose";
-import { GarmentClass, GarmentSize, Gender, UserType } from "@mfsvton/common";
+import { GarmentClass, Gender, UserType } from "@mfsvton/common";
 
 it("error with wrong credentials", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
@@ -37,19 +37,17 @@ it("create and delete garment successfully", async () => {
   const res = await request(app)
     .post("/api/garments")
     .set("Cookie", cookie)
-    .send({
-      adminId: new mongoose.Types.ObjectId().toHexString(),
-      garmentClass: GarmentClass.Shirt,
-      gender: Gender.Neutral,
-      price: 15,
-      available: [
-        {
-          size: GarmentSize.Small,
-          quantity: 1,
-        },
-      ],
-    })
-    .expect(201);
+      .field('garmentClass', GarmentClass.Shirt)
+      .field('gender', Gender.Neutral)
+      .field('price', 15)
+      .field('small', 1)
+      .field('medium', 1)
+      .field('large', 1)
+      .field('xlarge', 1)
+      .field('xxlarge', 1)
+      .attach('frontPhoto', global.imagePath)
+      .attach('backPhoto', global.imagePath)
+      .expect(201);
 
   const { body: body1 } = await request(app)
     .get("/api/garments/" + adminId)

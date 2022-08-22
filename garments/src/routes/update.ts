@@ -58,15 +58,18 @@ router.put(
     garment.set({ garmentClass, gender, price, small, medium, large, xlarge, xxlarge });
 
     if(frontPhoto) {
-        garment.set({frontPhoto});
+        //@ts-ignore
+        garment.set({frontPhoto: frontPhoto[0].buffer.toString('base64')});
     }
 
     if(backPhoto) {
-        garment.set({backPhoto});
+        //@ts-ignore
+        garment.set({backPhoto: backPhoto[0].buffer.toString('base64')});
     }
 
     if(photos) {
-        garment.set({photos});
+        //@ts-ignore
+        garment.set({photos: photos.map(val => val.buffer.toString('base64'))});
     }
 
     await garment.save();
@@ -83,8 +86,8 @@ router.put(
         xxlarge: garment.xxlarge,
         price: garment.price,
         version: garment.version,
-        frontPhoto, // send only when new image
-        backPhoto, // send only when new image
+        frontPhoto: frontPhoto ? frontPhoto[0].buffer.toString('base64'): undefined, // send onlywhen new image
+        backPhoto: backPhoto ? backPhoto[0].buffer.toString('base64'): undefined, // send onlywhen new image
     })
 
     res.status(201).send(garment);
