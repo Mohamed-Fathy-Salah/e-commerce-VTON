@@ -1,6 +1,5 @@
 import {
   GarmentClass,
-  GarmentSize,
   Gender,
   OrderCancelledEvent,
 } from "@mfsvton/common";
@@ -18,16 +17,17 @@ const setup = async () => {
   const adminId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garment.build({
-    adminId,
-    garmentClass: GarmentClass.Shirt,
-    gender: Gender.Male,
-    price: 20,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 3,
-      },
-    ],
+      adminId,
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Male,
+      price: 20,
+      small: 2,
+      medium: 2,
+      large: 2,
+      xlarge: 2,
+      xxlarge: 2,
+      frontPhoto: "blah",
+      backPhoto: "blah",
   });
   await garment.save();
 
@@ -37,8 +37,11 @@ const setup = async () => {
     garments: [
       {
         garmentId: garment.id,
-        quantity: 2,
-        size: GarmentSize.Small,
+      small: 4,
+      medium: 0,
+      large: 1,
+      xlarge: 0,
+      xxlarge: 3,
       },
     ],
     version: 0,
@@ -59,7 +62,11 @@ it("updates the ticket, publishes an event and acks the message", async () => {
   const updatedGarment = await Garment.findById(garment.id);
 
   // make sure garment quantity is updated
-  expect(updatedGarment!.available[0].quantity).toEqual(2 + 3)
+  expect(updatedGarment!.small).toEqual(data.garments[0].small + garment.small)
+  expect(updatedGarment!.medium).toEqual(data.garments[0].medium + garment.medium)
+  expect(updatedGarment!.large).toEqual(data.garments[0].large + garment.large)
+  expect(updatedGarment!.xlarge).toEqual(data.garments[0].xlarge + garment.xlarge)
+  expect(updatedGarment!.xxlarge).toEqual(data.garments[0].xxlarge + garment.xxlarge)
 
   expect(msg.ack).toHaveBeenCalled();
   expect(natsWrapper.client.publish).toHaveBeenCalled();

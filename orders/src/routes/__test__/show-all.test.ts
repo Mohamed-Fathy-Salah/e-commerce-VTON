@@ -1,10 +1,4 @@
-import {
-  GarmentClass,
-  GarmentSize,
-  Gender,
-  OrderStatus,
-  UserType,
-} from "@mfsvton/common";
+import { GarmentClass, GarmentSize, Gender, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -39,12 +33,11 @@ it("orders created", async () => {
     id: garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 2,
-      },
-    ],
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
     price: 2,
   });
   await garment.save();
@@ -56,9 +49,12 @@ it("orders created", async () => {
       garments: [
         {
           garmentId,
-          quantity: 2,
           price: 2,
-          size: GarmentSize.Small,
+          small: 2,
+          medium: 2,
+          large: 2,
+          xlarge: 2,
+          xxlarge: 2,
         },
       ],
     })

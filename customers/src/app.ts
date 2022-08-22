@@ -9,7 +9,6 @@ import { updateCustomerDataRoute } from "./routes/update";
 import { showCustomerDataRoute } from "./routes/show";
 
 const app = express();
-//const upload = multer();
 
 app.set("trust proxy", true);
 app.use(json());

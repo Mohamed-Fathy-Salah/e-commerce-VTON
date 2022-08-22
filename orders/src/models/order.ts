@@ -1,4 +1,4 @@
-import { GarmentSize, OrderStatus } from "@mfsvton/common";
+import { OrderStatus } from "@mfsvton/common";
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
@@ -6,14 +6,15 @@ import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 // that are requried to create a new User
 interface OrderAttrs {
   customerId: string;
-  garments: [
-    {
+  garments: {
       garmentId: string;
-      quantity: number;
       price: number;
-      size: GarmentSize;
-    }
-  ];
+      small: number;
+      medium: number;
+      large: number;
+      xlarge: number;
+      xxlarge: number;
+    }[];
   status: OrderStatus;
   expiresAt: Date;
 }
@@ -28,14 +29,15 @@ interface OrderModel extends mongoose.Model<OrderDoc> {
 // that a User Document has
 interface OrderDoc extends mongoose.Document {
   customerId: string;
-  garments: [
-    {
+  garments: {
       garmentId: string;
-      quantity: number;
       price: number;
-      size: GarmentSize;
-    }
-  ];
+      small: number;
+      medium: number;
+      large: number;
+      xlarge: number;
+      xxlarge: number;
+    }[];
   status: OrderStatus;
   expiresAt: Date;
   version: number;
@@ -56,19 +58,13 @@ const orderSchema = new mongoose.Schema(
     },
     garments: [
       {
-        garmentId: {
-          type: String,
-        },
-        quantity: {
-          type: Number,
-        },
-        price: {
-          type: Number,
-        },
-        size: {
-          type: String,
-          enum: Object.values(GarmentSize),
-        },
+        garmentId: String,
+        price: Number,
+        small: Number,
+        medium: Number,
+        large: Number,
+        xlarge: Number,
+        xxlarge: Number,
       },
       {
         _id: false,

@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
 declare global {
-  var signin: (type: UserType, id?: string) => string[];
+    var imagePath: string;
+    var signin: (type: UserType, id?: string) => string[];
 }
 
 jest.mock('../nats-wrapper');
@@ -47,3 +48,5 @@ global.signin = (type: UserType, id?: string) => {
   const base64 = Buffer.from(sessionJSON).toString("base64");
   return [`session=${base64}`];
 };
+
+global.imagePath = './src/test/test.png'

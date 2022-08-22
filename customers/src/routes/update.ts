@@ -23,7 +23,6 @@ router.put(
   requireCustomerAuth,
   upload.single('file'),
   [
-      // todo: add messages
     body("name").custom((value) => {
       return value.length > 0;
     }),
@@ -49,6 +48,7 @@ router.put(
     customer.set({age: req.body.age || customer.age});
     customer.set({skinTone: req.body.skinTone || customer.skinTone});
     customer.set({measurements: req.body.measurements});
+    // todo: make size prefs unique by size
     customer.set({sizePreferences: req.body.sizePreferences});
     if(req.file) {
         customer.set({photo: req.file.buffer.toString('base64')});
@@ -56,8 +56,17 @@ router.put(
 
     await customer.save();
 
-    // todo: put each item 
-    new CustomerDataUpdatedPublisher(natsWrapper.client).publish(req.body);
+    new CustomerDataUpdatedPublisher(natsWrapper.client).publish({
+        customerId: customer.id,
+        name: customer.name,
+        gender: customer.gender,
+        age: customer.age,
+        skin: customer.skinTone,
+        measurements: customer.measurements,
+        sizePreferences: customer.sizePreferences,
+        photo: customer.photo,
+        version: customer.version
+    });
 
     res.status(201).send(customer);
   }

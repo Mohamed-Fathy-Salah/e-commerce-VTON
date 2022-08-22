@@ -1,6 +1,6 @@
-import { GarmentClass, GarmentSize, Gender } from "@mfsvton/common";
+import { GarmentClass, Gender } from "@mfsvton/common";
 import mongoose from "mongoose";
-import {updateIfCurrentPlugin} from 'mongoose-update-if-current'
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // An interface that describes the properties
 // that are requried to create a new User
@@ -9,12 +9,14 @@ interface GarmentAttrs {
   garmentClass: GarmentClass;
   gender: Gender;
   price: number;
-  available: [
-    {
-      size: GarmentSize;
-      quantity: number;
-    }
-  ];
+  small: number;
+  medium: number;
+  large: number;
+  xlarge: number;
+  xxlarge: number;
+  frontPhoto: string;
+  backPhoto: string;
+  photos?: string[];
 }
 
 // An interface that describes the properties
@@ -30,12 +32,14 @@ export interface GarmentDoc extends mongoose.Document {
   garmentClass: GarmentClass;
   gender: Gender;
   price: number;
-  available: [
-    {
-      size: GarmentSize;
-      quantity: number;
-    }
-  ];
+  small: number;
+  medium: number;
+  large: number;
+  xlarge: number;
+  xxlarge: number;
+  frontPhoto: string;
+  backPhoto: string;
+  photos?: string[];
   version: number;
 }
 
@@ -60,25 +64,40 @@ const garmentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    available: {
-      type: [
-        {
-          size: {
-            type: String,
-            required: true,
-            enum: Object.values(GarmentSize),
-          },
-          quantity: {
-              type: Number,
-              required: true,
-              default: 0
-          }
-        }, {
-            _id: false
-        }
-      ],
-      required: true
+    small: {
+      type: Number,
+      default: 0,
+      required: true,
     },
+    medium: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    large: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    xlarge: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    xxlarge: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    frontPhoto: {
+      type: String,
+      required: true,
+    },
+    backPhoto: {
+      type: String,
+      required: true,
+    },
+    photos: [String],
   },
   {
     toJSON: {
@@ -90,7 +109,7 @@ const garmentSchema = new mongoose.Schema(
   }
 );
 
-garmentSchema.set('versionKey', 'version');
+garmentSchema.set("versionKey", "version");
 garmentSchema.plugin(updateIfCurrentPlugin);
 
 garmentSchema.statics.build = (attrs: GarmentAttrs) => {
