@@ -1,6 +1,5 @@
 import {
   GarmentClass,
-  GarmentSize,
   Gender,
   OrderCreatedEvent,
   OrderStatus,
@@ -23,12 +22,13 @@ const setup = async () => {
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     price: 20,
-    available: [
-      {
-        size: GarmentSize.Small,
-        quantity: 3,
-      },
-    ],
+    small: 3,
+    medium: 3,
+    large: 2,
+    xlarge: 1,
+    xxlarge: 0,
+    frontPhoto: "blah",
+    backPhoto: "blah",
   });
   await garment.save();
 
@@ -39,9 +39,12 @@ const setup = async () => {
     garments: [
       {
         garmentId: garment.id,
-        quantity: 2,
-        size: GarmentSize.Small,
-        price: garment.price
+        price: garment.price,
+        small: 2,
+        medium: 1,
+        large: 2,
+        xlarge: 0,
+        xxlarge: 0,
       },
     ],
     status: OrderStatus.Created,
@@ -55,6 +58,29 @@ const setup = async () => {
 
   return { listener, garment, orderId, data, msg };
 };
+
+it("error when order too much", async () => {
+  const { listener, garment, orderId, data, msg } = await setup();
+
+  data.garments[0].small = 10;
+
+  try {
+      await listener.onMessage(data, msg);
+  }catch(err) {console.log(err);}
+
+  const updatedGarment = await Garment.findById(garment.id);
+
+  // make sure garment quantity is updated
+  expect(updatedGarment!.small).toEqual(garment.small);
+  expect(updatedGarment!.medium).toEqual(garment.medium);
+  expect(updatedGarment!.large).toEqual(garment.large);
+  expect(updatedGarment!.xlarge).toEqual(garment.xlarge);
+  expect(updatedGarment!.xxlarge).toEqual(garment.xxlarge);
+
+  expect(msg.ack).not.toHaveBeenCalled();
+  expect(natsWrapper.client.publish).not.toHaveBeenCalled();
+});
+
 it("updates the ticket, publishes an event and acks the message", async () => {
   const { listener, garment, orderId, data, msg } = await setup();
 
@@ -63,7 +89,11 @@ it("updates the ticket, publishes an event and acks the message", async () => {
   const updatedGarment = await Garment.findById(garment.id);
 
   // make sure garment quantity is updated
-  expect(updatedGarment!.available[0].quantity).toEqual(3 - 2);
+  expect(updatedGarment!.small).toEqual(garment.small - data.garments[0].small);
+  expect(updatedGarment!.medium).toEqual(garment.medium - data.garments[0].medium);
+  expect(updatedGarment!.large).toEqual(garment.large - data.garments[0].large);
+  expect(updatedGarment!.xlarge).toEqual(garment.xlarge - data.garments[0].xlarge);
+  expect(updatedGarment!.xxlarge).toEqual(garment.xxlarge - data.garments[0].xxlarge);
 
   expect(msg.ack).toHaveBeenCalled();
   expect(natsWrapper.client.publish).toHaveBeenCalled();
