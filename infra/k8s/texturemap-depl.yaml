@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: texturemap-deployment
+  labels:
+    app: texturemap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: texturemap
+  template:
+    metadata:
+      labels:
+        app: texturemap
+    spec:
+      containers:
+        - name: texturemap
+          image: mofasa101/texturemap
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NATS_URI
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: vton
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: texturemap-srv
+spec:
+  selector:
+    app: texturemap
+  ports:
+    - name: texturemap
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
