@@ -1,20 +1,39 @@
 import cv2
 import numpy as np
+from PIL import Image
+import base64
+import io
 
+SIZE = 100
+HALF = SIZE//2
 # back_shirt_coordinates = 10, 258, 491, 505
 # front_shirt_coordinates = 547, 254, 462, 525
+# coordinates = {
+        # 'old-t-shirt_female': {
+            # 'back' : (20, 258, 471, 505),
+            # 'front': (557, 254, 442, 525)
+        # },
+        # 't-shirt_male': {
+            # 'back' : (12, 317, 491, 384),
+            # 'front': (551, 325, 436, 379)
+        # },
+        # 'short-pant_female': {
+            # 'back' : (17, 262, 486, 501),
+            # 'front': (521, 263, 489, 530)
+        # }
+# }
 coordinates = {
         'old-t-shirt_female': {
-            'back' : (20, 258, 471, 505),
-            'front': (557, 254, 442, 525)
+            'back' : (2, 25, 46, 49),
+            'front': (54, 25, 43, 51)
         },
         't-shirt_male': {
-            'back' : (12, 317, 491, 384),
-            'front': (551, 325, 436, 379)
+            'back' : (1, 31, 48, 37),
+            'front': (54, 31, 42, 37)
         },
         'short-pant_female': {
-            'back' : (17, 262, 486, 501),
-            'front': (521, 263, 489, 530)
+            'back' : (2, 25, 47, 49),
+            'front': (51, 26, 48, 51)
         }
 }
 
@@ -32,9 +51,9 @@ def dominant_color(image, mask):
     avg_color = np.sum(np.sum(masked, axis=0), axis=0) / cnt
     return avg_color
 
-def show(image):
-    cv2.imshow("hi", cv2.resize(image, (500, 500)))
-    cv2.waitKey(0)
+# def show(image):
+    # cv2.imshow("hi", cv2.resize(image, (500, 500)))
+    # cv2.waitKey(0)
 
 def pos(mask):
     if len(mask.shape) == 3:
@@ -87,18 +106,23 @@ def get_logo_mask(image, mask, gar_dim):
     # show(mask)
     
 
-def generate_texture_map(front_image_path=None, back_image_path=None,
-        garment_gender=None):
-    texture_map = np.zeros((1024, 1024, 3)) 
-    garment_coordinates = coordinates[garment_gender]
-    garment_coordinates = [garment_coordinates['back'], garment_coordinates['front']]
+def generate_texture_map(front_image_string=None, back_image_string=None, garment_gender=None):
+    # texture_map = np.zeros((1024, 1024, 3)) 
+    texture_map = np.zeros((SIZE, SIZE, 3)) 
+
+    garment_coordinates = None
+    if garment_gender in coordinates:
+        garment_coordinates = coordinates[garment_gender]
+        garment_coordinates = [garment_coordinates['back'], garment_coordinates['front']]
+
     dom_color = None
 
-    for idx, path in enumerate([back_image_path, front_image_path]):
-        if not path:
+    for idx, encoded_image in enumerate([back_image_string, front_image_string]):
+        if not encoded_image:
             continue
 
-        image = cv2.imread(path)
+        # image = cv2.imread(path)
+        image = stringToRGB(encoded_image)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         garment_mask = get_garment_mask(gray)
@@ -122,8 +146,8 @@ def generate_texture_map(front_image_path=None, back_image_path=None,
 
         dom_color = dominant_color(image, garment_without_logo)
         
-        if front_image_path and back_image_path:
-            texture_map[:,idx*512:idx*512+512] = dom_color
+        if front_image_string and back_image_string:
+            texture_map[:,idx*HALF:idx*HALF+HALF] = dom_color
         else :
             texture_map[:,:] = dom_color
 
@@ -143,14 +167,21 @@ def generate_texture_map(front_image_path=None, back_image_path=None,
 
     return texture_map 
 
+def stringToRGB(base64_string):
+    imgdata = base64.b64decode(str(base64_string))
+    img = Image.open(io.BytesIO(imgdata))
+    opencv_img= cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
+    return opencv_img 
+
+def run(front_image_string, back_image_string, garment, gender):
+    texture_map = generate_texture_map(front_image_string, back_image_string, f"{garment}_{gender}")  
+    _, buffer = cv2.imencode('.png', texture_map)
+    encoded_image = base64.b64encode(buffer)
+    return encoded_image
+
 if __name__ == "__main__":
-    # paths = stdin.readlines()
-    # paths = ['./images/lungs.jpg\n']
-    # for path in paths:
-        # generate_texture_map(path[:-1])
-    front_image_path = './images/shirt/lungs.jpg'
-    back_image_path = './images/shirt/blackheart.jpg'
-    garment_gender = 't-shirt_male'
-    texture_map = generate_texture_map(front_image_path, back_image_path, garment_gender)
-    show(texture_map / 255)
-    cv2.imwrite(f"./results/{garment_gender}/h.png", texture_map)
+    print(run('iVBORw0KGgoAAAANSUhEUgAAAAUAAAAGCAYAAAAL+1RLAAAAFUlEQVQImWNUVFT8z4AGmNAFaCUIAKzsAW7XsuRLAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAGCAYAAAAL+1RLAAAAFUlEQVQImWNUVFT8z4AGmNAFaCUIAKzsAW7XsuRLAAAAAElFTkSuQmCC', 'pant', 'male'))
+# # Take in base64 string and return cv image
+
+# cvimg = stringToRGB('R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7')
+
