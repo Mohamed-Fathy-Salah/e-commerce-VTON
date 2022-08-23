@@ -46,6 +46,7 @@ async def run(loop):
             response = json.dumps({"texturemap": texturemap, "garmentId": garmentId})
             log.warning(response)
             await sc.publish("texturemap:created", response)
+            log.warning('ack')
             await sc.ack(msg)
         except Exception as e:
             log.error(e)

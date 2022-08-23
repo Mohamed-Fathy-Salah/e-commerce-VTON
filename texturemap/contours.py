@@ -3,6 +3,10 @@ import numpy as np
 from PIL import Image
 import base64
 import io
+import logging
+
+log = logging.getLogger()
+log.addHandler(logging.StreamHandler())
 
 SIZE = 100
 HALF = SIZE//2
@@ -106,14 +110,10 @@ def get_logo_mask(image, mask, gar_dim):
     # show(mask)
     
 
-def generate_texture_map(front_image_string=None, back_image_string=None, garment_gender=None):
+def generate_texture_map(front_image_string, back_image_string, garment_gender):
     # texture_map = np.zeros((1024, 1024, 3)) 
     texture_map = np.zeros((SIZE, SIZE, 3)) 
 
-    garment_coordinates = None
-    if garment_gender in coordinates:
-        garment_coordinates = coordinates[garment_gender]
-        garment_coordinates = [garment_coordinates['back'], garment_coordinates['front']]
 
     dom_color = None
 
@@ -151,7 +151,10 @@ def generate_texture_map(front_image_string=None, back_image_string=None, garmen
         else :
             texture_map[:,:] = dom_color
 
-        if("shirt" in garment_gender):
+        if garment_gender in coordinates:
+            garment_coordinates = coordinates[garment_gender]
+            garment_coordinates = [garment_coordinates['back'], garment_coordinates['front']]
+
             logo_dim = pos(logo_mask)
 
             (w, h), (x, y) = relative_scale(gar_dim, logo_dim, garment_coordinates[idx]), relative_pos(gar_dim, logo_dim, garment_coordinates[idx])
@@ -173,11 +176,14 @@ def stringToRGB(base64_string):
     opencv_img= cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
     return opencv_img 
 
+def imageToString(image):
+    _, buffer = cv2.imencode('.png', image)
+    encoded_image = base64.b64encode(buffer)
+    return encoded_image.decode('utf-8')
+
 def run(front_image_string, back_image_string, garment, gender):
     texture_map = generate_texture_map(front_image_string, back_image_string, f"{garment}_{gender}")  
-    _, buffer = cv2.imencode('.png', texture_map)
-    encoded_image = base64.b64encode(buffer)
-    return encoded_image
+    return imageToString(texture_map)
 
 if __name__ == "__main__":
     print(run('iVBORw0KGgoAAAANSUhEUgAAAAUAAAAGCAYAAAAL+1RLAAAAFUlEQVQImWNUVFT8z4AGmNAFaCUIAKzsAW7XsuRLAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAGCAYAAAAL+1RLAAAAFUlEQVQImWNUVFT8z4AGmNAFaCUIAKzsAW7XsuRLAAAAAElFTkSuQmCC', 'pant', 'male'))
