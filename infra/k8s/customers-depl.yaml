@@ -17,6 +17,7 @@ spec:
       containers:
         - name: customers
           image: mofasa101/customers
+          imagePullPolicy: IfNotPresent
           env:
             - name: NATS_URI
               value: "http://nats-srv:4222"

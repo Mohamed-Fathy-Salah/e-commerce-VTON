@@ -3,7 +3,11 @@ from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 from os import environ
 import json
+from sqlmodel import Session, select
+from db import DB
 import logging
+
+from models.customers import Customers
 
 log = logging.getLogger()
 log.addHandler(logging.StreamHandler())
@@ -29,14 +33,22 @@ async def run(loop):
     sc = STAN()
     await sc.connect(cluster_id, client_id, nats=nc, loop=loop)
 
+    # {customerId: string, name: string, age: number, gender: Gender, version:number}
     async def customer_data_created_listener(msg):
         data = json.loads(msg.data)
         log.warning(data)
-        # response = json.dumps({"texturemap": texturemap, "garmentId": garmentId})
-        await sc.ack(msg)
+        with Session(DB().engine) as session:
+            customer = Customers(id= data['customerId'], gender= data['gender'], skin= 'white')
+            session.add(customer)
+            session.commit()
+            session.refresh(customer)
+            await sc.ack(msg)
+            return customer
 
     async def customer_data_updated_listener(msg):
         data = json.loads(msg.data)
+        # with Session(DB().engine) as session:
+            # session.get()
         log.warning(data)
         await sc.ack(msg)
 
@@ -69,6 +81,7 @@ async def run(loop):
 
 def connect():
     check_environment_vars()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run(loop))
-    loop.run_forever()
+
+    loop = asyncio.get_running_loop()
+    loop.create_task(run(loop))
+    # loop.run_forever()

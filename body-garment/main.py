@@ -1,33 +1,39 @@
-from fastapi import FastAPI, Cookie, Response, status
+from fastapi import FastAPI, Response, status, Request, Depends
 from db import DB
 from cookie import get_current_user
-from sqlmodel import Session
+from sqlmodel import Session, select
 from models.customers import Customers
 from models.garments import Garments
-from typing import Optional
 from natsWrapper import connect
 import uvicorn
+# from sqlalchemy.ext.asyncio import AsyncSession
+# from sqlalchemy.future import select
+import logging
+
+log = logging.getLogger()
+log.addHandler(logging.StreamHandler())
 
 app = FastAPI()
 
 @app.on_event("startup")
 def on_startup():
     DB()
-    # connect()
+    connect()
 
 @app.get('/api/bodygarment/lower/{garmentId}', status_code= status.HTTP_200_OK)
-def body_lower_garment(garmentId: str, response: Response, pose:str = 'T', encoded_token: Optional[str] = Cookie(None)):
-    # encoded_token = request.cookies.get('session')
-
+def body_lower_garment(garmentId: str, request: Request, response: Response, pose:str = 'T'):
+    encoded_token = request.cookies.get('session')
     current_user = get_current_user(encoded_token)
-    print(current_user)
 
     if(not current_user or current_user['type'] == "admin"):
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return "not authorized"
 
     with Session(DB().engine) as session:
-        customer = session.query(Customers).get(current_user['id'])
+        customer = session.execute(select(Customers).where(Customers.id == current_user['id']))
+        customer = customer.one()
+        log.warning(f"customer ===================== {customer}")
+        # customer = await session.query(Customers).get(current_user['id'])
 
         if(not customer):
             response.status_code = status.HTTP_404_NOT_FOUND
@@ -37,7 +43,9 @@ def body_lower_garment(garmentId: str, response: Response, pose:str = 'T', encod
             response.status_code = status.HTTP_400_BAD_REQUEST
             return "measurements not set"
         
-        garment = session.query(Garments).get(garmentId)
+        # garment = await session.query(Garments).get(garmentId)
+        garment = session.execute(select(Garments).where(Garments.id == garmentId))
+        garment = garment.one()
         
         if(not garment):
             response.status_code = status.HTTP_404_NOT_FOUND
