@@ -37,6 +37,8 @@ it("create and delete garment successfully", async () => {
   const res = await request(app)
     .post("/api/garments")
     .set("Cookie", cookie)
+      .field('name', "blah")
+      .field('description', "blah")
       .field('garmentClass', GarmentClass.Shirt)
       .field('gender', Gender.Neutral)
       .field('price', 15)

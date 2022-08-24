@@ -30,6 +30,8 @@ router.put(
     body("garmentClass").custom((value) =>
       Object.values(GarmentClass).includes(value)
     ),
+    body("name").notEmpty(),
+    body("description").notEmpty(),
     body("price").isFloat({ gt: 0 }),
     body("small").isFloat({ gt: 0 }),
     body("medium").isFloat({ gt: 0 }),
@@ -50,12 +52,12 @@ router.put(
       throw new NotFoundError();
     }
 
-    const { garmentClass, gender, price, small, medium, large, xlarge, xxlarge} = req.body;
+    const { name, description, garmentClass, gender, price, small, medium, large, xlarge, xxlarge} = req.body;
     
     //@ts-ignore
     const {frontPhoto, backPhoto, photos} = req.files;
 
-    garment.set({ garmentClass, gender, price, small, medium, large, xlarge, xxlarge });
+    garment.set({ name, description, garmentClass, gender, price, small, medium, large, xlarge, xxlarge });
 
     if(frontPhoto) {
         //@ts-ignore
