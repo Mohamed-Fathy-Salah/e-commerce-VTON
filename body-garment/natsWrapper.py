@@ -3,11 +3,6 @@ from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 from .types import Subjects
 from os import environ
-from events.listeners.customer_data_created_listener import customer_data_created_listener
-from events.listeners.customer_data_updated_listener import customer_data_updated_listener
-from events.listeners.garment_created_listener import garment_created_listener
-from events.listeners.garment_updated_listener import garment_updated_listener
-from events.listeners.garment_deleted_listener import garment_deleted_listener
 
 cluster_id = environ.get('NATS_CLUSTER_ID') 
 client_id = environ.get('NATS_CLIENT_ID')

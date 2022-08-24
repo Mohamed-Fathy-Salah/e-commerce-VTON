@@ -6,7 +6,7 @@ from models.customers import Customers
 from models.garments import Garments
 from typing import Optional
 from .types import Poses, UserType
-from . import nats
+from natsWrapper import connect
 import uvicorn
 
 app = FastAPI()
@@ -14,7 +14,7 @@ app = FastAPI()
 @app.on_event("startup")
 def on_startup():
     DB()
-    nats.connect()
+    connect()
 
 @app.get('/api/bodygarment/lower/{garmentId}', status_code= status.HTTP_200_OK)
 def body_lower_garment(garmentId: str, response: Response, pose: Poses = Poses.T, encoded_token: Optional[str] = Cookie(None)):
