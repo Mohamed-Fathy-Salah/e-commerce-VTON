@@ -8,8 +8,10 @@ RUN apt update && apt install python3 python3-pip -y
 #RUN cd /app/data && unzip short-pant_female.zip && rm short-pant_female.zip
 #RUN cd /app/weights && unzip short-pant_female_weights.zip && rm short-pant_female_weights.zip
 
-#COPY . ./TailorNet
+COPY requirements.txt .
 
-RUN pip install pyjwt fastapi "uvicorn[standard]" asyncio-nats-streaming sqlmodel
+RUN pip3 install -r requirements.txt
+
+#COPY . ./TailorNet
 
 CMD ["python3", "main.py"]

@@ -1,0 +1,8 @@
+pyjwt
+fastapi
+"uvicorn[standard]"
+asyncio-nats-streaming
+asyncio-nats-client
+sqlmodel 
+protobuf==3.20.0
+websockets
