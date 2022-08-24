@@ -28,14 +28,21 @@ const Nav = ({ user }) => {
     </>
   ) : (
     <>
+      {user?.type === 'admin' && (
+        <Link href='/add-garment'>
+          <button className='px-8 py-1 rounded-full bg-blue-700 hover:bg-blue-800 transition text-white shadow-sm'>
+            Add a new garment
+          </button>
+        </Link>
+      )}
       <button
         onClick={handleLogout}
-        className='mx-3 px-4 py-1 rounded-full bg-red-700 text-white shadow-sm'
+        className='mx-3 px-8 py-1 rounded-full bg-red-700 hover:bg-red-800 transition text-white shadow-sm'
       >
-        logout
+        Logout
       </button>
       <Link href='/cart'>
-        <div className='p-3 rounded-full bg-gray-200 text-gray-700'>
+        <div className='p-3 rounded-full bg-gray-200 text-gray-700 cursor-pointer hover:bg-gray-300 transition'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
