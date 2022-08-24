@@ -1,8 +1,12 @@
 import asyncio
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
-from .types import Subjects
 from os import environ
+import json
+import logging
+
+log = logging.getLogger()
+log.addHandler(logging.StreamHandler())
 
 cluster_id = environ.get('NATS_CLUSTER_ID') 
 client_id = environ.get('NATS_CLIENT_ID')
@@ -26,23 +30,34 @@ async def run(loop):
     await sc.connect(cluster_id, client_id, nats=nc, loop=loop)
 
     async def customer_data_created_listener(msg):
-        # data = json.loads(msg.data)
+        data = json.loads(msg.data)
+        log.warning(data)
         # response = json.dumps({"texturemap": texturemap, "garmentId": garmentId})
         await sc.ack(msg)
 
     async def customer_data_updated_listener(msg):
+        data = json.loads(msg.data)
+        log.warning(data)
         await sc.ack(msg)
 
     async def garment_created_listener(msg):
+        data = json.loads(msg.data)
+        log.warning(data)
         await sc.ack(msg)
 
     async def garment_updated_listener(msg):
+        data = json.loads(msg.data)
+        log.warning(data)
         await sc.ack(msg)
 
     async def garment_deleted_listener(msg):
+        data = json.loads(msg.data)
+        log.warning(data)
         await sc.ack(msg)
 
     async def texturemap_created_listener(msg):
+        data = json.loads(msg.data)
+        log.warning(data)
         await sc.ack(msg)
 
     await sc.subscribe("customer:data:created", cb=customer_data_created_listener)

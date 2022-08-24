@@ -1,7 +1,7 @@
 from sqlmodel import Field, SQLModel
-from ..types import GarmentClass
+from sqlmodel import Enum
 
 class Garments(SQLModel, table=True):
     id: str = Field(default=None, primary_key=True)
-    garmentClass: GarmentClass
+    garmentClass: str = Field(Enum("shirt", "skirt", "t-shirt", "pant", "short-pant"))
     textureMap: str

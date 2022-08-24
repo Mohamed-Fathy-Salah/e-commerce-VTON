@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lower-deployment
+  labels:
+    app: lower
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lower
+  template:
+    metadata:
+      labels:
+        app: lower
+    spec:
+      containers:
+        - name: lower
+          image: mofasa101/lower
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: POSTGRESQL_URI
+              value: "postgresql://user:pass@bodygarment-postgresql-srv:5432/db"
+            - name: NATS_URI
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: vton
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lower-srv
+spec:
+  selector:
+    app: lower
+  ports:
+    - name: lower
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

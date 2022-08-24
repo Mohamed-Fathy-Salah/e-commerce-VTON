@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bodygarment-postgresql-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bodygarment-postgresql
+  template:
+    metadata:
+      labels:
+        app: bodygarment-postgresql
+    spec:
+      containers:
+        - name: bodygarment-postgresql
+          image: postgres
+          env:
+            - name: POSTGRES_DB
+              value: db
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: pass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bodygarment-postgresql-srv
+spec:
+  selector:
+    app: bodygarment-postgresql
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
