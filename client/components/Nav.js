@@ -1,8 +1,21 @@
 import Link from 'next/link';
 import Logo from './Logo';
 
+import { useState } from 'react';
+import { Menu } from '@headlessui/react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+
 const Nav = ({ user }) => {
-  const links = user ? (
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const res = await axios.post('/api/users/signout');
+    console.log(res);
+    router.push('/');
+  };
+
+  const links = !user ? (
     <>
       <Link href='/login'>
         <button className='mx-3 px-4 py-1 hidden sm:inline'>Login</button>
@@ -15,9 +28,12 @@ const Nav = ({ user }) => {
     </>
   ) : (
     <>
-      <Link href='/login'>
-        <button className='mx-3 px-4 py-1 hidden sm:inline'>Login</button>
-      </Link>
+      <button
+        onClick={handleLogout}
+        className='mx-3 px-4 py-1 rounded-full bg-red-700 text-white shadow-sm'
+      >
+        logout
+      </button>
       <Link href='/cart'>
         <div className='p-3 rounded-full bg-gray-200 text-gray-700'>
           <svg
@@ -26,7 +42,7 @@ const Nav = ({ user }) => {
             viewBox='0 0 24 24'
             stroke-width='1.5'
             stroke='currentColor'
-            class='w-6 h-6'
+            className='w-6 h-6'
           >
             <path
               stroke-linecap='round'
@@ -46,4 +62,5 @@ const Nav = ({ user }) => {
     </nav>
   );
 };
+
 export default Nav;

@@ -9,15 +9,6 @@ import { useEffect } from 'react';
 const Home = ({ user }) => {
   console.log(user);
 
-  // useEffect(() => {
-  //   const logout = async () => {
-  //     const res = await axios.post('/api/users/signout');
-  //     console.log('deleted :' + res);
-  //   };
-
-  //   logout();
-  // }, []);
-
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
