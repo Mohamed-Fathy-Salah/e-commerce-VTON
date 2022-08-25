@@ -1,11 +1,12 @@
 import asyncio
+from fastapi import Depends
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 from os import environ
 import json
-from sqlmodel import Session, select
-from db import DB
 import logging
+from db import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.customers import Customers
 
@@ -34,16 +35,16 @@ async def run(loop):
     await sc.connect(cluster_id, client_id, nats=nc, loop=loop)
 
     # {customerId: string, name: string, age: number, gender: Gender, version:number}
-    async def customer_data_created_listener(msg):
+    async def customer_data_created_listener(msg, session: AsyncSession = Depends(get_session)):
         data = json.loads(msg.data)
         log.warning(data)
-        with Session(DB().engine) as session:
-            customer = Customers(id= data['customerId'], gender= data['gender'], skin= 'white')
-            session.add(customer)
-            session.commit()
-            session.refresh(customer)
-            await sc.ack(msg)
-            return customer
+        customer = Customers(id= data['customerId'], gender= data['gender'], skin= 'white')
+
+        session.add(customer)
+        await session.commit()
+        await session.refresh(customer)
+        await sc.ack(msg)
+        return customer
 
     async def customer_data_updated_listener(msg):
         data = json.loads(msg.data)

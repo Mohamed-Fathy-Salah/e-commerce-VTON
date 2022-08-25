@@ -1,13 +1,12 @@
 from fastapi import FastAPI, Response, status, Request, Depends
-from db import DB
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from cookie import get_current_user
-from sqlmodel import Session, select
+from db import get_session, init_db
 from models.customers import Customers
 from models.garments import Garments
 from natsWrapper import connect
 import uvicorn
-# from sqlalchemy.ext.asyncio import AsyncSession
-# from sqlalchemy.future import select
 import logging
 
 log = logging.getLogger()
@@ -16,12 +15,12 @@ log.addHandler(logging.StreamHandler())
 app = FastAPI()
 
 @app.on_event("startup")
-def on_startup():
-    DB()
+async def on_startup():
+    await init_db()
     connect()
 
 @app.get('/api/bodygarment/lower/{garmentId}', status_code= status.HTTP_200_OK)
-def body_lower_garment(garmentId: str, request: Request, response: Response, pose:str = 'T'):
+async def body_lower_garment(garmentId: str, request: Request, response: Response, pose:str = 'T', session: AsyncSession = Depends(get_session)):
     encoded_token = request.cookies.get('session')
     current_user = get_current_user(encoded_token)
 
@@ -29,31 +28,28 @@ def body_lower_garment(garmentId: str, request: Request, response: Response, pos
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return "not authorized"
 
-    with Session(DB().engine) as session:
-        customer = session.execute(select(Customers).where(Customers.id == current_user['id']))
-        customer = customer.one()
-        log.warning(f"customer ===================== {customer}")
-        # customer = await session.query(Customers).get(current_user['id'])
+    customer = await session.execute(select(Customers).where(Customers.id == current_user['id']))
+    customer = customer.one()
+    log.warning(f"customer ===================== {customer}")
 
-        if(not customer):
-            response.status_code = status.HTTP_404_NOT_FOUND
-            return "customer not found"
+    if(not customer):
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return "customer not found"
 
-        if(not customer['betas']):
-            response.status_code = status.HTTP_400_BAD_REQUEST
-            return "measurements not set"
-        
-        # garment = await session.query(Garments).get(garmentId)
-        garment = session.execute(select(Garments).where(Garments.id == garmentId))
-        garment = garment.one()
-        
-        if(not garment):
-            response.status_code = status.HTTP_404_NOT_FOUND
-            return "garment not found"
-        
-        if(not garment['textureMap']):
-            response.status_code = status.HTTP_400_BAD_REQUEST
-            return "garment do not have texure map"
+    if(not customer['betas']):
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return "measurements not set"
+    
+    garment = await session.execute(select(Garments).where(Garments.id == garmentId))
+    garment = garment.one()
+    
+    if(not garment):
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return "garment not found"
+    
+    if(not garment['textureMap']):
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return "garment do not have texure map"
 
     #todo: run tailorNet with user beta, pose, garment, size
     #todo: return obj file

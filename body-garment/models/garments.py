@@ -1,5 +1,4 @@
-from sqlmodel import Field, SQLModel
-from sqlmodel import Enum
+from sqlmodel import Enum, Field, SQLModel
 
 class Garments(SQLModel, table=True):
     id: str = Field(default=None, primary_key=True)

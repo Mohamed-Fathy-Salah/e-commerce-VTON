@@ -25,7 +25,7 @@ spec:
                   name: jwt-secret
                   key: JWT_KEY
             - name: POSTGRESQL_URI
-              value: "postgresql://user:pass@bodygarment-postgresql-srv:5432/db"
+              value: "postgresql+asyncpg://user:pass@bodygarment-postgresql-srv:5432/db"
             - name: NATS_URI
               value: "http://nats-srv:4222"
             - name: NATS_CLUSTER_ID
