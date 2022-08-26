@@ -25,8 +25,9 @@ const setup = async () => {
 
   //create a fake data object
   const data: GarmentDeletedEvent["data"] = {
-    garmentId: garment.id,
-    adminId: "adfadf",
+      garmentId: garment.id,
+      adminId: "adfadf",
+      version: garment.version + 1
   };
 
   //create a fake msg object
@@ -56,3 +57,15 @@ it("acks the message", async () => {
 
   expect(msg.ack).toHaveBeenCalled();
 });
+
+it('does not call ack if the event has a skipped version number', async () => {
+    const {msg, data, listener, garment} = await setup();
+
+    data.version = 10;
+
+    try{
+        await listener.onMessage(data, msg);
+    }catch(err){ console.log('error') }
+
+    expect(msg.ack).not.toHaveBeenCalled();
+})
