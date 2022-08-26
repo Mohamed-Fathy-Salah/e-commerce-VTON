@@ -40,10 +40,11 @@ async def run(loop):
         gender = data['gender']
         frontPhoto = data['frontPhoto']
         backPhoto = data['backPhoto']
+        version = data['version']
 
         try:
             texturemap = generate(frontPhoto, backPhoto, garmentClass, gender)
-            response = json.dumps({"texturemap": texturemap, "garmentId": garmentId})
+            response = json.dumps({"texturemap": texturemap, "garmentId": garmentId, "version": version})
             log.warning(response)
             await sc.publish("texturemap:created", response)
             log.warning('ack')
@@ -65,9 +66,10 @@ async def run(loop):
             garmentId = data['garmentId']
             garmentClass = data['garmentClass']
             gender = data['gender']
+            version = data['version']
 
             texturemap = generate(frontPhoto, backPhoto, garmentClass, gender)
-            response = json.dumps({"texturemap": texturemap, "garmentId": garmentId})
+            response = json.dumps({"texturemap": texturemap, "garmentId": garmentId, "version": version})
             await sc.publish("texturemap:created", response)
 
         await sc.ack(msg)
