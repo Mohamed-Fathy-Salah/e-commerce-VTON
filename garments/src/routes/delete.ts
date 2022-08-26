@@ -25,8 +25,9 @@ router.delete(
     await garment.delete();
 
     new GarmentDeletedPublisher(natsWrapper.client).publish({
-        garmentId,
-        adminId
+        garmentId: garment.id,
+        adminId: garment.adminId,
+        version: garment.version
     });
 
     return res.status(200).send(garment);
