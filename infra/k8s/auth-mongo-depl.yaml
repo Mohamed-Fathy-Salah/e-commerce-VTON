@@ -15,6 +15,13 @@ spec:
       containers:
         - name: auth-mongo
           image: mongo
+          volumeMounts:
+            - mountPath: /tmp/pv
+              name: mount
+      volumes:
+        - persistentVolumeClaim:
+            claimName: local-claim
+          name: mount
 ---
 apiVersion: v1
 kind: Service

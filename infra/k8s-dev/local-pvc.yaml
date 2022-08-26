@@ -1,0 +1,13 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: local-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: local-pv
+  storageClassName: local-storage
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 3Gi
