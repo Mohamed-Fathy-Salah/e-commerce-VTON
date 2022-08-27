@@ -1,13 +1,12 @@
 import asyncio
-from fastapi import Depends
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
+from sqlalchemy.future import select
 from os import environ
 import json
 import logging as log
-from db import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from db import async_session
+from asyncpg.exceptions import UniqueViolationError
 from models.customers import Customers
 
 cluster_id = environ.get('NATS_CLUSTER_ID') 
@@ -32,20 +31,41 @@ async def run(loop):
     await sc.connect(cluster_id, client_id, nats=nc, loop=loop)
 
     # {customerId: string, name: string, age: number, gender: Gender, version:number}
-    async def customer_data_created_listener(msg, session: AsyncSession = Depends(get_session)):
+    async def customer_data_created_listener(msg):
         data = json.loads(msg.data)
-        log.warning(f"customer created {data}")
-        customer = Customers(id= data['customerId'], gender= data['gender'], skin= 'white')
 
-        session.add(customer)
-        await session.commit()
-        await session.refresh(customer)
+        try:
+            customer = Customers(id= data['customerId'], gender= data['gender'], skin= 'white', version= data['version'])
+            async with async_session() as session:
+                session.add(customer)
+                await session.commit()
+        except UniqueViolationError:
+            log.warning(f"customer already exists")
+        except Exception as e:
+            raise Exception('---------> something went wrong in customer data created listener', str(e))
+
+        log.warning(f"customer created {data}")
         await sc.ack(msg)
 
     async def customer_data_updated_listener(msg):
         data = json.loads(msg.data)
-        # with Session(DB().engine) as session:
-            # session.get()
+
+        try:
+            async with async_session() as session:
+                customer = await session.execute(select(Customers).where(Customers.id == data['customerId'] and Customers.version == data['version'] - 1 )).one()
+
+                if not customer:
+                    raise Exception("customer not found")
+
+                customer['gender'] = data['gender']
+                # todo : customers['betas'] = get_betas(data['measurements'], data['gender'])
+                customer['skin'] = data['skin']
+                customer['version'] = data['version']
+                
+                await session.commit()
+        except Exception as e:
+            raise Exception('---------> something went wrong in customer data created listener', str(e))
+
         log.warning(f" customer updated {data}")
         await sc.ack(msg)
 
@@ -71,12 +91,13 @@ async def run(loop):
 
     queueGroupName = "bodygarment-service"
 
-    await sc.subscribe("customer:data:created", cb=customer_data_created_listener, deliver_all_available=True, manual_acks=True, ack_wait=True, durable_name= queueGroupName)
-    await sc.subscribe("customer:data:updated", cb=customer_data_updated_listener, deliver_all_available=True, manual_acks=True, ack_wait=True, durable_name= queueGroupName)
-    await sc.subscribe("garment:created", cb=garment_created_listener, deliver_all_available=True, manual_acks=True, ack_wait=True, durable_name= queueGroupName)
-    await sc.subscribe("garment:updated", cb=garment_updated_listener, deliver_all_available=True, manual_acks=True, ack_wait=True, durable_name= queueGroupName)
-    await sc.subscribe("garment:deleted", cb=garment_deleted_listener, deliver_all_available=True, manual_acks=True, ack_wait=True, durable_name= queueGroupName)
-    await sc.subscribe("texturemap:created", cb=texturemap_created_listener, deliver_all_available=True, manual_acks=True, ack_wait=True, durable_name= queueGroupName)
+    # todo: process new events only
+    await sc.subscribe("customer:data:created", cb=customer_data_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
+    await sc.subscribe("customer:data:updated", cb=customer_data_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
+    await sc.subscribe("garment:created", cb=garment_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
+    await sc.subscribe("garment:updated", cb=garment_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
+    await sc.subscribe("garment:deleted", cb=garment_deleted_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
+    await sc.subscribe("texturemap:created", cb=texturemap_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
 
 def connect():
     check_environment_vars()

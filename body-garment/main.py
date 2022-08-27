@@ -2,7 +2,7 @@ from fastapi import FastAPI, Response, status, Request, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from cookie import get_current_user
-from db import get_session, init_db
+from db import init_db, get_session
 from models.customers import Customers
 from models.garments import Garments
 from natsWrapper import connect
@@ -18,6 +18,11 @@ app = FastAPI()
 async def on_startup():
     await init_db()
     connect()
+
+@app.get('/api/bodygarment/lower', status_code= status.HTTP_200_OK)
+async def customers(request: Request, response: Response, session: AsyncSession = Depends(get_session)):
+    customers = await session.execute(select(Customers))
+    return customers.all()
 
 @app.get('/api/bodygarment/lower/{garmentId}', status_code= status.HTTP_200_OK)
 async def body_lower_garment(garmentId: str, request: Request, response: Response, pose:str = 'T', session: AsyncSession = Depends(get_session)):
