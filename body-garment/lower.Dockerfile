@@ -9,6 +9,8 @@ FROM python:3.9.13-slim-buster
 #RUN cd /app/data && unzip short-pant_female.zip && rm short-pant_female.zip
 #RUN cd /app/weights && unzip short-pant_female_weights.zip && rm short-pant_female_weights.zip
 
+RUN apt update && apt install python3-opencv -y
+
 COPY requirements.txt .
 
 RUN pip3 install -r requirements.txt

@@ -2,12 +2,15 @@ import asyncio
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 from sqlalchemy.future import select
+from sqlalchemy import delete
 from os import environ
 import json
 import logging as log
 from db import async_session
 from asyncpg.exceptions import UniqueViolationError
 from models.customers import Customers
+from models.garments import Garments
+from texturemap import run as generate_texturemap
 
 cluster_id = environ.get('NATS_CLUSTER_ID') 
 client_id = environ.get('NATS_CLIENT_ID')
@@ -30,7 +33,7 @@ async def run(loop):
     sc = STAN()
     await sc.connect(cluster_id, client_id, nats=nc, loop=loop)
 
-    # {customerId: string, name: string, age: number, gender: Gender, version:number}
+    # msg.data = {customerId: string, name: string, age: number, gender: Gender, version:number}
     async def customer_data_created_listener(msg):
         data = json.loads(msg.data)
 
@@ -64,29 +67,67 @@ async def run(loop):
                 
                 await session.commit()
         except Exception as e:
-            raise Exception('---------> something went wrong in customer data created listener', str(e))
+            raise Exception('---------> something went wrong in customer data updated listener', str(e))
 
         log.warning(f" customer updated {data}")
         await sc.ack(msg)
 
+    # msg.data = {garmentId: string; adminId: string; garmentClass: GarmentClass; gender: Gender; small: number; medium: number; large: number; xlarge: number; xxlarge: number; price: number; frontPhoto: string; backPhoto: string; version: number;}
     async def garment_created_listener(msg):
         data = json.loads(msg.data)
+
+        texturemap = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garmentClass'], data['gender'])
+
+        garment = Garments(id= data['garmentId'], garmentClass= data['garmentClass'], textureMap= texturemap, version=data['version'])
+
+        try:
+            async with async_session() as session:
+                session.add(garment)
+                await session.commit()
+        except UniqueViolationError:
+            log.warning(f"garment already exists")
+        except Exception as e:
+            raise Exception('---------> something went wrong in garment created listener', str(e))
+
         log.warning(f" garment created {data}")
         await sc.ack(msg)
 
+    # msg.data = {garmentId: string; adminId: string; garmentClass: GarmentClass; gender: Gender; small: number; medium: number; large: number; xlarge: number; xxlarge: number; price: number; frontPhoto?: string; backPhoto?: string; version: number;}
     async def garment_updated_listener(msg):
         data = json.loads(msg.data)
+
+        try:
+            async with async_session() as session:
+                garment = await session.execute(select(Garments).where(Garments.id == data['garmentId'] and Garments.version == data['version'] - 1 )).one()
+
+                if not garment:
+                    raise Exception("garment not found")
+
+                garment['garmentClass'] = data['garmentClass']
+                garment['version'] = data['version']
+                if data['frontPhoto'] and data['backPhoto'] :
+                    garment['textureMap'] = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garment'], data['gender'])
+                
+                await session.commit()
+        except Exception as e:
+            raise Exception('---------> something went wrong in garment udpated listener', str(e))
+
         log.warning(f" garment updated {data}")
         await sc.ack(msg)
 
+    # msg.data = {garmentId: string; adminId: string; version: number;}
     async def garment_deleted_listener(msg):
         data = json.loads(msg.data)
-        log.warning(f" garment deleted {data}")
-        await sc.ack(msg)
 
-    async def texturemap_created_listener(msg):
-        data = json.loads(msg.data)
-        log.warning(f"texturemap created {data}")
+        try:
+            async with async_session() as session:
+                await session.execute(delete(Garments).where(Garments.id == data['garmentId']))
+
+                await session.commit()
+        except Exception as e:
+            raise Exception('---------> something went wrong in garment udpated listener', str(e))
+
+        log.warning(f" garment deleted {data}")
         await sc.ack(msg)
 
     queueGroupName = "bodygarment-service"
@@ -97,7 +138,6 @@ async def run(loop):
     await sc.subscribe("garment:created", cb=garment_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
     await sc.subscribe("garment:updated", cb=garment_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
     await sc.subscribe("garment:deleted", cb=garment_deleted_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
-    await sc.subscribe("texturemap:created", cb=texturemap_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
 
 def connect():
     check_environment_vars()
