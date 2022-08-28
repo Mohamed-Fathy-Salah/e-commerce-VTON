@@ -11,22 +11,24 @@ const setup = async () => {
 
   //create and save a ticket
   const garment = Garments.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
-    garmentClass: GarmentClass.Shirt,
-    gender: Gender.Male,
-    small: 2,
-    medium: 2,
-    large: 2,
-    xlarge: 2,
-    xxlarge: 2,
-    price: 20,
+      id: new mongoose.Types.ObjectId().toHexString(),
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Male,
+      small: 2,
+      medium: 2,
+      large: 2,
+      xlarge: 2,
+      xxlarge: 2,
+      price: 20,
+      adminId: "adf"
   });
   await garment.save();
 
   //create a fake data object
   const data: GarmentDeletedEvent["data"] = {
-    garmentId: garment.id,
-    adminId: "adfadf",
+      garmentId: garment.id,
+      adminId: "adfadf",
+      version: garment.version + 1
   };
 
   //create a fake msg object
@@ -56,3 +58,15 @@ it("acks the message", async () => {
 
   expect(msg.ack).toHaveBeenCalled();
 });
+
+it('does not call ack if the event has a skipped version number', async () => {
+    const {msg, data, listener, garment} = await setup();
+
+    data.version = 10;
+
+    try{
+        await listener.onMessage(data, msg);
+    }catch(err){ console.log('error') }
+
+    expect(msg.ack).not.toHaveBeenCalled();
+})

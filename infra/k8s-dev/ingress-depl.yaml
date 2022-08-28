@@ -4,7 +4,7 @@ metadata:
   name: ingress-service
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
     - host: vton.dev
@@ -15,6 +15,13 @@ spec:
             backend:
               service:
                 name: auth-srv
+                port:
+                  number: 3000
+          - path: /api/admindata/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: admins-srv
                 port:
                   number: 3000
           - path: /api/customerdata/?(.*)
@@ -50,5 +57,12 @@ spec:
             backend:
               service:
                 name: payments-srv
+                port:
+                  number: 3000
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: client-srv
                 port:
                   number: 3000

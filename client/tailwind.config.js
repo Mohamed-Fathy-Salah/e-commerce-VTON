@@ -10,6 +10,6 @@ module.exports = {
         sans: ['Archivo', 'sans-serif'],
       },
     },
-    plugins: [],
   },
+  plugins: [require('@tailwindcss/forms')],
 };

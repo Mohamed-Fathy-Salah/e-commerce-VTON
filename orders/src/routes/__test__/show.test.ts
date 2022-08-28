@@ -1,10 +1,4 @@
-import {
-  GarmentClass,
-  GarmentSize,
-  Gender,
-  OrderStatus,
-  UserType,
-} from "@mfsvton/common";
+import { GarmentClass, Gender, OrderStatus, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -48,6 +42,7 @@ it("customer not current user", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adf",
   });
   await garment.save();
 
@@ -57,6 +52,7 @@ it("customer not current user", async () => {
     .send({
       garments: [
         {
+          adminId: "adf",
           garmentId,
           price: 2,
           small: 2,
@@ -90,6 +86,7 @@ it("show order", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adf",
   });
   await garment.save();
 
@@ -99,6 +96,7 @@ it("show order", async () => {
     .send({
       garments: [
         {
+          adminId: "adf",
           garmentId,
           price: 2,
           small: 2,

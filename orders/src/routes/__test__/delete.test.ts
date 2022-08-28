@@ -44,15 +44,17 @@ it("customer not current user", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adf",
   });
   await garment.save();
 
-  const {body: order} = await request(app)
+  const { body: order } = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
       garments: [
         {
+          adminId: "adf",
           garmentId,
           price: 2,
           small: 2,
@@ -62,7 +64,8 @@ it("customer not current user", async () => {
           xxlarge: 2,
         },
       ],
-    }).expect(201);
+    })
+    .expect(201);
 
   await request(app)
     .delete("/api/orders/" + order.id)
@@ -86,15 +89,17 @@ it("delete order", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adf",
   });
   await garment.save();
 
-  const {body: order} = await request(app)
+  const { body: order } = await request(app)
     .post("/api/orders")
     .set("Cookie", cookie)
     .send({
       garments: [
         {
+          adminId: "adf",
           garmentId,
           price: 2,
           small: 2,
@@ -104,7 +109,8 @@ it("delete order", async () => {
           xxlarge: 2,
         },
       ],
-    }).expect(201);
+    })
+    .expect(201);
 
   const res = await request(app)
     .delete("/api/orders/" + order.id)

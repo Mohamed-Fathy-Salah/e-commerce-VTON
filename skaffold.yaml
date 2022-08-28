@@ -9,13 +9,21 @@ build:
   local:
     push: false
   artifacts:
+    - image: mofasa101/vton-client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
     - image: mofasa101/auth
       context: auth
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.ts"
+          - src: 'src/**/*.ts'
             dest: .
     - image: mofasa101/customers
       context: customers
@@ -23,7 +31,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.ts"
+          - src: 'src/**/*.ts'
             dest: .
     - image: mofasa101/garments
       context: garments
@@ -31,7 +39,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.ts"
+          - src: 'src/**/*.ts'
             dest: .
     - image: mofasa101/cart
       context: cart
@@ -39,7 +47,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.ts"
+          - src: 'src/**/*.ts'
             dest: .
     - image: mofasa101/orders
       context: orders
@@ -47,7 +55,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.ts"
+          - src: 'src/**/*.ts'
             dest: .
     - image: mofasa101/expiration
       context: expiration
@@ -55,7 +63,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.js"
+          - src: 'src/**/*.js'
             dest: .
     - image: mofasa101/payments
       context: payments
@@ -63,5 +71,5 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*.js"
+          - src: 'src/**/*.js'
             dest: .
