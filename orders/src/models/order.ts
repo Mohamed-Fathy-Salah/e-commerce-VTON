@@ -7,6 +7,7 @@ import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 interface OrderAttrs {
   customerId: string;
   garments: {
+      adminId: string;
       garmentId: string;
       price: number;
       small: number;
@@ -30,6 +31,7 @@ interface OrderModel extends mongoose.Model<OrderDoc> {
 interface OrderDoc extends mongoose.Document {
   customerId: string;
   garments: {
+      adminId: string;
       garmentId: string;
       price: number;
       small: number;
@@ -58,6 +60,7 @@ const orderSchema = new mongoose.Schema(
     },
     garments: [
       {
+        adminId: String,
         garmentId: String,
         price: Number,
         small: Number,
