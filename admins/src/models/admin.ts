@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 // An interface that describes the properties
 // that are requried to create a new Admin
 interface AdminAttrs {
-    adminId: string;
-    name: string;
+  adminId: string;
+  name: string;
 }
 
 // An interface that describes the properties
@@ -16,25 +16,25 @@ interface AdminModel extends mongoose.Model<AdminDoc> {
 // An interface that describes the properties
 // that a Admin Document has
 interface AdminDoc extends mongoose.Document {
-    adminId: string;
-    name: string;
-    photo: string;
+  adminId: string;
+  name: string;
+  photo: string;
 }
 
 const adminSchema = new mongoose.Schema(
   {
-      adminId: {
-          type: String,
-          required: true,
-          unique: true,
-      },
-      name: {
-          type: String,
-          required: true
-      },
-      photo: {
-          type: String,
-      }
+    adminId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    photo: {
+      type: String,
+    },
   },
   {
     toJSON: {
