@@ -16,7 +16,8 @@ export class GarmentCreatedListener extends Listener<GarmentCreatedEvent> {
         medium: data.medium,
         large: data.medium,
         xlarge: data.xlarge,
-        xxlarge: data.xxlarge
+        xxlarge: data.xxlarge,
+        adminId: data.adminId
     })
     await garment.save();
 

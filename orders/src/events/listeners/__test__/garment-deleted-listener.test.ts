@@ -11,15 +11,16 @@ const setup = async () => {
 
   //create and save a ticket
   const garment = Garments.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
-    garmentClass: GarmentClass.Shirt,
-    gender: Gender.Male,
-    small: 2,
-    medium: 2,
-    large: 2,
-    xlarge: 2,
-    xxlarge: 2,
-    price: 20,
+      id: new mongoose.Types.ObjectId().toHexString(),
+      garmentClass: GarmentClass.Shirt,
+      gender: Gender.Male,
+      small: 2,
+      medium: 2,
+      large: 2,
+      xlarge: 2,
+      xxlarge: 2,
+      price: 20,
+      adminId: "adf"
   });
   await garment.save();
 

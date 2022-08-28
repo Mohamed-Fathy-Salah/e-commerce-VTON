@@ -53,7 +53,7 @@ router.post(
       for (let i = 0; i < garments.length; i++) {
         const garment = await Garments.findById(garments[i].garmentId);
 
-        if (!garment) {
+        if (!garment || garment.adminId !== garments[i].adminId) {
           throw new NotFoundError();
         }
 

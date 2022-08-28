@@ -19,7 +19,8 @@ const setup = async () => {
         large: 2,
         xlarge: 2,
         xxlarge: 2,
-        price: 20
+        price: 20,
+        adminId: "adf"
     })
     await garment.save();
 

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admins-deployment
+  labels:
+    app: admins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admins
+  template:
+    metadata:
+      labels:
+        app: admins
+    spec:
+      containers:
+        - name: admins
+          image: mofasa101/admins
+          env:
+            - name: NATS_URI
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: vton
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: "mongodb://admins-mongo-srv:27017/admins"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admins-srv
+spec:
+  selector:
+    app: admins
+  ports:
+    - name: admins
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
