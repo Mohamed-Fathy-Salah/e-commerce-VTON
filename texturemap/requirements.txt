@@ -1,7 +1,0 @@
-asyncio-nats-client
-asyncio-nats-streaming
-numpy
-opencv-python
-protobuf==3.20.0
-websockets
-pillow
