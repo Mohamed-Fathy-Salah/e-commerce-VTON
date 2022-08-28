@@ -70,6 +70,7 @@ it("order reserved garments", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adf",
   });
   await garment.save();
 
@@ -79,6 +80,7 @@ it("order reserved garments", async () => {
     .send({
       garments: [
         {
+        adminId: "adf",
           garmentId,
           price: 2,
           small: 3,
@@ -90,6 +92,45 @@ it("order reserved garments", async () => {
       ],
     })
     .expect(400);
+});
+
+it("order garment with wrong adminid", async () => {
+  const customerId = new mongoose.Types.ObjectId().toHexString();
+  const cookie = global.signin(UserType.Customer, customerId);
+  const garmentId = new mongoose.Types.ObjectId().toHexString();
+
+  const garment = Garments.build({
+    id: garmentId,
+    garmentClass: GarmentClass.Shirt,
+    gender: Gender.Male,
+    small: 2,
+    medium: 2,
+    large: 2,
+    xlarge: 2,
+    xxlarge: 2,
+    price: 2,
+    adminId: "adf",
+  });
+  await garment.save();
+
+  await request(app)
+    .post("/api/orders")
+    .set("Cookie", cookie)
+    .send({
+      garments: [
+        {
+        adminId: "bbb",
+          garmentId,
+          price: 2,
+          small: 3,
+          medium: 0,
+          large: 0,
+          xlarge: 0,
+          xxlarge: 0,
+        },
+      ],
+    })
+    .expect(404);
 });
 
 it("order success", async () => {
@@ -107,6 +148,7 @@ it("order success", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adff",
   });
   await garment.save();
 
@@ -116,6 +158,7 @@ it("order success", async () => {
     .send({
       garments: [
         {
+          adminId: "adff",
           garmentId,
           price: 2,
           small: 2,
