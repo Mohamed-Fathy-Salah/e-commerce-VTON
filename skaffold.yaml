@@ -17,6 +17,14 @@ build:
         manual:
           - src: '**/*.js'
             dest: .
+    - image: mofasa101/admins
+      context: admins
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: mofasa101/auth
       context: auth
       docker:
@@ -73,3 +81,12 @@ build:
         manual:
           - src: 'src/**/*.js'
             dest: .
+    - image: mofasa101/bodygarment
+      context: body-garment
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
+

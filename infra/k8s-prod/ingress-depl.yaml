@@ -17,6 +17,13 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /api/admindata/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: admins-srv
+                port:
+                  number: 3000
           - path: /api/customerdata/?(.*)
             pathType: Prefix
             backend:
@@ -50,6 +57,13 @@ spec:
             backend:
               service:
                 name: payments-srv
+                port:
+                  number: 3000
+          - path: /api/bodygarment/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: bodygarment-srv
                 port:
                   number: 3000
           - path: /?(.*)

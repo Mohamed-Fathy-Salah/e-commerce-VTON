@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lower-deployment
+  name: bodygarment-deployment
   labels:
-    app: lower
+    app: bodygarment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lower
+      app: bodygarment
   template:
     metadata:
       labels:
-        app: lower
+        app: bodygarment
     spec:
       containers:
-        - name: lower
-          image: mofasa101/lower
+        - name: bodygarment
+          image: mofasa101/bodygarment
           imagePullPolicy: IfNotPresent
           env:
             - name: JWT_KEY
@@ -38,12 +38,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: lower-srv
+  name: bodygarment-srv
 spec:
   selector:
-    app: lower
+    app: bodygarment
   ports:
-    - name: lower
+    - name: bodygarment
       protocol: TCP
       port: 3000
       targetPort: 3000
