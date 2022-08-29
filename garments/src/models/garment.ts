@@ -6,6 +6,8 @@ import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 // that are requried to create a new User
 interface GarmentAttrs {
   adminId: string;
+  name: string;
+  description: string;
   garmentClass: GarmentClass;
   gender: Gender;
   price: number;
@@ -29,6 +31,8 @@ interface GarmentModel extends mongoose.Model<GarmentDoc> {
 // that a User Document has
 export interface GarmentDoc extends mongoose.Document {
   adminId: string;
+  name: string;
+  description: string;
   garmentClass: GarmentClass;
   gender: Gender;
   price: number;
@@ -48,6 +52,14 @@ const garmentSchema = new mongoose.Schema(
     adminId: {
       type: String,
       required: true,
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
     },
     garmentClass: {
       type: String,

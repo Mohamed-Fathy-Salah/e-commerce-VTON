@@ -29,6 +29,8 @@ router.post(
     body("garmentClass").custom((value) =>
       Object.values(GarmentClass).includes(value)
     ),
+    body("name").notEmpty(),
+    body("description").notEmpty(),
     body("gender").custom((value) => Object.values(Gender).includes(value)),
     body("price").isFloat({ gt: 0 }),
     body("small").isFloat({ gt: 0 }),
@@ -42,7 +44,7 @@ router.post(
   validateRequest,
   async (req: Request, res: Response) => {
     const adminId = req.currentUser!.id;
-    const { garmentClass, gender, price, small, medium, large, xlarge, xxlarge } = req.body;
+    const { name, description, garmentClass, gender, price, small, medium, large, xlarge, xxlarge } = req.body;
 
     //@ts-ignore
     const {frontPhoto, backPhoto, photos} = req.files;
@@ -59,6 +61,8 @@ router.post(
         xxlarge,
         frontPhoto: frontPhoto[0].buffer.toString('base64'),
         backPhoto: backPhoto[0].buffer.toString('base64'),
+        name,
+        description
     });
     if(photos) {
         //@ts-ignore

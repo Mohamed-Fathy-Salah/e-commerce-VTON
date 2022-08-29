@@ -1,4 +1,4 @@
-import { GarmentClass, GarmentSize, Gender, UserType } from "@mfsvton/common";
+import { GarmentClass, Gender, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
@@ -39,6 +39,7 @@ it("orders created", async () => {
     xlarge: 2,
     xxlarge: 2,
     price: 2,
+    adminId: "adf",
   });
   await garment.save();
 
@@ -48,6 +49,7 @@ it("orders created", async () => {
     .send({
       garments: [
         {
+          adminId: "adf",
           garmentId,
           price: 2,
           small: 2,
