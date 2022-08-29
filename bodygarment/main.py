@@ -7,10 +7,6 @@ from models.customers import Customers
 from models.garments import Garments
 from natsWrapper import connect
 import uvicorn
-import logging
-
-log = logging.getLogger()
-log.addHandler(logging.StreamHandler())
 
 app = FastAPI()
 
@@ -35,7 +31,7 @@ async def body_lower_garment(garmentId: str, request: Request, response: Respons
 
     customer = await session.execute(select(Customers).where(Customers.id == current_user['id']))
     customer = customer.one()
-    log.warning(f"customer ===================== {customer}")
+    # log.warning(f"customer ===================== {customer}")
 
     if(not customer):
         response.status_code = status.HTTP_404_NOT_FOUND

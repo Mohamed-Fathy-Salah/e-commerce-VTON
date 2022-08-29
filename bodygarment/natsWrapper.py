@@ -2,10 +2,10 @@ import asyncio
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 from sqlalchemy.future import select
-from sqlalchemy import delete
+from sqlalchemy import delete, and_
 from os import environ
 import json
-import logging as log
+import logging 
 from db import async_session
 from asyncpg.exceptions import UniqueViolationError
 from models.customers import Customers
@@ -15,6 +15,11 @@ from texturemap import run as generate_texturemap
 cluster_id = environ.get('NATS_CLUSTER_ID') 
 client_id = environ.get('NATS_CLIENT_ID')
 nats_uri = environ.get('NATS_URI')
+
+log = logging.getLogger()
+log.handlers.clear()
+log.addHandler(logging.StreamHandler())
+log.propagate = False
 
 def check_environment_vars():
     if(not cluster_id):
@@ -42,6 +47,7 @@ async def run(loop):
             async with async_session() as session:
                 session.add(customer)
                 await session.commit()
+                log.warning(f"customer created {customer}")
         except UniqueViolationError:
             log.warning(f"customer already exists")
         except Exception as e:
@@ -52,24 +58,31 @@ async def run(loop):
 
     async def customer_data_updated_listener(msg):
         data = json.loads(msg.data)
-
+        
         try:
             async with async_session() as session:
-                customer = await session.execute(select(Customers).where(Customers.id == data['customerId'] and Customers.version == data['version'] - 1 )).one()
+                customer = await session.execute(select(Customers).where(and_(Customers.id == data['customerId'] ,Customers.version == data['version'] - 1 )))
 
+                customer = customer.first()
+                
                 if not customer:
                     raise Exception("customer not found")
 
-                customer['gender'] = data['gender']
-                # todo : customers['betas'] = get_betas(data['measurements'], data['gender'])
-                customer['skin'] = data['skin']
-                customer['version'] = data['version']
-                
+                log.warning(f" -1---------------- customer updated {customer},{type(customer)}")
+                log.warning(f" 3---------------- customer updated {dict(customer)}")
+
+                setattr(customer, 'gender', data['gender'])
+                # customer.gender = data['gender']
+                # todo : customers.betas = get_betas(data['measurements'], data['gender'])
+                # customer.skin = data['skin']
+                # customer.version = data['version']
+
+                log.warning(f" -2---------------- customer updated {customer}")
                 await session.commit()
         except Exception as e:
             raise Exception('---------> something went wrong in customer data updated listener', str(e))
 
-        log.warning(f" customer updated {data}")
+        log.warning(f"-3----------------  customer updated {data}")
         await sc.ack(msg)
 
     # msg.data = {garmentId: string; adminId: string; garmentClass: GarmentClass; gender: Gender; small: number; medium: number; large: number; xlarge: number; xxlarge: number; price: number; frontPhoto: string; backPhoto: string; version: number;}
