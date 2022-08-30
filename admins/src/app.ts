@@ -3,6 +3,10 @@ import { currentUser, errorHandler, NotFoundError } from "@mfsvton/common";
 import cookieSession from "cookie-session";
 import express from "express";
 import { json } from "body-parser";
+import { showDataRouter } from "./routes/show-data";
+import { indexOrderRouter } from "./routes/index-order";
+import { ShowOrdersRouter } from "./routes/show-orders";
+import { updateRouter } from "./routes/update";
 
 const app = express();
 
@@ -20,6 +24,10 @@ app.use(
 
 app.use(currentUser);
 
+app.use(indexOrderRouter);
+app.use(showDataRouter);
+app.use(ShowOrdersRouter);
+app.use(updateRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
