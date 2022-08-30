@@ -35,7 +35,7 @@ spec:
                   name: stripe-secret
                   key: STRIPE_KEY
             - name: MONGO_URI
-              value: "mongodb+srv://try:00000000@cluster0.iqbmt.mongodb.net/payments"
+              value: "mongodb://payments-mongo-srv:27017/payments"
 ---
 apiVersion: v1
 kind: Service

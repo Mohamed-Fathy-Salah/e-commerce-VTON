@@ -25,7 +25,7 @@ spec:
                   name: jwt-secret
                   key: JWT_KEY
             - name: MONGO_URI
-              value: "mongodb+srv://try:00000000@cluster0.iqbmt.mongodb.net/garments"
+              value: "mongodb://garments-mongo-srv:27017/garments"
             - name: NATS_URI
               value: "http://nats-srv:4222"
             - name: NATS_CLUSTER_ID
