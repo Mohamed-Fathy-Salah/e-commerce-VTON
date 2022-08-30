@@ -2,7 +2,7 @@ import asyncio
 from nats.aio.client import Client as NATS
 from stan.aio.client import Client as STAN
 from sqlalchemy.future import select
-from sqlalchemy import delete, and_
+from sqlalchemy import delete, and_, update
 from os import environ
 import json
 import logging 
@@ -61,21 +61,21 @@ async def run(loop):
         
         try:
             async with async_session() as session:
-                customer = await session.execute(select(Customers).where(and_(Customers.id == data['customerId'] ,Customers.version == data['version'] - 1 )))
-
-                customer = customer.first()
+                # customer = await session.execute(select(Customers).where(and_(Customers.id == data['customerId'] ,Customers.version == data['version'] - 1 )))
+                # customer = customer.first()
                 
-                if not customer:
-                    raise Exception("customer not found")
+                # if not customer:
+                    # raise Exception("customer not found")
 
-                log.warning(f" -1---------------- customer updated {customer},{type(customer)}")
-                log.warning(f" 3---------------- customer updated {dict(customer)}")
-
-                setattr(customer, 'gender', data['gender'])
+                # setattr(customer, 'gender', data['gender'])
                 # customer.gender = data['gender']
                 # todo : customers.betas = get_betas(data['measurements'], data['gender'])
                 # customer.skin = data['skin']
                 # customer.version = data['version']
+                
+                stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin']).execution_options(synchronize_session="evaluate")
+
+                customer = await session.execute(stmt)
 
                 log.warning(f" -2---------------- customer updated {customer}")
                 await session.commit()
