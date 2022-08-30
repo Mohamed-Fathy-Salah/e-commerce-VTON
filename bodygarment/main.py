@@ -15,10 +15,17 @@ async def on_startup():
     await init_db()
     connect()
 
-@app.get('/api/bodygarment', status_code= status.HTTP_200_OK)
+# todo: delete route
+@app.get('/api/bodygarment/customers', status_code= status.HTTP_200_OK)
 async def customers(request: Request, response: Response, session: AsyncSession = Depends(get_session)):
     customers = await session.execute(select(Customers))
     return customers.all()
+
+# todo: delete route
+@app.get('/api/bodygarment/garments', status_code= status.HTTP_200_OK)
+async def garments(request: Request, response: Response, session: AsyncSession = Depends(get_session)):
+    garments = await session.execute(select(Garments))
+    return garments.all()
 
 @app.get('/api/bodygarment/{garmentId}', status_code= status.HTTP_200_OK)
 async def body_lower_garment(garmentId: str, request: Request, response: Response, pose:str = 'T', session: AsyncSession = Depends(get_session)):

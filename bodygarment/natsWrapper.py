@@ -40,6 +40,7 @@ async def run(loop):
 
     # msg.data = {customerId: string, name: string, age: number, gender: Gender, version:number}
     async def customer_data_created_listener(msg):
+        log.warning(f"------------------- customer created")
         data = json.loads(msg.data)
 
         try:
@@ -47,89 +48,82 @@ async def run(loop):
             async with async_session() as session:
                 session.add(customer)
                 await session.commit()
-                log.warning(f"customer created {customer}")
+
+            log.warning(f"customer created {data}")
+            await sc.ack(msg)
         except UniqueViolationError:
             log.warning(f"customer already exists")
         except Exception as e:
             raise Exception('---------> something went wrong in customer data created listener', str(e))
 
-        log.warning(f"customer created {data}")
-        await sc.ack(msg)
-
     async def customer_data_updated_listener(msg):
+        log.warning(f"------------------- customer updated")
         data = json.loads(msg.data)
         
         try:
             async with async_session() as session:
-                # customer = await session.execute(select(Customers).where(and_(Customers.id == data['customerId'] ,Customers.version == data['version'] - 1 )))
-                # customer = customer.first()
-                
-                # if not customer:
-                    # raise Exception("customer not found")
-
-                # setattr(customer, 'gender', data['gender'])
-                # customer.gender = data['gender']
-                # todo : customers.betas = get_betas(data['measurements'], data['gender'])
-                # customer.skin = data['skin']
-                # customer.version = data['version']
+                # todo : betas = get_betas(data['measurements'], data['gender'])
                 
                 stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin']).execution_options(synchronize_session="evaluate")
 
-                customer = await session.execute(stmt)
+                await session.execute(stmt)
 
-                log.warning(f" -2---------------- customer updated {customer}")
                 await session.commit()
+
+            log.warning(f"customer updated {data}")
+            await sc.ack(msg)
         except Exception as e:
             raise Exception('---------> something went wrong in customer data updated listener', str(e))
-
-        log.warning(f"-3----------------  customer updated {data}")
-        await sc.ack(msg)
 
     # msg.data = {garmentId: string; adminId: string; garmentClass: GarmentClass; gender: Gender; small: number; medium: number; large: number; xlarge: number; xxlarge: number; price: number; frontPhoto: string; backPhoto: string; version: number;}
     async def garment_created_listener(msg):
         data = json.loads(msg.data)
-
-        texturemap = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garmentClass'], data['gender'])
-
-        garment = Garments(id= data['garmentId'], garmentClass= data['garmentClass'], textureMap= texturemap, version=data['version'])
+        log.warning(f"------------------- garment created {data}")
 
         try:
+            texturemap = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garmentClass'], data['gender'])
+
+            garment = Garments(id= data['garmentId'], garmentClass= data['garmentClass'], textureMap= texturemap, version=data['version'])
+
             async with async_session() as session:
                 session.add(garment)
                 await session.commit()
+
+            log.warning(f" garment created {data}")
+            await sc.ack(msg)
         except UniqueViolationError:
             log.warning(f"garment already exists")
         except Exception as e:
             raise Exception('---------> something went wrong in garment created listener', str(e))
 
-        log.warning(f" garment created {data}")
-        await sc.ack(msg)
-
     # msg.data = {garmentId: string; adminId: string; garmentClass: GarmentClass; gender: Gender; small: number; medium: number; large: number; xlarge: number; xxlarge: number; price: number; frontPhoto?: string; backPhoto?: string; version: number;}
     async def garment_updated_listener(msg):
+        log.warning(f"------------------- garment update")
         data = json.loads(msg.data)
 
         try:
             async with async_session() as session:
-                garment = await session.execute(select(Garments).where(Garments.id == data['garmentId'] and Garments.version == data['version'] - 1 )).one()
+                stmt = None
 
-                if not garment:
-                    raise Exception("garment not found")
-
-                garment['garmentClass'] = data['garmentClass']
-                garment['version'] = data['version']
                 if data['frontPhoto'] and data['backPhoto'] :
-                    garment['textureMap'] = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garment'], data['gender'])
+                    texturemap = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garment'], data['gender'])
+                    stmt = update(Garments).where(and_(Garments.id == data['garmentId'], Garments.version == data['version'] - 1)).values(garmentClass=data['garmentClass'], version=data['version'], texturemap=texturemap).execution_options(synchronize_session="evaluate")
+                else:
+                    stmt = update(Garments).where(and_(Garments.id == data['garmentId'], Garments.version == data['version'] - 1)).values(garmentClass=data['garmentClass'], version=data['version']).execution_options(synchronize_session="evaluate")
                 
+                log.warning(f"------------------- after update stmt")
+                await session.execute(stmt)
                 await session.commit()
+
+            log.warning(f" garment updated {data}")
+            await sc.ack(msg)
         except Exception as e:
             raise Exception('---------> something went wrong in garment udpated listener', str(e))
 
-        log.warning(f" garment updated {data}")
-        await sc.ack(msg)
 
     # msg.data = {garmentId: string; adminId: string; version: number;}
     async def garment_deleted_listener(msg):
+        log.warning(f"------------------- garment deleted")
         data = json.loads(msg.data)
 
         try:
@@ -137,20 +131,21 @@ async def run(loop):
                 await session.execute(delete(Garments).where(Garments.id == data['garmentId']))
 
                 await session.commit()
+
+            log.warning(f" garment deleted {data}")
+            await sc.ack(msg)
         except Exception as e:
             raise Exception('---------> something went wrong in garment udpated listener', str(e))
 
-        log.warning(f" garment deleted {data}")
-        await sc.ack(msg)
 
     queueGroupName = "bodygarment-service"
 
     # todo: process new events only
-    await sc.subscribe("customer:data:created", cb=customer_data_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
-    await sc.subscribe("customer:data:updated", cb=customer_data_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
-    await sc.subscribe("garment:created", cb=garment_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
-    await sc.subscribe("garment:updated", cb=garment_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
-    await sc.subscribe("garment:deleted", cb=garment_deleted_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName)
+    await sc.subscribe("customer:data:created", cb=customer_data_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
+    await sc.subscribe("customer:data:updated", cb=customer_data_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
+    await sc.subscribe("garment:created", cb=garment_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
+    await sc.subscribe("garment:updated", cb=garment_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
+    await sc.subscribe("garment:deleted", cb=garment_deleted_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
 
 def connect():
     check_environment_vars()
