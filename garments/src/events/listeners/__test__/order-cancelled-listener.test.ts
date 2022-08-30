@@ -18,6 +18,8 @@ const setup = async () => {
 
   const garment = Garment.build({
       adminId,
+      name: 'blah',
+      description: 'blah',
       garmentClass: GarmentClass.Shirt,
       gender: Gender.Male,
       price: 20,

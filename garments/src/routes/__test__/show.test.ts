@@ -10,6 +10,8 @@ it("get data of admin", async () => {
   await request(app)
       .post("/api/garments")
       .set("Cookie", cookie)
+      .field('name', "blah")
+      .field('description', "blah")
       .field('garmentClass', GarmentClass.Shirt)
       .field('gender', Gender.Male)
       .field('price', 20)

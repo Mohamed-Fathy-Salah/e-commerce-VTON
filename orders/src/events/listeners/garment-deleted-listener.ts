@@ -7,7 +7,10 @@ export class GarmentDeletedListener extends Listener<GarmentDeletedEvent> {
   subject: Subjects.GarmentDeleted = Subjects.GarmentDeleted;
   queueGroupName = queueGroupName;
   async onMessage(data: GarmentDeletedEvent["data"], msg: Message): Promise<void> {
-    const garment = await Garments.findById(data.garmentId);
+    const garment = await Garments.findByEvent({
+        id: data.garmentId,
+        version: data.version
+    });
 
     if(!garment) {
       throw new NotFoundError();

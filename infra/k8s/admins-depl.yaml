@@ -1,23 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: texturemap-deployment
+  name: admins-deployment
   labels:
-    app: texturemap
+    app: admins
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: texturemap
+      app: admins
   template:
     metadata:
       labels:
-        app: texturemap
+        app: admins
     spec:
       containers:
-        - name: texturemap
-          image: mofasa101/texturemap
-          imagePullPolicy: IfNotPresent
+        - name: admins
+          image: mofasa101/admins
           env:
             - name: NATS_URI
               value: "http://nats-srv:4222"
@@ -27,16 +26,23 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: "mongodb+srv://try:00000000@cluster0.iqbmt.mongodb.net/admins"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: texturemap-srv
+  name: admins-srv
 spec:
   selector:
-    app: texturemap
+    app: admins
   ports:
-    - name: texturemap
+    - name: admins
       protocol: TCP
       port: 3000
       targetPort: 3000

@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cart-mongo-depl
+  name: client-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cart-mongo
+      app: client
   template:
     metadata:
       labels:
-        app: cart-mongo
+        app: client
     spec:
       containers:
-        - name: cart-mongo
-          image: mongo
+        - name: client
+          image: mofasa101/vton-client:latest
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: cart-mongo-srv
+  name: client-srv
 spec:
   selector:
-    app: cart-mongo
+    app: client
   ports:
-    - name: db
+    - name: client
       protocol: TCP
-      port: 27017
-      targetPort: 27017
+      port: 3000
+      targetPort: 3000
