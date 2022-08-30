@@ -1,0 +1,13 @@
+name: tests-customers
+
+on:
+  pull_request:
+    paths:
+      - "customers/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd customers && npm i && npm run test:ci

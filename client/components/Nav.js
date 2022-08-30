@@ -2,18 +2,18 @@ import Link from 'next/link';
 
 const Nav = () => {
   return (
-    <nav className='flex justify-between border-b-2 py-6 px-10 mb-10'>
+    <nav className='mb-10 flex justify-between border-b-2 py-6 px-10'>
       <Link href='/'>
-        <h2 className='text-3xl font-black cursor-pointer text-blue-700'>
+        <h2 className='cursor-pointer text-3xl font-black text-blue-700'>
           SmartFasion
         </h2>
       </Link>
       <div>
         <Link href='/login'>
-          <button className='mx-3 px-4 py-1 hidden sm:inline'>Login</button>
+          <button className='mx-3 hidden px-4 py-1 sm:inline'>Login</button>
         </Link>
         <Link href='/register'>
-          <button className='mx-3 px-4 py-1 rounded-full bg-blue-700 text-white shadow-sm'>
+          <button className='mx-3 rounded-full bg-blue-700 px-4 py-1 text-white shadow-sm'>
             Register
           </button>
         </Link>
