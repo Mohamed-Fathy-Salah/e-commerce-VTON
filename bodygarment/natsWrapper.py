@@ -105,13 +105,12 @@ async def run(loop):
             async with async_session() as session:
                 stmt = None
 
-                if data['frontPhoto'] and data['backPhoto'] :
+                if 'frontPhoto' in data and 'backPhoto' in data:
                     texturemap = generate_texturemap(data['frontPhoto'], data['backPhoto'], data['garment'], data['gender'])
                     stmt = update(Garments).where(and_(Garments.id == data['garmentId'], Garments.version == data['version'] - 1)).values(garmentClass=data['garmentClass'], version=data['version'], texturemap=texturemap).execution_options(synchronize_session="evaluate")
                 else:
                     stmt = update(Garments).where(and_(Garments.id == data['garmentId'], Garments.version == data['version'] - 1)).values(garmentClass=data['garmentClass'], version=data['version']).execution_options(synchronize_session="evaluate")
                 
-                log.warning(f"------------------- after update stmt")
                 await session.execute(stmt)
                 await session.commit()
 
@@ -128,7 +127,7 @@ async def run(loop):
 
         try:
             async with async_session() as session:
-                await session.execute(delete(Garments).where(Garments.id == data['garmentId']))
+                await session.execute(delete(Garments).where(and_(Garments.id == data['garmentId'], Garments.version == data['version'])))
 
                 await session.commit()
 
@@ -141,11 +140,11 @@ async def run(loop):
     queueGroupName = "bodygarment-service"
 
     # todo: process new events only
-    await sc.subscribe("customer:data:created", cb=customer_data_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
-    await sc.subscribe("customer:data:updated", cb=customer_data_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
-    await sc.subscribe("garment:created", cb=garment_created_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
-    await sc.subscribe("garment:updated", cb=garment_updated_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
-    await sc.subscribe("garment:deleted", cb=garment_deleted_listener, deliver_all_available=True, manual_acks=True, durable_name= queueGroupName, ack_wait=60)
+    await sc.subscribe("customer:data:created", cb=customer_data_created_listener, manual_acks=True, durable_name= queueGroupName, ack_wait=10)
+    await sc.subscribe("customer:data:updated", cb=customer_data_updated_listener, manual_acks=True, durable_name= queueGroupName, ack_wait=10)
+    await sc.subscribe("garment:created", cb=garment_created_listener, manual_acks=True, durable_name= queueGroupName, ack_wait=10)
+    await sc.subscribe("garment:updated", cb=garment_updated_listener, manual_acks=True, durable_name= queueGroupName, ack_wait=10)
+    await sc.subscribe("garment:deleted", cb=garment_deleted_listener, manual_acks=True, durable_name= queueGroupName, ack_wait=10)
 
 def connect():
     check_environment_vars()

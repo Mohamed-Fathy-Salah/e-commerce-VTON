@@ -16,7 +16,7 @@ router.delete(
     const adminId = req.currentUser!.id;
     const garmentId = req.params.garmentId;
 
-    const garment = await Garment.findOne({ adminId, id: garmentId });
+    const garment = await Garment.findOne({ adminId, _id: garmentId });
 
     if (!garment) {
       throw new NotFoundError();
@@ -25,7 +25,7 @@ router.delete(
     await garment.delete();
 
     new GarmentDeletedPublisher(natsWrapper.client).publish({
-        garmentId: garment.id,
+        garmentId,
         adminId: garment.adminId,
         version: garment.version
     });
