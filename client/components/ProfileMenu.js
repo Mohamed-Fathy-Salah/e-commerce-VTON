@@ -13,24 +13,21 @@ import {
 } from '@heroicons/react/24/solid';
 
 const ProfileMenu = ({ user }) => {
+  console.log(user.id);
   const router = useRouter();
-  // const endPoint =
-  //   user.type === 'admin'
-  //     ? `/api/admindata/${user.id}`
-  //     : `/api/customerdata/${user.id}`;
+  const endPoint =
+    user.type === 'admin'
+      ? `/api/admindata/${user.id}`
+      : `/api/customerdata/${user.id}`;
 
-  // const { data, error } = useSWR(endPoint, (url) =>
-  //   axios
-  //     .get(
-  //       'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local' + url
-  //     )
-  //     .then((res) => res.data)
-  // );
+  const { data, error } = useSWR(endPoint, (url) =>
+    axios.get(url).then((res) => res.data)
+  );
 
-  // console.log(data, error);
+  console.log(data, error);
 
-  // if (error) return <div>failed to load</div>;
-  // if (!data) return <div>loading...</div>;
+  if (error) return <div>failed to load</div>;
+  if (!data) return <div>loading...</div>;
 
   const handleLogout = async () => {
     const res = await axios.post('/api/users/signout');

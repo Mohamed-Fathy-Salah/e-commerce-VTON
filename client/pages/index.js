@@ -34,7 +34,7 @@ export async function getServerSideProps(ctx) {
     userInfo = await client.get('/api/customerdata/' + user.id);
   }
   // if (user?.type === 'admin') {
-  //   userInfo = await client.get('/api/admindata/' + user.id);
+  //   userInfo = await client.get('/api/admindata/orders');
   // }
 
   console.log(userInfo?.data);
