@@ -33,6 +33,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: mofasa101/admins
+      context: admins
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: mofasa101/garments
       context: garments
       docker:
