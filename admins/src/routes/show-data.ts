@@ -5,7 +5,7 @@ import { Admin } from '../models/admin';
 const router = express.Router()
 
 router.get(
-    '/api/admindata/:admindata',
+    '/api/admindata/:adminId',
     async (req:Request, res: Response) => {
         const adminId = req.params.adminId;
 
