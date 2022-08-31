@@ -69,7 +69,8 @@ const orderSchema = new mongoose.Schema(
       xxlarge: Number,
     },
     status: {
-      type: OrderStatus,
+      type: String,
+      enum: Object.values(OrderStatus),
       required: true,
     },
   },
