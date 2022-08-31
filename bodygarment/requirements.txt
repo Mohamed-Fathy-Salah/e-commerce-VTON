@@ -1,0 +1,10 @@
+pyjwt
+fastapi==0.68.1
+uvicorn==0.15.0
+asyncio-nats-streaming
+asyncio-nats-client
+sqlmodel
+protobuf==3.20.0
+websockets
+asyncpg==0.24.0
+sqlalchemy[asyncio]

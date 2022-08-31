@@ -59,6 +59,13 @@ spec:
                 name: payments-srv
                 port:
                   number: 3000
+          - path: /api/bodygarment/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: bodygarment-srv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:

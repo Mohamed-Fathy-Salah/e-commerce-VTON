@@ -57,7 +57,7 @@ router.put(
     await customer.save();
 
     new CustomerDataUpdatedPublisher(natsWrapper.client).publish({
-        customerId: customer.id,
+        customerId: customer.customerId,
         name: customer.name,
         gender: customer.gender,
         age: customer.age,
