@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admins-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admins-mongo
+  template:
+    metadata:
+      labels:
+        app: admins-mongo
+    spec:
+      containers:
+        - name: admins-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admins-mongo-srv
+spec:
+  selector:
+    app: admins-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+<<<<<<<< HEAD:server/infra/k8s/auth-depl.yaml
+  name: auth-deployment
+  labels:
+    app: auth
+========
+  name: admins-deployment
+  labels:
+    app: admins
+>>>>>>>> dev:infra/k8s/admins-depl.yaml
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+<<<<<<<< HEAD:server/infra/k8s/auth-depl.yaml
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: mofasa101/auth
+========
+      app: admins
+  template:
+    metadata:
+      labels:
+        app: admins
+    spec:
+      containers:
+        - name: admins
+          image: mofasa101/admins
+>>>>>>>> dev:infra/k8s/admins-depl.yaml
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: "mongodb://auth-mongo-srv:27017/auth"
+            - name: NATS_URI
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: vton
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: "mongodb+srv://try:00000000@cluster0.iqbmt.mongodb.net/admins"
+---
+apiVersion: v1
+kind: Service
+metadata:
+<<<<<<<< HEAD:server/infra/k8s/auth-depl.yaml
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+    - name: auth
+========
+  name: admins-srv
+spec:
+  selector:
+    app: admins
+  ports:
+    - name: admins
+>>>>>>>> dev:infra/k8s/admins-depl.yaml
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

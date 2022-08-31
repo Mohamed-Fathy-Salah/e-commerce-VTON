@@ -7,8 +7,6 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 const Home = ({ user }) => {
-  console.log(user);
-
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -30,7 +28,22 @@ export async function getServerSideProps(ctx) {
   const client = buildClient(ctx);
   const { data } = await client.get('/api/users/currentuser');
   const user = data.currentUser;
-  console.log(user);
+  let userInfo;
+
+  if (user?.type === 'customer') {
+    userInfo = await client.get('/api/customerdata/' + user.id);
+  }
+  // if (user?.type === 'admin') {
+  //   userInfo = await client.get('/api/admindata/' + user.id);
+  // }
+
+  console.log(userInfo?.data);
+  // let userInfo;
+  // if (user.type === 'admin') {
+  //   userInfo = await client.get(`/api/admindata/${user.id}`);
+  // } else {
+  //   userInfo = await client.get(`/api/customerdata/${user.id}`);
+  // }
 
   // if (!user) {
   //   return {
