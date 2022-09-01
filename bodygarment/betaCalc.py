@@ -1,5 +1,3 @@
-import torch
-
 def convertWeight(w, gender):
     w = w*100
     female_a = -2.35648430867
