@@ -52,9 +52,9 @@ const AddGarForm = () => {
         handleFormSubmit(values, FormikHelpers)
       }
     >
-      <Form className='flex flex-col gap-4 w-10/12 lg:w-6/12 mx-auto bg-white p-6 sm:p-10 rounded-lg shadow-md'>
+      <Form className='mx-auto flex w-10/12 flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-10 lg:w-6/12'>
         <div>
-          <label htmlFor='name' className='block mb-2 p-1'>
+          <label htmlFor='name' className='mb-2 block p-1'>
             Garment Name:
           </label>
           <Field
@@ -64,11 +64,11 @@ const AddGarForm = () => {
             placeholder='e.g. kint color block t-shirt'
           />
           <ErrorMessage name='name'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='desc' className='block mb-2 p-1'>
+          <label htmlFor='desc' className='mb-2 block p-1'>
             Garment Description:
           </label>
           <Field
@@ -80,11 +80,11 @@ const AddGarForm = () => {
             placeholder='e.g. T-shirt made of spun cotton fabric. Featuring a round neckline, short sleeves and ribbed trims.'
           ></Field>
           <ErrorMessage name='email'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='class' className='block mb-2 p-1'>
+          <label htmlFor='class' className='mb-2 block p-1'>
             Garment Class:
           </label>
           <Field
@@ -101,11 +101,11 @@ const AddGarForm = () => {
             <option value='skirt'>Skirt</option>
           </Field>
           <ErrorMessage name='age'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='gender' className='block mb-2 p-1'>
+          <label htmlFor='gender' className='mb-2 block p-1'>
             Gender:
           </label>
           <Field as='select' id='gender' name='gender' className=''>
@@ -118,7 +118,7 @@ const AddGarForm = () => {
           </Field>
         </div>
         <div>
-          <label htmlFor='price' className='block mb-2 p-1'>
+          <label htmlFor='price' className='mb-2 block p-1'>
             Garment Price:
           </label>
           <Field
@@ -129,7 +129,7 @@ const AddGarForm = () => {
           />
         </div>
         <div>
-          <label htmlFor='quantity' className='block mb-2 p-1'>
+          <label htmlFor='quantity' className='mb-2 block p-1'>
             Avilable Quantity:
           </label>
           <Field
@@ -140,27 +140,33 @@ const AddGarForm = () => {
           />
         </div>
         <div>
-          <label htmlFor='front-img' className='block mb-2 p-1'>
+          <label htmlFor='front-img' className=' block p-1'>
             Front Image:
           </label>
           <Field type='file' id='front-img' name='front-img' />
         </div>
         <div>
-          <label htmlFor='back-img' className='block mb-2 p-1'>
+          <label htmlFor='back-img' className=' block p-1'>
             Back Image:
           </label>
           <Field type='file' id='back-img' name='back-img' />
         </div>
         <div>
-          <label htmlFor='prev-imgs' className='block mb-2 p-1'>
+          <label htmlFor='prev-imgs' className='block p-1'>
             Preview Images:
           </label>
-          <Field type='file' id='prev-imgs' name='prev-imgs' />
+          <Field
+            className='py-0'
+            type='file'
+            multiple
+            id='prev-imgs'
+            name='prev-imgs'
+          />
         </div>
-        <div className=' text-red-600 p-1'>{genError}</div>
+        <div className=' p-1 text-red-600'>{genError}</div>
         <button
           type='submit'
-          className='bg-blue-700 text-white rounded-md py-3 text-xl shadow-sm mt-3 hover:bg-blue-800 transition-colors'
+          className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800'
         >
           Add Garment
         </button>
