@@ -3,8 +3,6 @@ import request from "supertest";
 import { Gender, UserType } from "@mfsvton/common";
 import mongoose from "mongoose";
 
-// todo: fix tests
-
 it("error if user is not in DB ", async () => {
     const customerId = new mongoose.Types.ObjectId().toHexString();
   await request(app)
