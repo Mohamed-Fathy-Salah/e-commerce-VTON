@@ -66,11 +66,14 @@ async def run(loop):
                 stmt = None
 
                 if 'measurements' in data:
-                    betas = get_betas(data['measurements'], data['gender'])
+                    log.warning(f"-------- inside if {data['measurements']}")
+                    betas = json.dumps(get_betas(data['measurements'], data['gender']))
                     stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin'], betas=betas).execution_options(synchronize_session="evaluate")
                 else:
+                    log.warning(f"-------- inside else")
                     stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin']).execution_options(synchronize_session="evaluate")
 
+                log.warning(f"-------- outside if else {stmt}")
                 await session.execute(stmt)
 
                 await session.commit()
