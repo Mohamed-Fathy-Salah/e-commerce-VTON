@@ -41,14 +41,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    # - image: mofasa101/garments
-    #   context: garments
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: 'src/**/*.ts'
-    #         dest: .
+    - image: mofasa101/garments
+      context: garments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     # - image: mofasa101/cart
     #   context: cart
     #   docker:
