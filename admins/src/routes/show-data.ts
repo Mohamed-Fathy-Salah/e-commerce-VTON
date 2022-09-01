@@ -4,7 +4,7 @@ import { Admin } from "../models/admin";
 
 const router = express.Router();
 
-router.get("/api/admindata/:adminId", async (req: Request, res: Response) => {
+router.get("/api/admindata/data/:adminId", async (req: Request, res: Response) => {
   const adminId = req.params.adminId;
 
   const admin = await Admin.findOne({ adminId });

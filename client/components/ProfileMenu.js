@@ -17,7 +17,7 @@ const ProfileMenu = ({ user }) => {
   const router = useRouter();
   const endPoint =
     user.type === 'admin'
-      ? `/api/admindata/${user.id}`
+      ? `/api/admindata/data/${user.id}`
       : `/api/customerdata/${user.id}`;
 
   const { data, error } = useSWR(endPoint, (url) =>
@@ -42,7 +42,7 @@ const ProfileMenu = ({ user }) => {
           <Menu.Button className='focut:ring-offset-gray-100 inline-flex w-full items-center justify-center rounded-md border-gray-300 bg-gray-200 p-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 sm:border sm:bg-white sm:p-2'>
             {/* <Image /> */}
             <UserIcon className='h-6 w-6 rounded-md text-gray-500 sm:mr-2 sm:h-8 sm:w-8 sm:bg-gray-200 sm:p-2' />
-            {/* <p className='hidden sm:inline'>Hello {data.name}</p> */}
+            <p className=' hidden font-medium sm:inline'>Hello {data.name}</p>
             <ChevronDownIcon
               className='mr-1 ml-2 hidden h-4 w-4 sm:inline'
               aria-hidden='true'

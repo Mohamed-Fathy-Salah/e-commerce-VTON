@@ -24,10 +24,10 @@ app.use(
 
 app.use(currentUser);
 
-app.use(indexOrderRouter);
-app.use(showDataRouter);
 app.use(ShowOrdersRouter);
 app.use(updateRouter);
+app.use(indexOrderRouter);
+app.use(showDataRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();

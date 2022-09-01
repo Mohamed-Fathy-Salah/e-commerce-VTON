@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Logo from './Logo';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 
 import ProfileMenu from './ProfileMenu';
