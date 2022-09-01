@@ -1,4 +1,4 @@
-import { NotFoundError, requireCustomerAuth, UserType } from "@mfsvton/common";
+import { NotFoundError, UserType } from "@mfsvton/common";
 import express, { Request, Response } from "express";
 import { Customer } from "../models/customer";
 
@@ -7,9 +7,9 @@ const router = express.Router();
 router.get(
   "/api/customerdata/:customerId",
   async (req: Request, res: Response) => {
-    const userId = req.params.customerId;
+    const customerId = req.params.customerId;
 
-    const customer = await Customer.findOne({ userId });
+    const customer = await Customer.findOne({ customerId });
 
     if (!customer) {
       throw new NotFoundError();
@@ -17,7 +17,7 @@ router.get(
 
     if (
       req.currentUser &&
-      req.currentUser.id === userId &&
+      req.currentUser.id === customerId &&
       req.currentUser.type === UserType.Customer
     ) {
       return res.status(200).send(customer);

@@ -17,6 +17,7 @@ spec:
       containers:
         - name: customers
           image: mofasa101/customers
+          imagePullPolicy: IfNotPresent
           env:
             - name: NATS_URI
               value: "http://nats-srv:4222"
@@ -32,7 +33,7 @@ spec:
                   name: jwt-secret
                   key: JWT_KEY
             - name: MONGO_URI
-              value: "mongodb://customers-mongo-srv:27017/customers"
+              value: "mongodb+srv://try:00000000@cluster0.iqbmt.mongodb.net/customers"
 ---
 apiVersion: v1
 kind: Service
