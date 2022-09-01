@@ -10,7 +10,7 @@ const CartTable = dynamic(() => import('../../components/CartTable'), {
 const CartPage = () => {
   return (
     <Layout home>
-      <h1 className='mb-12 text-center text-3xl font-semibold text-gray-700'>
+      <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
         Your Cart
       </h1>
       <div className='grid grid-cols-4 gap-4 px-4 2xl:px-0'>
