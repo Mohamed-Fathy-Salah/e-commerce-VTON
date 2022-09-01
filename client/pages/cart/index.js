@@ -7,9 +7,9 @@ const CartTable = dynamic(() => import('../../components/CartTable'), {
   ssr: false,
 });
 
-const CartPage = () => {
+const CartPage = ({ user }) => {
   return (
-    <Layout home>
+    <Layout home user={user}>
       <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
         Your Cart
       </h1>
