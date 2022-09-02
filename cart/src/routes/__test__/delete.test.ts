@@ -35,9 +35,12 @@ it("deleted successfully", async () => {
     .set("Cookie", cookie)
     .send({
       garmentId,
-      quantity: 1,
       price: 10,
-      size: GarmentSize.Small,
+      small: 1,
+      medium: 1,
+      large: 1,
+      xlarge: 1,
+      xxlarge: 1,
     })
     .expect(201);
 

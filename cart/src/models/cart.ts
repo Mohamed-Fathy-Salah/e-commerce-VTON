@@ -19,9 +19,12 @@ interface CartDoc extends mongoose.Document {
     customerId: string;
     garments: {
         garmentId: string,
-        quantity: number,
         price: number,
-        size: GarmentSize
+        small: number,
+        medium: number,
+        large: number,
+        xlarge: number,
+        xxlarge: number
     }[]
 }
 
@@ -33,19 +36,13 @@ const cartSchema = new mongoose.Schema(
       unique: true,
     },
     garments: [{
-        garmentId: {
-            type: String,
-        },
-        quantity: {
-            type: Number
-        },
-        price: {
-            type: Number
-        },
-        size: {
-            type: String,
-            enum: Object.values(GarmentSize)
-        }
+        garmentId: String,
+        price: Number,
+        small: Number,
+        medium: Number,
+        large: Number,
+        xlarge: Number,
+        xxlarge: Number,
     }, {
         _id: false 
     }]

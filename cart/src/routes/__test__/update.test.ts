@@ -20,9 +20,12 @@ it("cart not found error", async () => {
     .set("Cookie", global.signin(UserType.Customer))
     .send({
       garmentId: new mongoose.Types.ObjectId().toHexString(),
-      quantity: 1,
       price: 10,
-      size: GarmentSize.Small,
+      small: 1,
+      medium: 1,
+      large: 1,
+      xlarge: 1,
+      xxlarge: 1,
     })
     .expect(404);
 });
@@ -38,13 +41,13 @@ it("validate body", async () => {
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: -1, price: 10, size: GarmentSize.Medium })
+    .send({ garmentId, price: 10, small: 1, large: 1, xlarge: 1, xxlarge: 1 })
     .expect(400);
 
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: 1, price: 0, size: GarmentSize.Large })
+    .send({ garmentId, price: 0, small: 1, medium: 1, large: 1, xxlarge: 1 })
     .expect(400);
 
   await request(app)
@@ -65,19 +68,43 @@ it("updated successfully", async () => {
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: 1, price: 10, size: GarmentSize.Small })
+    .send({
+      garmentId,
+      price: 10,
+      small: 1,
+      medium: 1,
+      large: 1,
+      xlarge: 1,
+      xxlarge: 1,
+    })
     .expect(201);
 
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: 1, price: 10, size: GarmentSize.Small })
+    .send({
+      garmentId,
+      price: 10,
+      small: 2,
+      medium: 1,
+      large: 3,
+      xlarge: 0,
+      xxlarge: 1,
+    })
     .expect(201);
 
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: 2, price: 13, size: GarmentSize.Small })
+    .send({
+      garmentId,
+      price: 10,
+      small: 0,
+      medium: 0,
+      large: 3,
+      xlarge: 0,
+      xxlarge: 0,
+    })
     .expect(201);
 
   await request(app)
@@ -85,9 +112,12 @@ it("updated successfully", async () => {
     .set("Cookie", cookie)
     .send({
       garmentId: new mongoose.Types.ObjectId().toHexString(),
-      quantity: 3,
       price: 20,
-      size: GarmentSize.Medium,
+      small: 1,
+      medium: 0,
+      large: 1,
+      xlarge: 0,
+      xxlarge: 0,
     })
     .expect(201);
 
@@ -112,14 +142,43 @@ it("delete when quantity = 0", async () => {
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: 1, price: 10, size: GarmentSize.Small })
+    .send({
+      garmentId,
+      price: 10,
+      small: 1,
+      medium: 1,
+      large: 1,
+      xlarge: 1,
+      xxlarge: 1,
+    })
     .expect(201);
-
 
   await request(app)
     .put("/api/cart")
     .set("Cookie", cookie)
-    .send({ garmentId, quantity: 0, price: 13, size: GarmentSize.Small })
+    .send({
+      garmentId,
+      price: 10,
+      small: 0,
+      medium: 0,
+      large: 0,
+      xlarge: 0,
+      xxlarge: 0,
+    })
+    .expect(201);
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({
+      garmentId: new mongoose.Types.ObjectId().toHexString(),
+      price: 20,
+      small: 1,
+      medium: 0,
+      large: 1,
+      xlarge: 0,
+      xxlarge: 0,
+    })
     .expect(201);
 
   const res = await request(app)
@@ -129,5 +188,5 @@ it("delete when quantity = 0", async () => {
     .expect(200);
 
   expect(res.body.customerId).toEqual(customerId);
-  expect(res.body.garments.length).toEqual(0);
+  expect(res.body.garments.length).toEqual(1);
 });
