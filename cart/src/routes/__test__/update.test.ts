@@ -100,3 +100,34 @@ it("updated successfully", async () => {
   expect(res.body.customerId).toEqual(customerId);
   expect(res.body.garments.length).toEqual(2);
 });
+
+it("delete when quantity = 0", async () => {
+  const customerId = new mongoose.Types.ObjectId().toHexString();
+  const cookie = global.signin(UserType.Customer, customerId);
+  const garmentId = new mongoose.Types.ObjectId().toHexString();
+
+  const cart = Cart.build({ customerId });
+  await cart.save();
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId, quantity: 1, price: 10, size: GarmentSize.Small })
+    .expect(201);
+
+
+  await request(app)
+    .put("/api/cart")
+    .set("Cookie", cookie)
+    .send({ garmentId, quantity: 0, price: 13, size: GarmentSize.Small })
+    .expect(201);
+
+  const res = await request(app)
+    .get("/api/cart")
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
+
+  expect(res.body.customerId).toEqual(customerId);
+  expect(res.body.garments.length).toEqual(0);
+});

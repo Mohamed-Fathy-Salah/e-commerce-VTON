@@ -8,6 +8,7 @@ import { newCartRouter } from "./routes/new";
 import { updateCartRouter } from "./routes/update";
 import { showCartRouter } from "./routes/show";
 import { deleteCartRouter } from "./routes/delete";
+import { deleteAllCartRouter } from "./routes/delete-all";
 
 const app = express();
 app.set("trust proxy", true);
@@ -25,6 +26,7 @@ app.use(currentUser);
 app.use(newCartRouter)
 app.use(showCartRouter)
 app.use(deleteCartRouter)
+app.use(deleteAllCartRouter)
 app.use(updateCartRouter)
 
 app.all("*", async (req, res) => {
