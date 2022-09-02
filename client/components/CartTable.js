@@ -1,6 +1,6 @@
 import CartItem from './CartItem';
 
-const CartTable = () => {
+const CartTable = ({ garments }) => {
   return (
     <table className='w-full'>
       <tbody>
@@ -11,9 +11,9 @@ const CartTable = () => {
           <th className='pr-4 text-gray-500'>Total</th>
           <th></th>
         </tr>
-        <CartItem />
-        <CartItem />
-        <CartItem />
+        {garments.map((garment) => (
+          <CartItem key={garment._id} garment={garment} />
+        ))}
       </tbody>
     </table>
   );
