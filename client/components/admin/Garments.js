@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 
 const Garments = ({ user }) => {
-  const { data, error } = useSWR(`/api/garments/${user?.id}`, (url) =>
+  const { data, error } = useSWR(`/api/garments/admin/${user?.id}`, (url) =>
     axios.get(url).then((res) => res.data)
   );
 

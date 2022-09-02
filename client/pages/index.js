@@ -3,9 +3,8 @@ import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
 import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
-import axios from 'axios';
 
-const Home = ({ user }) => {
+const Home = ({ user, garments }) => {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -16,12 +15,31 @@ const Home = ({ user }) => {
       <Layout home user={user}>
         <main className='w-full items-center justify-center px-10 '>
           <SearchBar />
-          <GarmentList />
+          <GarmentList garments={garments} />
         </main>
       </Layout>
     </div>
   );
 };
+
+export async function getServerSideProps(ctx) {
+  const client = buildClient(ctx);
+  const { data } = await client.get('/api/garments');
+
+  if (data) {
+    return {
+      props: {
+        garments: data,
+      },
+    };
+  }
+
+  return {
+    props: {
+      garments: null,
+    },
+  };
+}
 
 // export async function getServerSideProps(ctx) {
 //   const client = buildClient(ctx);
