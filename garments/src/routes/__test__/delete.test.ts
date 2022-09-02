@@ -52,7 +52,7 @@ it("create and delete garment successfully", async () => {
       .expect(201);
 
   const { body: body1 } = await request(app)
-    .get("/api/garments/" + adminId)
+    .get("/api/garments/admin/" + adminId)
     .expect(200);
   expect(body1.length).toEqual(1);
 
@@ -63,7 +63,7 @@ it("create and delete garment successfully", async () => {
     .expect(200);
 
   const { body: body2 } = await request(app)
-    .get("/api/garments/" + adminId)
+    .get("/api/garments/admin/" + adminId)
     .expect(200);
   expect(body2.length).toEqual(0);
 });
