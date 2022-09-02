@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Head from 'next/head';
 import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
@@ -5,6 +6,14 @@ import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
 
 const Home = ({ user, garments }) => {
+  const [search, setSearch] = useState('');
+  const filteredGarment = garments.filter((gar) =>
+    (gar.name || gar.description || gar.garmentClass || gar.gender).includes(
+      search
+    )
+  );
+
+  console.log(search);
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -14,8 +23,8 @@ const Home = ({ user, garments }) => {
 
       <Layout home user={user}>
         <main className='w-full items-center justify-center px-10 '>
-          <SearchBar />
-          <GarmentList garments={garments} />
+          <SearchBar search={search} setSearch={setSearch} />
+          <GarmentList garments={search ? filteredGarment : garments} />
         </main>
       </Layout>
     </div>
