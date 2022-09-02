@@ -1,5 +1,4 @@
 import {
-    GarmentSize,
   NotFoundError,
   requireCustomerAuth,
   validateRequest,
@@ -14,15 +13,13 @@ router.put(
   "/api/cart",
   requireCustomerAuth,
   [
-    body("garmentId")
-    .not()
-    .isEmpty(),
-    body("price")
-    .isFloat({ gt: 0}),
-    body("quantity")
-    .isFloat({ gt: -1}),
-    body("size")
-    .custom((value) => Object.values(GarmentSize).includes(value))
+    body("garmentId").notEmpty(),
+    body("price").isFloat({ gt: 0 }),
+    body("small").isFloat({ gt: -1 }),
+    body("medium").isFloat({ gt: -1 }),
+    body("large").isFloat({ gt: -1 }),
+    body("xlarge").isFloat({ gt: -1 }),
+    body("xxlarge").isFloat({ gt: -1 }),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -34,16 +31,16 @@ router.put(
       throw new NotFoundError();
     }
 
-    const {garmentId, price, quantity, size} = req.body;
+    const { garmentId, price, small, medium, large, xlarge, xxlarge} = req.body;
 
-    const idx = cart.garments.findIndex(i => i.garmentId === garmentId)
-    
+    const idx = cart.garments.findIndex((i) => i.garmentId === garmentId);
+
     if (idx === -1) {
-        cart.garments.push(req.body)
-    } else if(quantity === 0) {
-        cart.garments.splice(idx, 1);
+      cart.garments.push(req.body);
+    } else if (small + medium + large + xlarge + xxlarge === 0) {
+      cart.garments.splice(idx, 1);
     } else {
-        cart.garments[idx] = {garmentId, price, quantity, size} 
+      cart.garments[idx] = { garmentId, price, small, medium, large, xlarge, xxlarge};
     }
     await cart.save();
 
