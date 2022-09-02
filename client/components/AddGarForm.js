@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
 const AddGarForm = () => {
+  const router = useRouter();
   const [genError, setGenError] = useState('');
   const [files, setFiles] = useState({
     front: '',
@@ -11,46 +14,50 @@ const AddGarForm = () => {
   });
 
   console.log(files);
-  const handleLogin = async (values, FormikHelpers) => {
-    console.log(values);
-    // const data = {
-    //   name: values.name,
-    //   description: values.description,
-    //   garmentClass: values.class,
-    //   gender: values.gender,
-    //   price: Number(values.price),
-    //   small: Number(values.smallQnt),
-    //   medium: Number(values.mediumQnt),
-    //   large: Number(values.largeQnt),
-    //   xlarge: Number(values.xlQnt),
-    //   xxlarge: Number(values.xxlQnt),
-    //   frontPhoto: values.frontPhoto,
-    //   backPhoto: values.backPhoto,
-    //   photos: values.photos,
-    // };
 
-    // try {
-    //   const res = await axios.post('/api/garments', data, {
-    //     'Content-Type': 'multipart/form-data',
-    //   });
-    //   console.log(res);
-    //   // FormikHelpers.resetForm();
-    //   setGenError('');
-    //   router.push('/');
-    // } catch (err) {
-    //   {
-    //     setGenError(
-    //       <div className=''>
-    //         <ul className='my-0'>
-    //           {err.response.data.errors.map((err) => (
-    //             <li key={err.message}>{err.message}</li>
-    //           ))}
-    //         </ul>
-    //       </div>
-    //     );
-    //     console.log(err);
-    //   }
-    // }
+  const handleFormSubmit = async (values, FormikHelpers) => {
+    const data = {
+      name: values.name,
+      description: values.description,
+      garmentClass: values.class,
+      gender: values.gender,
+      price: Number(values.price),
+      small: Number(values.smallQnt),
+      medium: Number(values.mediumQnt),
+      large: Number(values.largeQnt),
+      xlarge: Number(values.xlQnt),
+      xxlarge: Number(values.xxlQnt),
+      frontPhoto: files.front,
+      backPhoto: files.back,
+      photos: files.images,
+    };
+    console.log(data);
+
+    try {
+      const res = await axios.post('/api/garments', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+        },
+      });
+      console.log(res);
+      FormikHelpers.resetForm();
+      setGenError('');
+      router.push('/admin/dashboard');
+    } catch (err) {
+      {
+        setGenError(
+          <div className=''>
+            <ul className='my-0'>
+              {err.response?.data.errors.map((err) => (
+                <li key={err.message}>{err.message}</li>
+              ))}
+            </ul>
+          </div>
+        );
+        console.log(err);
+      }
+    }
   };
 
   return (
@@ -66,9 +73,6 @@ const AddGarForm = () => {
         largeQnt: '',
         xlQnt: '',
         xxlQnt: '',
-        frontPhoto: '',
-        backPhoto: '',
-        photos: [],
       }}
       validationSchema={Yup.object({
         name: Yup.string()
@@ -99,14 +103,14 @@ const AddGarForm = () => {
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='desc' className='mb-2 block p-1'>
+          <label htmlFor='description' className='mb-2 block p-1'>
             Garment Description:
           </label>
           <Field
             as='textarea'
             className=' h-32 resize-none'
-            id='desc'
-            name='desc'
+            id='description'
+            name='description'
             type='text'
             placeholder='e.g. T-shirt made of spun cotton fabric. Featuring a round neckline, short sleeves and ribbed trims.'
           ></Field>
@@ -126,7 +130,7 @@ const AddGarForm = () => {
             placeholder='Enter your age ...'
           >
             <option value=''>select class</option>
-            <option value='t-shirt'>T-Shirt</option>
+            <option value='shirt'>Shirt</option>
             <option value='pants'>Pants</option>
             <option value='short'>Short</option>
             <option value='skirt'>Skirt</option>
@@ -194,8 +198,7 @@ const AddGarForm = () => {
             type='file'
             id='front-img'
             name='front-img'
-            value={files.front}
-            onChange={(e) => setFiles({ ...files, front: e.target.value })}
+            onChange={(e) => setFiles({ ...files, front: e.target.files[0] })}
           />
         </div>
         <div>
@@ -206,8 +209,7 @@ const AddGarForm = () => {
             type='file'
             id='back-img'
             name='back-img'
-            value={files.back}
-            onChange={(e) => setFiles({ ...files, back: e.target.value })}
+            onChange={(e) => setFiles({ ...files, back: e.target.files[0] })}
           />
         </div>
         <div>
@@ -220,8 +222,13 @@ const AddGarForm = () => {
             multiple
             id='prev-imgs'
             name='prev-imgs'
-            value={files.images}
-            onChange={(e) => setFiles({ ...files, images: [e.target.files] })}
+            onChange={(e) => {
+              let filesList = [];
+              Object.values(e.target.files).map((file) => {
+                filesList.push(file.name);
+              });
+              setFiles({ ...files, images: filesList });
+            }}
           />
         </div>
         <div className=' p-1 text-red-600'>{genError}</div>
