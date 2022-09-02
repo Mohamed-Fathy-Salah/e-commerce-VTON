@@ -4,10 +4,10 @@ import AddGarForm from '../../components/AddGarForm';
 import Layout from '../../components/Layout';
 
 const AddGarment = ({ user }) => {
-  if (user === 'unauthorized') {
+  if (!user || user.type !== 'admin') {
     return (
       <div className=' flex h-screen items-center justify-center px-40'>
-        <h3 className='rounded-md bg-gray-200 py-6 px-8 text-center text-4xl font-bold text-red-700'>
+        <h3 className='rounded-md bg-gray-200 py-6 px-8 text-center text-4xl font-medium text-red-600'>
           You are not authorized to access this page
           <Link href='/'>
             <a className='mt-4 block text-lg text-gray-700 underline'>

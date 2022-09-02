@@ -42,8 +42,8 @@ const dashboard = ({ user }) => {
         </Link>
       </nav>
       <section>
-        {activeTab === 'orders' && <Orders />}
-        {activeTab === 'garments' && <Garments />}
+        {activeTab === 'orders' && <Orders user={user} />}
+        {activeTab === 'garments' && <Garments user={user} />}
       </section>
     </Layout>
   );
