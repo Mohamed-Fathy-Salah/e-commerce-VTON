@@ -8,6 +8,7 @@ import { newGarmentsRouter } from "./routes/new";
 import { updateGarmentsRouter } from "./routes/update";
 import { showGarmentsRouter } from "./routes/show";
 import { deleteGarmentsRouter } from "./routes/delete";
+import { showAllGarmentsRouter } from "./routes/show-all";
 
 const app = express();
 app.set("trust proxy", true);
@@ -25,6 +26,7 @@ app.use(currentUser);
 app.use(newGarmentsRouter);
 app.use(updateGarmentsRouter);
 app.use(showGarmentsRouter);
+app.use(showAllGarmentsRouter);
 app.use(deleteGarmentsRouter);
 
 app.all("*", async (req, res) => {
