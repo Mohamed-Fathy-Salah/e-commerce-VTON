@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 const GarmentItem = ({ garment }) => {
   return (
@@ -9,7 +10,11 @@ const GarmentItem = ({ garment }) => {
         className='w-full rounded object-contain'
         src={'data:image;base64,' + garment.frontPhoto}
       />
-      <h2 className='text-lg font-semibold text-gray-600'>{garment.name}</h2>
+      <Link href={'/garment/' + garment.id} replace={true}>
+        <h2 className='cursor-pointer text-lg font-semibold text-gray-600'>
+          {garment.name}
+        </h2>
+      </Link>
       <h3 className='text-lg text-gray-500'>{garment.price} EGP</h3>
       <table className='my-2 w-2/3 border'>
         <tbody>

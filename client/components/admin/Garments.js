@@ -1,9 +1,10 @@
 import GarmentItem from '../GarmentItem';
 import useSWR from 'swr';
 import axios from 'axios';
+import Link from 'next/link';
 
 const Garments = ({ user }) => {
-  const { data, error } = useSWR(`/api/garments/${user?.id}`, (url) =>
+  const { data, error } = useSWR(`/api/garments/admin/${user?.id}`, (url) =>
     axios.get(url).then((res) => res.data)
   );
 

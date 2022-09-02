@@ -1,4 +1,4 @@
-const SearchBar = () => {
+const SearchBar = ({ search, setSearch }) => {
   return (
     <div className='mx-auto my-16 rounded-lg lg:px-8'>
       <div className='flex flex-col items-center justify-center p-10'>
@@ -12,6 +12,8 @@ const SearchBar = () => {
           type='text'
           name='price'
           id='price'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className='text-md block w-full rounded-full border-2 bg-transparent px-7 py-2 text-lg sm:ml-10 sm:w-full sm:py-3'
           placeholder='search here ...'
         />
