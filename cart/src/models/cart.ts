@@ -17,12 +17,12 @@ interface CartModel extends mongoose.Model<CartDoc> {
 // that a User Document has
 interface CartDoc extends mongoose.Document {
     customerId: string;
-    garments: [{
+    garments: {
         garmentId: string,
         quantity: number,
         price: number,
         size: GarmentSize
-    }]
+    }[]
 }
 
 const cartSchema = new mongoose.Schema(

@@ -38,9 +38,11 @@ router.put(
 
     const idx = cart.garments.findIndex(i => i.garmentId === garmentId)
     
-    if(idx === -1) {
+    if (idx === -1) {
         cart.garments.push(req.body)
-    }else {
+    } else if(quantity === 0) {
+        cart.garments.splice(idx, 1);
+    } else {
         cart.garments[idx] = {garmentId, price, quantity, size} 
     }
     await cart.save();

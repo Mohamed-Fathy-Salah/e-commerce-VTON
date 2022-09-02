@@ -8,7 +8,7 @@ it("error with wrong creds", async () => {
   await request(app).delete("/api/cart").send({}).expect(401);
 
   await request(app)
-    .delete("/api/cart")
+    .delete("/api/cart/1245")
     .set("Cookie", global.signin(UserType.Admin))
     .send({})
     .expect(401);
@@ -16,13 +16,14 @@ it("error with wrong creds", async () => {
 
 it("cart not found error", async () => {
   await request(app)
-    .delete("/api/cart")
+    .delete("/api/cart/1234134")
     .set("Cookie", global.signin(UserType.Customer))
     .send({})
     .expect(404);
 });
 
 it("deleted successfully", async () => {
+  const garmentId = new mongoose.Types.ObjectId().toHexString();
   const customerId = new mongoose.Types.ObjectId().toHexString();
   const cookie = global.signin(UserType.Customer, customerId);
 
@@ -33,7 +34,7 @@ it("deleted successfully", async () => {
     .put("/api/cart")
     .set("Cookie", cookie)
     .send({
-      garmentId: "adfdsaf",
+      garmentId,
       quantity: 1,
       price: 10,
       size: GarmentSize.Small,
@@ -41,7 +42,7 @@ it("deleted successfully", async () => {
     .expect(201);
 
   await request(app)
-    .delete("/api/cart")
+    .delete(`/api/cart/${garmentId}`)
     .set("Cookie", cookie)
     .send()
     .expect(200);
