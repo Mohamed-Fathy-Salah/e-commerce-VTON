@@ -1,24 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customers-deployment
+  name: bodygarment-deployment
   labels:
-    app: customers
+    app: bodygarment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: customers
+      app: bodygarment
   template:
     metadata:
       labels:
-        app: customers
+        app: bodygarment
     spec:
       containers:
-        - name: customers
-          image: mofasa101/customers
+        - name: bodygarment
+          image: mofasa101/bodygarment
           imagePullPolicy: IfNotPresent
           env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: POSTGRESQL_URI
+              value: "postgresql+asyncpg://user:pass@bodygarment-postgresql-srv:5432/db"
             - name: NATS_URI
               value: "http://nats-srv:4222"
             - name: NATS_CLUSTER_ID
@@ -27,23 +34,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: JWT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-secret
-                  key: JWT_KEY
-            - name: MONGO_URI
-              value: "mongodb+srv://try:00000000@cluster0.iqbmt.mongodb.net/customers"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: customers-srv
+  name: bodygarment-srv
 spec:
   selector:
-    app: customers
+    app: bodygarment
   ports:
-    - name: customers
+    - name: bodygarment
       protocol: TCP
       port: 3000
       targetPort: 3000
