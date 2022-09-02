@@ -24,7 +24,14 @@ const Home = ({ user, garments }) => {
       <Layout home user={user}>
         <main className='w-full items-center justify-center px-10 '>
           <SearchBar search={search} setSearch={setSearch} />
-          <GarmentList garments={search ? filteredGarment : garments} />
+          {filteredGarment.length ? (
+            <GarmentList garments={search ? filteredGarment : garments} />
+          ) : (
+            <div className='text-center text-xl font-medium text-gray-400'>
+              {' '}
+              No Garments Match Your Search{' '}
+            </div>
+          )}
         </main>
       </Layout>
     </div>
