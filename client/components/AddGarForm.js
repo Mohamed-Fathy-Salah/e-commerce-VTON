@@ -1,28 +1,62 @@
 import { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { useDropzone } from 'react-dropzone';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
 const AddGarForm = () => {
+  const router = useRouter();
   const [genError, setGenError] = useState('');
-
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragAccept,
-    isDragReject,
-  } = useDropzone({
-    accept: {
-      'image/jpeg': ['.jpeg', '.png'],
-    },
+  const [files, setFiles] = useState({
+    front: '',
+    back: '',
+    images: [],
   });
 
-  const openDialog = () => {
-    // Note that the ref is set async,
-    // so it might be null at some point
-    if (dropzoneRef.current) {
-      dropzoneRef.current.open();
+  console.log(files);
+
+  const handleFormSubmit = async (values, FormikHelpers) => {
+    const data = {
+      name: values.name,
+      description: values.description,
+      garmentClass: values.class,
+      gender: values.gender,
+      price: Number(values.price),
+      small: Number(values.smallQnt),
+      medium: Number(values.mediumQnt),
+      large: Number(values.largeQnt),
+      xlarge: Number(values.xlQnt),
+      xxlarge: Number(values.xxlQnt),
+      frontPhoto: files.front,
+      backPhoto: files.back,
+      photos: files.images,
+    };
+    console.log(data);
+
+    try {
+      const res = await axios.post('/api/garments', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+        },
+      });
+      console.log(res);
+      FormikHelpers.resetForm();
+      setGenError('');
+      router.push('/admin/dashboard');
+    } catch (err) {
+      {
+        setGenError(
+          <div className=''>
+            <ul className='my-0'>
+              {err.response?.data.errors.map((err) => (
+                <li key={err.message}>{err.message}</li>
+              ))}
+            </ul>
+          </div>
+        );
+        console.log(err);
+      }
     }
   };
 
@@ -34,10 +68,11 @@ const AddGarForm = () => {
         class: '',
         gender: '',
         price: '',
-        avilable: [], //add validation schema
-        frontPhoto: '',
-        backPhoto: '',
-        photos: [],
+        smallQnt: '',
+        mediumQnt: '',
+        largeQnt: '',
+        xlQnt: '',
+        xxlQnt: '',
       }}
       validationSchema={Yup.object({
         name: Yup.string()
@@ -52,9 +87,9 @@ const AddGarForm = () => {
         handleFormSubmit(values, FormikHelpers)
       }
     >
-      <Form className='flex flex-col gap-4 w-10/12 lg:w-6/12 mx-auto bg-white p-6 sm:p-10 rounded-lg shadow-md'>
+      <Form className='mx-auto flex w-10/12 flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-10 lg:w-6/12'>
         <div>
-          <label htmlFor='name' className='block mb-2 p-1'>
+          <label htmlFor='name' className='mb-2 block p-1'>
             Garment Name:
           </label>
           <Field
@@ -64,27 +99,27 @@ const AddGarForm = () => {
             placeholder='e.g. kint color block t-shirt'
           />
           <ErrorMessage name='name'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='desc' className='block mb-2 p-1'>
+          <label htmlFor='description' className='mb-2 block p-1'>
             Garment Description:
           </label>
           <Field
             as='textarea'
             className=' h-32 resize-none'
-            id='desc'
-            name='desc'
+            id='description'
+            name='description'
             type='text'
             placeholder='e.g. T-shirt made of spun cotton fabric. Featuring a round neckline, short sleeves and ribbed trims.'
           ></Field>
           <ErrorMessage name='email'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='class' className='block mb-2 p-1'>
+          <label htmlFor='class' className='mb-2 block p-1'>
             Garment Class:
           </label>
           <Field
@@ -95,17 +130,17 @@ const AddGarForm = () => {
             placeholder='Enter your age ...'
           >
             <option value=''>select class</option>
-            <option value='t-shirt'>T-Shirt</option>
+            <option value='shirt'>Shirt</option>
             <option value='pants'>Pants</option>
             <option value='short'>Short</option>
             <option value='skirt'>Skirt</option>
           </Field>
           <ErrorMessage name='age'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='gender' className='block mb-2 p-1'>
+          <label htmlFor='gender' className='mb-2 block p-1'>
             Gender:
           </label>
           <Field as='select' id='gender' name='gender' className=''>
@@ -118,7 +153,7 @@ const AddGarForm = () => {
           </Field>
         </div>
         <div>
-          <label htmlFor='price' className='block mb-2 p-1'>
+          <label htmlFor='price' className='mb-2 block p-1'>
             Garment Price:
           </label>
           <Field
@@ -129,38 +164,77 @@ const AddGarForm = () => {
           />
         </div>
         <div>
-          <label htmlFor='quantity' className='block mb-2 p-1'>
+          <label htmlFor='smallQnt' className='mb-2 block p-1'>
             Avilable Quantity:
           </label>
-          <Field
-            id='quantity'
-            name='quantity'
-            type='text'
-            placeholder='quantity'
+          <div className='flex gap-2'>
+            <Field
+              id='smallQnt'
+              name='smallQnt'
+              type='number'
+              placeholder='Small'
+            />
+            <Field
+              id='mediumQnt'
+              name='mediumQnt'
+              type='number'
+              placeholder='Medium'
+            />
+            <Field
+              id='largeQnt'
+              name='largeQnt'
+              type='number'
+              placeholder='Large'
+            />
+            <Field id='xlQnt' name='xlQnt' type='number' placeholder='XL' />
+            <Field id='xxlQnt' name='xxlQnt' type='number' placeholder='XXL' />
+          </div>
+        </div>
+        <div>
+          <label htmlFor='front-img' className=' block p-1'>
+            Front Image:
+          </label>
+          <input
+            type='file'
+            id='front-img'
+            name='front-img'
+            onChange={(e) => setFiles({ ...files, front: e.target.files[0] })}
           />
         </div>
         <div>
-          <label htmlFor='front-img' className='block mb-2 p-1'>
-            Front Image:
-          </label>
-          <Field type='file' id='front-img' name='front-img' />
-        </div>
-        <div>
-          <label htmlFor='back-img' className='block mb-2 p-1'>
+          <label htmlFor='back-img' className=' block p-1'>
             Back Image:
           </label>
-          <Field type='file' id='back-img' name='back-img' />
+          <input
+            type='file'
+            id='back-img'
+            name='back-img'
+            onChange={(e) => setFiles({ ...files, back: e.target.files[0] })}
+          />
         </div>
         <div>
-          <label htmlFor='prev-imgs' className='block mb-2 p-1'>
+          <label htmlFor='prev-imgs' className='block p-1'>
             Preview Images:
           </label>
-          <Field type='file' id='prev-imgs' name='prev-imgs' />
+          <input
+            className='py-0'
+            type='file'
+            multiple
+            id='prev-imgs'
+            name='prev-imgs'
+            onChange={(e) => {
+              let filesList = [];
+              Object.values(e.target.files).map((file) => {
+                filesList.push(file.name);
+              });
+              setFiles({ ...files, images: filesList });
+            }}
+          />
         </div>
-        <div className=' text-red-600 p-1'>{genError}</div>
+        <div className=' p-1 text-red-600'>{genError}</div>
         <button
           type='submit'
-          className='bg-blue-700 text-white rounded-md py-3 text-xl shadow-sm mt-3 hover:bg-blue-800 transition-colors'
+          className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800'
         >
           Add Garment
         </button>

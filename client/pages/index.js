@@ -4,7 +4,6 @@ import Layout from '../components/Layout';
 import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
 import axios from 'axios';
-import { useEffect } from 'react';
 
 const Home = ({ user }) => {
   return (
@@ -24,47 +23,31 @@ const Home = ({ user }) => {
   );
 };
 
-export async function getServerSideProps(ctx) {
-  const client = buildClient(ctx);
-  const { data } = await client.get('/api/users/currentuser');
-  const user = data.currentUser;
-  let userInfo;
+// export async function getServerSideProps(ctx) {
+//   const client = buildClient(ctx);
+//   const { data } = await client.get('/api/users/currentuser');
+//   const user = data.currentUser;
 
-  if (user?.type === 'customer') {
-    userInfo = await client.get('/api/customerdata/' + user.id);
-  }
-  // if (user?.type === 'admin') {
-  //   userInfo = await client.get('/api/admindata/' + user.id);
-  // }
+//   // if (!user) {
+//   //   return {
+//   //     redirect: {
+//   //       destination: '/login',
+//   //       permanent: false,
+//   //     },
+//   //   };
+//   // }
 
-  console.log(userInfo?.data);
-  // let userInfo;
-  // if (user.type === 'admin') {
-  //   userInfo = await client.get(`/api/admindata/${user.id}`);
-  // } else {
-  //   userInfo = await client.get(`/api/customerdata/${user.id}`);
-  // }
+//   if (user) {
+//     return {
+//       props: { user },
+//     };
+//   }
 
-  // if (!user) {
-  //   return {
-  //     redirect: {
-  //       destination: '/login',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-
-  if (user) {
-    return {
-      props: { user },
-    };
-  }
-
-  return {
-    props: {
-      user: null,
-    },
-  };
-}
+//   return {
+//     props: {
+//       user: null,
+//     },
+//   };
+// }
 
 export default Home;
