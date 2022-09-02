@@ -4,7 +4,7 @@ import { Garment } from "../models/garment";
 const router = express.Router();
 
 router.get(
-  "/api/garments/:adminId",
+  "/api/garments/admin/:adminId",
   async (req: Request, res: Response) => {
       const garments = await Garment.find({adminId: req.params.adminId});
 
