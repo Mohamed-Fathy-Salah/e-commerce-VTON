@@ -101,7 +101,7 @@ it("good boi :)", async () => {
 
 
   const {body} = await request(app)
-    .get("/api/garments/" + adminId)
+    .get("/api/garments/admin/" + adminId)
     .expect(200);
   expect(body.length).toEqual(1);
 
@@ -121,7 +121,7 @@ it("good boi :)", async () => {
     .expect(201);
 
    const {body: body1} = await request(app)
-    .get("/api/garments/" + adminId)
+    .get("/api/garments/admin/" + adminId)
     .expect(200);
 
   expect(body1.length).toEqual(1);

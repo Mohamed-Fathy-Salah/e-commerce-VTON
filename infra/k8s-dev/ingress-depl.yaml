@@ -38,13 +38,6 @@ spec:
                 name: garments-srv
                 port:
                   number: 3000
-          - path: /api/cart/?(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: cart-srv
-                port:
-                  number: 3000
           - path: /api/orders/?(.*)
             pathType: Prefix
             backend:

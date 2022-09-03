@@ -1,15 +1,11 @@
 import { app } from "../../app";
 import request from "supertest";
-import mongoose from "mongoose";
 import { GarmentClass, Gender, UserType } from "@mfsvton/common";
 
 it("get data of admin", async () => {
-  const adminId = new mongoose.Types.ObjectId().toHexString();
-  const cookie = global.signin(UserType.Admin, adminId);
-
-  await request(app)
+  const {body: garment} = await request(app)
       .post("/api/garments")
-      .set("Cookie", cookie)
+      .set("Cookie", global.signin(UserType.Admin))
       .field('name', "blah")
       .field('description', "blah")
       .field('garmentClass', GarmentClass.Shirt)
@@ -24,11 +20,11 @@ it("get data of admin", async () => {
       .attach('backPhoto', global.imagePath)
       .expect(201);
 
-  const {body} = await request(app).get("/api/garments/admin/" + adminId).expect(200);
+  const {body: res} = await request(app).get("/api/garments/garment/" + garment.id).expect(200);
 
-  expect(body[0].garmentClass).toEqual(GarmentClass.Shirt);
-  expect(body[0].gender).toEqual(Gender.Male);
-  expect(body[0].price).toEqual(20);
-  expect(body[0].frontPhoto).toBeDefined();
-  expect(body[0].backPhoto).toBeDefined();
+  expect(res.garmentClass).toEqual(garment.garmentClass);
+  expect(res.gender).toEqual(garment.gender);
+  expect(res.price).toEqual(garment.price);
+  expect(res.frontPhoto).toBeDefined();
+  expect(res.backPhoto).toBeDefined();
 });

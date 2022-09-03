@@ -18,19 +18,23 @@ router.put(
   "/api/admindata",
   requireAdminAuth,
   upload.single("photo"),
-  body("name").notEmpty(),
+  [body("name").notEmpty()],
   validateRequest,
   async (req: Request, res: Response) => {
+    
     const adminId = req.currentUser!.id;
-
-    const admin = await Admin.findById(adminId);
+    
+    const admin = await Admin.findOne({adminId});
+    console.log(admin!);
 
     if (!admin) {
-      throw new NotFoundError();
+      // throw new NotFoundError();
+      res.send(adminId);
+      return;
     }
 
     //@ts-ignore
-    const { photo } = req.file;
+    const photo = req.file;
 
     admin.set({ name: req.body.name });
 

@@ -1,12 +1,19 @@
+import { useState } from 'react';
 import Head from 'next/head';
 import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
 import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
-import axios from 'axios';
-import { useEffect } from 'react';
 
-const Home = ({ user }) => {
+const Home = ({ user, garments }) => {
+  const [search, setSearch] = useState('');
+  const filteredGarment = garments.filter((gar) =>
+    (gar.name || gar.description || gar.garmentClass || gar.gender).includes(
+      search
+    )
+  );
+
+  console.log(search);
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -16,8 +23,15 @@ const Home = ({ user }) => {
 
       <Layout home user={user}>
         <main className='w-full items-center justify-center px-10 '>
-          <SearchBar />
-          <GarmentList />
+          <SearchBar search={search} setSearch={setSearch} />
+          {filteredGarment.length ? (
+            <GarmentList garments={search ? filteredGarment : garments} />
+          ) : (
+            <div className='text-center text-xl font-medium text-gray-400'>
+              {' '}
+              No Garments Match Your Search{' '}
+            </div>
+          )}
         </main>
       </Layout>
     </div>
@@ -26,45 +40,48 @@ const Home = ({ user }) => {
 
 export async function getServerSideProps(ctx) {
   const client = buildClient(ctx);
-  const { data } = await client.get('/api/users/currentuser');
-  const user = data.currentUser;
-  let userInfo;
+  const { data } = await client.get('/api/garments');
 
-  if (user?.type === 'customer') {
-    userInfo = await client.get('/api/customerdata/' + user.id);
-  }
-  // if (user?.type === 'admin') {
-  //   userInfo = await client.get('/api/admindata/' + user.id);
-  // }
-
-  console.log(userInfo?.data);
-  // let userInfo;
-  // if (user.type === 'admin') {
-  //   userInfo = await client.get(`/api/admindata/${user.id}`);
-  // } else {
-  //   userInfo = await client.get(`/api/customerdata/${user.id}`);
-  // }
-
-  // if (!user) {
-  //   return {
-  //     redirect: {
-  //       destination: '/login',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-
-  if (user) {
+  if (data) {
     return {
-      props: { user },
+      props: {
+        garments: data,
+      },
     };
   }
 
   return {
     props: {
-      user: null,
+      garments: null,
     },
   };
 }
+
+// export async function getServerSideProps(ctx) {
+//   const client = buildClient(ctx);
+//   const { data } = await client.get('/api/users/currentuser');
+//   const user = data.currentUser;
+
+//   // if (!user) {
+//   //   return {
+//   //     redirect: {
+//   //       destination: '/login',
+//   //       permanent: false,
+//   //     },
+//   //   };
+//   // }
+
+//   if (user) {
+//     return {
+//       props: { user },
+//     };
+//   }
+
+//   return {
+//     props: {
+//       user: null,
+//     },
+//   };
+// }
 
 export default Home;
