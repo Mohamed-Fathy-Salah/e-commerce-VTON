@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Layout from '../../components/Layout';
 import axios from 'axios';
+import Link from 'next/link';
 
 const GarmentPage = ({ user, garment }) => {
+  const router = useRouter();
+
   const avilableSizes = [
     {
       size: 's',
@@ -28,6 +32,18 @@ const GarmentPage = ({ user, garment }) => {
   ];
 
   const [activeTab, setActiveTab] = useState('m');
+
+  const handleAddToCart = async () => {
+    const data = {
+      garmentId: garment.id,
+      quantity: 1,
+      price: garment.price,
+      size: activeTab,
+    };
+    const res = axios.put('/api/cart');
+    // router.push('cart')
+    console.log(res);
+  };
 
   return (
     <Layout user={user} home>
@@ -82,9 +98,12 @@ const GarmentPage = ({ user, garment }) => {
             </div>
           </div>
           <div className='end mt-10 flex items-start gap-3'>
-            <button className='my-2 rounded-full bg-blue-700 px-6 py-4 text-white'>
+            <button
+              onClick={handleAddToCart}
+              className='my-2 rounded-full bg-blue-700 px-6 py-4 text-white'
+            >
               Add To Card
-            </button>
+            </button>{' '}
             <button className=' my-2 rounded-full bg-slate-900 px-6 py-4 text-white'>
               Try On
             </button>
