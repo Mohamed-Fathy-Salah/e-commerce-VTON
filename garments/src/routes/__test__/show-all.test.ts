@@ -4,10 +4,12 @@ import { GarmentClass, Gender, UserType } from "@mfsvton/common";
 
 it("get data of admin", async () => {
     const n = 10;
+    const cookie = global.signin(UserType.Admin);
+    const garmentsId = [];
     for(let i = 0; i< n;i++) {
-        await request(app)
+        const res = await request(app)
         .post("/api/garments")
-        .set("Cookie", global.signin(UserType.Admin))
+        .set("Cookie", cookie)
         .field('name', "blah")
         .field('description', "blah")
         .field('garmentClass', GarmentClass.Shirt)
@@ -21,8 +23,18 @@ it("get data of admin", async () => {
         .attach('frontPhoto', global.imagePath)
         .attach('backPhoto', global.imagePath)
         .expect(201);
+
+        garmentsId.push(res.body.id);
     }
-  const {body} = await request(app).get("/api/garments").expect(200);
+
+    const ids = new Buffer(JSON.stringify(garmentsId).toString('base64');
+    console.log(ids);
+    cookie.push(`cart=${ids}`);
+
+  const {body} = await request(app)
+  .get("/api/garments")
+  .set('Cookie', cookie)
+  .expect(200);
 
   expect(body.length).toEqual(n);
 });
