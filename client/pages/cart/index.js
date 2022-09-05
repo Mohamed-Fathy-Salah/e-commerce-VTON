@@ -4,13 +4,29 @@ import CartSummary from '../../components/CartSummary';
 import Layout from '../../components/Layout';
 import useSWR from 'swr';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const CartTable = dynamic(() => import('../../components/CartTable'), {
   ssr: false,
 });
 
 const CartPage = ({ user, cart }) => {
+  useEffect(() => {
+    const cart = Object.keys(localStorage)
+      .filter((item) => item.startsWith('cart-'))
+      .map((cartElm) => {
+        const val = JSON.parse(localStorage.getItem(cartElm));
+        val['garmentId'] = cartElm.slice(5);
+        return val;
+      });
+    const cartBase64 = Buffer.from(JSON.stringify(cart)).toString('base64');
+    // const cartArray = JSON.parse(
+    //   Buffer.from(cartBase64, 'base64').toString('ascii')
+    // );
+    // console.log(cartArray);
+    document.cookie = `cart=${cartBase64}`;
+  }, []);
+
   return (
     <Layout home user={user}>
       <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>

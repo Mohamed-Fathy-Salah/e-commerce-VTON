@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Layout from '../../components/Layout';
 import axios from 'axios';
 import Link from 'next/link';
+import { replace } from 'formik';
 
 const GarmentPage = ({ user, garment }) => {
   const router = useRouter();
@@ -35,14 +36,29 @@ const GarmentPage = ({ user, garment }) => {
 
   const handleAddToCart = async () => {
     const data = {
-      garmentId: garment.id,
-      quantity: 1,
-      price: garment.price,
-      size: activeTab,
+      // garmentId: garment.id,
+      // price: garment.price,
+      small: activeTab === 's' ? 1 : 0,
+      medium: activeTab === 'm' ? 1 : 0,
+      large: activeTab === 'l' ? 1 : 0,
+      xlarge: activeTab === 'xl' ? 1 : 0,
+      xxlarge: activeTab === 'xxl' ? 1 : 0,
     };
-    const res = axios.put('/api/cart');
-    // router.push('cart')
-    console.log(res);
+
+    localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
+    router.push('/cart');
+    // document.cookie = `cart=[${JSON.stringify(data)}]`;
+    // console.log();
+    // const cart = document.cookie
+    //   ? JSON.parse(
+    //       Buffer.from(document.cookie.split(`cart=`).pop()).toString('ascii')
+    //     )
+    //   : [];
+    // cart.push(Buffer.from(JSON.stringify(data)).toString('base64'));
+    // document.cookie = `cart=${cart}`;
+
+    // const strObj = Buffer.from(cart, 'base64').toString('ascii');
+    // console.log(JSON.parse(strObj));
   };
 
   return (
@@ -81,8 +97,10 @@ const GarmentPage = ({ user, garment }) => {
                 {avilableSizes.map((size) => (
                   <div
                     key={size.size}
-                    className={`cursor-pointer select-none rounded bg-blue-100 px-5 py-2 text-xl font-bold transition-colors duration-200 ${
-                      activeTab === size.size ? 'bg-blue-700 text-white' : ''
+                    className={`cursor-pointer select-none rounded  px-5 py-2 text-xl font-bold transition-colors duration-200 ${
+                      activeTab === size.size
+                        ? 'bg-blue-700 text-white'
+                        : 'bg-blue-100 text-gray-700'
                     }`}
                     onClick={() => setActiveTab(size.size)}
                   >

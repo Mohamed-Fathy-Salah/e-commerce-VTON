@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
@@ -13,7 +13,6 @@ const Home = ({ user, garments }) => {
     )
   );
 
-  console.log(search);
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>

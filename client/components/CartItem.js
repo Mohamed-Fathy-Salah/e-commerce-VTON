@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 
 const CartItem = ({ garment }) => {
+  const [itemQnt, setItemQnt] = useState(1);
   const { data, error } = useSWR(
     '/api/garments/garment/' + garment.garmentId,
     (url) => axios.get(url).then((res) => res.data)
@@ -12,7 +13,6 @@ const CartItem = ({ garment }) => {
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
 
-  const [itemQnt, setItemQnt] = useState(garment.quantity);
   const garmentInfo = data;
 
   const handleQntChange = (e) => {
@@ -31,7 +31,12 @@ const CartItem = ({ garment }) => {
           <div className='p-4 text-gray-700'>
             <h4 className='font-semibold'>{garmentInfo.name}</h4>
             <span className='font-medium'>
-              {garmentInfo.garmentClass} - {garment.size.toUpperCase()}
+              {garmentInfo.garmentClass} -{' '}
+              {(garment.small && 'S') ||
+                (garment.medium && 'M') ||
+                (garment.large && 'L') ||
+                (garment.xlarge && 'XL') ||
+                (garment.xxlarge && 'XXL')}
             </span>
           </div>
         </div>
