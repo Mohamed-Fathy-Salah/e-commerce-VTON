@@ -22,10 +22,10 @@ router.get(
     }
 
     const cart = JSON.parse(Buffer.from(encodedCart, 'base64').toString('ascii'));
-    const garments = cart.map((value: {garmentId: string}) => Garment.findById(value.garmentId))
-    await Promise.all(garments);
 
-    return garments;
+    const garments = cart.map(async (value: {garmentId: string}) => await Garment.findById(value.garmentId))
+
+    res.status(200).send(garments)
 });
 
 export { router as showAllGarmentsRouter };
