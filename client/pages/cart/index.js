@@ -1,6 +1,5 @@
 import dynamic from 'next/dynamic';
 import CartSummary from '../../components/CartSummary';
-// import CartTable from '../../components/CartTable';
 import Layout from '../../components/Layout';
 import useSWR from 'swr';
 import axios from 'axios';
@@ -10,23 +9,36 @@ const CartTable = dynamic(() => import('../../components/CartTable'), {
   ssr: false,
 });
 
-const CartPage = ({ user, cart }) => {
+const cartToCookie = () => {
+  const cart = Object.keys(localStorage)
+    .filter((item) => item.startsWith('cart-'))
+    .map((cartElm) => {
+      const val = JSON.parse(localStorage.getItem(cartElm));
+      val['garmentId'] = cartElm.slice(5);
+      return val;
+    });
+  const cartBase64 = Buffer.from(JSON.stringify(cart)).toString('base64');
+  document.cookie = `cart=${cartBase64}`;
+};
+
+const CartPage = ({ user }) => {
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
-    const cart = Object.keys(localStorage)
-      .filter((item) => item.startsWith('cart-'))
-      .map((cartElm) => {
-        const val = JSON.parse(localStorage.getItem(cartElm));
-        val['garmentId'] = cartElm.slice(5);
-        return val;
+    cartToCookie();
+
+    const fetchCart = async () => {
+      const { data } = await axios.get('/api/garments?cart=1', {
+        withCredentials: true,
       });
-    const cartBase64 = Buffer.from(JSON.stringify(cart)).toString('base64');
-    // const cartArray = JSON.parse(
-    //   Buffer.from(cartBase64, 'base64').toString('ascii')
-    // );
-    // console.log(cartArray);
-    document.cookie = `cart=${cartBase64}`;
+      const garments = data.map((gar) => gar.value);
+      setCart(garments);
+    };
+
+    fetchCart();
   }, []);
 
+  console.log(cart);
   return (
     <Layout home user={user}>
       <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
@@ -34,7 +46,7 @@ const CartPage = ({ user, cart }) => {
       </h1>
       <div className='grid grid-cols-4 gap-4 px-4 2xl:px-0'>
         <div className='col-span-4 md:col-span-3'>
-          <CartTable garments={cart.garments} />
+          <CartTable garments={cart} />
         </div>
         <div className='col-span-4 md:col-span-1'>
           <CartSummary />
@@ -44,17 +56,17 @@ const CartPage = ({ user, cart }) => {
   );
 };
 
-CartPage.getInitialProps = async (context, client) => {
-  const { data } = await client.get(`/api/cart`);
+// CartPage.getInitialProps = async (context, client) => {
+//   const { data } = await client.get(`/api/cart`);
 
-  if (!data) {
-    return {
-      cart: null,
-    };
-  }
+//   if (!data) {
+//     return {
+//       cart: null,
+//     };
+//   }
 
-  return {
-    cart: data,
-  };
-};
+//   return {
+//     cart: data,
+//   };
+// };
 export default CartPage;

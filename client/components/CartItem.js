@@ -5,19 +5,11 @@ import axios from 'axios';
 
 const CartItem = ({ garment }) => {
   const [itemQnt, setItemQnt] = useState(1);
-  const { data, error } = useSWR(
-    '/api/garments/garment/' + garment.garmentId,
-    (url) => axios.get(url).then((res) => res.data)
-  );
-
-  if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
-
-  const garmentInfo = data;
 
   const handleQntChange = (e) => {
     setItemQnt(e.target.value);
   };
+
   return (
     <tr className='border-b text-sm md:text-base'>
       <td className='py-4 pr-4'>
@@ -26,12 +18,12 @@ const CartItem = ({ garment }) => {
             className=' object-contain'
             width={100}
             height={100}
-            src={'data:image;base64,' + garmentInfo.frontPhoto}
+            src={'data:image;base64,' + garment.frontPhoto}
           />
           <div className='p-4 text-gray-700'>
-            <h4 className='font-semibold'>{garmentInfo.name}</h4>
+            <h4 className='font-semibold'>{garment.name}</h4>
             <span className='font-medium'>
-              {garmentInfo.garmentClass} -{' '}
+              {garment.garmentClass} -{' '}
               {(garment.small && 'S') ||
                 (garment.medium && 'M') ||
                 (garment.large && 'L') ||

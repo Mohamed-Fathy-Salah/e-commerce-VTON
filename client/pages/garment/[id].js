@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Layout from '../../components/Layout';
-import axios from 'axios';
-import Link from 'next/link';
-import { replace } from 'formik';
+import Modal from '../../components/utils/Modal';
 
 const GarmentPage = ({ user, garment }) => {
   const router = useRouter();
@@ -33,11 +31,10 @@ const GarmentPage = ({ user, garment }) => {
   ];
 
   const [activeTab, setActiveTab] = useState('m');
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleAddToCart = async () => {
     const data = {
-      // garmentId: garment.id,
-      // price: garment.price,
       small: activeTab === 's' ? 1 : 0,
       medium: activeTab === 'm' ? 1 : 0,
       large: activeTab === 'l' ? 1 : 0,
@@ -46,25 +43,13 @@ const GarmentPage = ({ user, garment }) => {
     };
 
     localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
-    router.push('/cart');
-    // document.cookie = `cart=[${JSON.stringify(data)}]`;
-    // console.log();
-    // const cart = document.cookie
-    //   ? JSON.parse(
-    //       Buffer.from(document.cookie.split(`cart=`).pop()).toString('ascii')
-    //     )
-    //   : [];
-    // cart.push(Buffer.from(JSON.stringify(data)).toString('base64'));
-    // document.cookie = `cart=${cart}`;
-
-    // const strObj = Buffer.from(cart, 'base64').toString('ascii');
-    // console.log(JSON.parse(strObj));
   };
 
   return (
     <Layout user={user} home>
       <div className='flex flex-col justify-between lg:flex-row'>
         <div className='flex flex-col gap-10 py-5 px-5'>
+          <Modal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
           <div>
             <span className='rounded bg-gray-500 px-4 py-2 text-white'>
               {garment.small ||

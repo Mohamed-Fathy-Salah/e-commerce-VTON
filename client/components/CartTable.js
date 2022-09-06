@@ -11,8 +11,8 @@ const CartTable = ({ garments }) => {
           <th className='pr-4 text-gray-500'>Total</th>
           <th></th>
         </tr>
-        {garments.map((garment) => (
-          <CartItem key={garment._id} garment={garment} />
+        {garments?.map((garment) => (
+          <CartItem key={garment.id} garment={garment} />
         ))}
       </tbody>
     </table>
