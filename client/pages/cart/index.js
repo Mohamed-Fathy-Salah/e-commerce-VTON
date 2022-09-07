@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic';
 import CartSummary from '../../components/CartSummary';
 import Layout from '../../components/Layout';
-import useSWR from 'swr';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -56,17 +55,4 @@ const CartPage = ({ user }) => {
   );
 };
 
-// CartPage.getInitialProps = async (context, client) => {
-//   const { data } = await client.get(`/api/cart`);
-
-//   if (!data) {
-//     return {
-//       cart: null,
-//     };
-//   }
-
-//   return {
-//     cart: data,
-//   };
-// };
 export default CartPage;

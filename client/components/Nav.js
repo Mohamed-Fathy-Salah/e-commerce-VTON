@@ -8,12 +8,7 @@ import ProfileMenu from './ProfileMenu';
 const Nav = ({ user, cartUpdate }) => {
   const router = useRouter();
 
-  const [cart, setCart] = useState(() =>
-    typeof localStorage !== 'undefined'
-      ? Object.keys(localStorage).filter((item) => item.startsWith('cart-'))
-          .length
-      : 0
-  );
+  const [cart, setCart] = useState(0);
 
   useEffect(() => {
     const cart = Object.keys(localStorage).filter((item) =>
