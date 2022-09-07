@@ -16,14 +16,19 @@ router.get(
     }
 
     const encodedCart = req.cookies.cart;
-
+    
     if (!encodedCart) {
       return res.status(200).send([]);
     }
 
     const cart = JSON.parse(Buffer.from(encodedCart, 'base64').toString('ascii'));
 
-    const garments = cart.map(async (value: {garmentId: string}) => await Garment.findById(value.garmentId))
+    let garments = cart.map((value: {garmentId: string}) => Garment.findById(value.garmentId))
+ 
+    garments = await Promise.allSettled(garments);
+
+    
+    
 
     res.status(200).send(garments)
 });

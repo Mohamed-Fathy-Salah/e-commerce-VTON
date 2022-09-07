@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import Link from 'next/link';
 
-const Modal = ({ isOpen, setIsOpen }) => {
+const Modal = ({ isOpen, setIsOpen, title, description }) => {
   return (
     <Dialog
       open={isOpen}
@@ -16,19 +14,10 @@ const Modal = ({ isOpen, setIsOpen }) => {
       <div className='fixed inset-0 flex items-center justify-center p-4'>
         <Dialog.Panel className='mx-auto max-w-md rounded bg-white p-16'>
           <Dialog.Title className='text-center text-lg font-semibold'>
-            This item has been added to your cart successfully
+            {title}
           </Dialog.Title>
           <Dialog.Description className='mt-10 flex flex-col justify-center gap-4'>
-            <Link href='/'>
-              <button className='rounded-md bg-blue-700 py-1 px-3 text-white outline-none hover:opacity-90'>
-                Continue Shopping
-              </button>
-            </Link>
-            <Link href='/cart'>
-              <button className='rounded-md bg-gray-200 py-1 px-3 outline-none hover:opacity-90'>
-                Go To Cart
-              </button>
-            </Link>
+            {description}
           </Dialog.Description>
         </Dialog.Panel>
       </div>

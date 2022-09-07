@@ -24,7 +24,7 @@ const Nav = ({ user }) => {
       <ProfileMenu user={user} />
       {user.type === 'customer' && (
         <Link href='/cart'>
-          <button className='cursor-pointer rounded-md bg-gray-200 p-3 text-gray-700 transition hover:bg-gray-300'>
+          <button className='cursor-pointer rounded-md bg-gray-200 p-3 text-gray-700 transition hover:bg-gray-300 '>
             <ShoppingCartIcon className='h-6 w-6' />
           </button>
         </Link>

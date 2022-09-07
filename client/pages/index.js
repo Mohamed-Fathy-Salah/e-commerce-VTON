@@ -6,11 +6,14 @@ import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
 
 const Home = ({ user, garments }) => {
+  console.log(garments);
   const [search, setSearch] = useState('');
-  const filteredGarment = garments.filter((gar) =>
-    (gar.name || gar.description || gar.garmentClass || gar.gender).includes(
-      search
-    )
+  const filteredGarment = garments.filter(
+    (gar) =>
+      gar.gender.toLowerCase().includes(search.toLowerCase()) ||
+      gar.garmentClass.toLowerCase().includes(search.toLowerCase()) ||
+      gar.description?.toLowerCase().includes(search.toLowerCase()) ||
+      gar.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
