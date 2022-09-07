@@ -6,7 +6,6 @@ import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
 
 const Home = ({ user, garments }) => {
-  console.log(garments);
   const [search, setSearch] = useState('');
   const filteredGarment = garments.filter(
     (gar) =>

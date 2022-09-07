@@ -2,11 +2,25 @@ import Link from 'next/link';
 import Logo from './Logo';
 import { useRouter } from 'next/router';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-
+import { useEffect, useState } from 'react';
 import ProfileMenu from './ProfileMenu';
 
-const Nav = ({ user }) => {
+const Nav = ({ user, cartUpdate }) => {
   const router = useRouter();
+
+  const [cart, setCart] = useState(() =>
+    typeof localStorage !== 'undefined'
+      ? Object.keys(localStorage).filter((item) => item.startsWith('cart-'))
+          .length
+      : 0
+  );
+
+  useEffect(() => {
+    const cart = Object.keys(localStorage).filter((item) =>
+      item.startsWith('cart-')
+    )?.length;
+    setCart(cart);
+  }, [cartUpdate]);
 
   const links = !user ? (
     <>
@@ -24,7 +38,12 @@ const Nav = ({ user }) => {
       <ProfileMenu user={user} />
       {user.type === 'customer' && (
         <Link href='/cart'>
-          <button className='cursor-pointer rounded-md bg-gray-200 p-3 text-gray-700 transition hover:bg-gray-300 '>
+          <button className='relative cursor-pointer rounded-md bg-gray-200 p-3 text-gray-700 transition hover:bg-gray-300 '>
+            {cart > 0 && (
+              <div className='absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-600 p-1 text-xs text-white'>
+                {cart}
+              </div>
+            )}
             <ShoppingCartIcon className='h-6 w-6' />
           </button>
         </Link>

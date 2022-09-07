@@ -1,10 +1,10 @@
 import Footer from './Footer';
 import Nav from './Nav';
 
-const Layout = ({ home, children, user }) => {
+const Layout = ({ home, children, user, cartUpdate }) => {
   return (
     <>
-      {home && <Nav user={user} />}
+      {home && <Nav user={user} cartUpdate={cartUpdate} />}
       {children}
       {home && <Footer />}
     </>

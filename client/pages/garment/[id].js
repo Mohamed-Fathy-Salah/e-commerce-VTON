@@ -32,6 +32,7 @@ const GarmentPage = ({ user, garment }) => {
   const [activeTab, setActiveTab] = useState('m');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [cartUpdate, setCartUpdate] = useState(0);
 
   const handleAddToCart = async () => {
     if (quantity >= 1) {
@@ -44,12 +45,13 @@ const GarmentPage = ({ user, garment }) => {
       };
 
       localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
+      setCartUpdate(cartUpdate + 1);
       setIsModalOpen(true);
     }
   };
 
   return (
-    <Layout user={user} home>
+    <Layout user={user} home cartUpdate={cartUpdate}>
       <div className='flex flex-col justify-between lg:flex-row'>
         <div className='flex flex-col gap-10 py-5 px-5'>
           <Modal
