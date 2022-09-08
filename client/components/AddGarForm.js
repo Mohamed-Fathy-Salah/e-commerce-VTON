@@ -31,7 +31,6 @@ const AddGarForm = () => {
       backPhoto: files.back,
       photos: files.images,
     };
-    console.log(data);
 
     try {
       const res = await axios.post('/api/garments', data, {

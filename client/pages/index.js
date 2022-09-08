@@ -30,7 +30,7 @@ const Home = ({ user, garments }) => {
           ) : (
             <div className='text-center text-xl font-medium text-gray-400'>
               {' '}
-              No Garments Match Your Search{' '}
+              No Garments Match
             </div>
           )}
         </main>

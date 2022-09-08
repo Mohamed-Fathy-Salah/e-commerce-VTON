@@ -54,6 +54,8 @@ router.post(
         const garment = await Garments.findById(garments[i].garmentId);
 
         if (!garment || garment.adminId !== garments[i].adminId) {
+
+          
           throw new NotFoundError();
         }
 

@@ -31,23 +31,20 @@ const GarmentPage = ({ user, garment }) => {
 
   const [activeTab, setActiveTab] = useState('m');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [quantity, setQuantity] = useState(1);
   const [cartUpdate, setCartUpdate] = useState(0);
 
   const handleAddToCart = async () => {
-    if (quantity >= 1) {
-      const data = {
-        small: activeTab === 's' ? quantity : 0,
-        medium: activeTab === 'm' ? quantity : 0,
-        large: activeTab === 'l' ? quantity : 0,
-        xlarge: activeTab === 'xl' ? quantity : 0,
-        xxlarge: activeTab === 'xxl' ? quantity : 0,
-      };
+    const data = {
+      small: activeTab === 's' ? 1 : 0,
+      medium: activeTab === 'm' ? 1 : 0,
+      large: activeTab === 'l' ? 1 : 0,
+      xlarge: activeTab === 'xl' ? 1 : 0,
+      xxlarge: activeTab === 'xxl' ? 1 : 0,
+    };
 
-      localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
-      setCartUpdate(cartUpdate + 1);
-      setIsModalOpen(true);
-    }
+    localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
+    setCartUpdate(cartUpdate + 1);
+    setIsModalOpen(true);
   };
 
   return (
@@ -123,20 +120,6 @@ const GarmentPage = ({ user, garment }) => {
               </div>
               <hr />
               <div className='mt-4 flex items-center justify-between text-xl'>
-                <input
-                  type='number'
-                  placeholder='Qty...'
-                  className={`w-24 py-2 ${
-                    quantity < 1 && 'animate-pulse ring-1 ring-red-500'
-                  }`}
-                  min={1}
-                  value={quantity}
-                  onChange={(e) =>
-                    e.target.value <
-                      avilableSizes.find((size) => size.size === activeTab)
-                        .stock && setQuantity(e.target.value)
-                  }
-                />
                 <span className='text-gray-500'>
                   {avilableSizes.find((size) => size.size === activeTab).stock}{' '}
                   Avilable In stock

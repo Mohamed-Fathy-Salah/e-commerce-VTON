@@ -22,6 +22,7 @@ const cartToCookie = () => {
 
 const CartPage = ({ user }) => {
   const [cart, setCart] = useState([]);
+  const [updateLocalStorage, setUpdateLocalStorage] = useState(0);
 
   useEffect(() => {
     cartToCookie();
@@ -37,18 +38,22 @@ const CartPage = ({ user }) => {
     fetchCart();
   }, []);
 
-  console.log(cart);
   return (
-    <Layout home user={user}>
+    <Layout home user={user} cartUpdate={cart}>
       <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
         Your Cart
       </h1>
       <div className='grid grid-cols-4 gap-4 px-4 2xl:px-0'>
         <div className='col-span-4 md:col-span-3'>
-          <CartTable garments={cart} />
+          <CartTable
+            garments={cart}
+            setCart={setCart}
+            cart={cart}
+            updatels={setUpdateLocalStorage}
+          />
         </div>
         <div className='col-span-4 md:col-span-1'>
-          <CartSummary />
+          <CartSummary ls={updateLocalStorage} cart={cart} />
         </div>
       </div>
     </Layout>
