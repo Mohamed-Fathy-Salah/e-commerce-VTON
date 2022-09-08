@@ -30,7 +30,7 @@ it("orders created", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garments.build({
-    id: garmentId,
+    garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     small: 2,
