@@ -11,7 +11,7 @@ const setup = async () => {
 
   //create and save a ticket
   const garment = Garments.build({
-      id: new mongoose.Types.ObjectId().toHexString(),
+      garmentId: new mongoose.Types.ObjectId().toHexString(),
       garmentClass: GarmentClass.Shirt,
       gender: Gender.Male,
       small: 2,
@@ -26,7 +26,7 @@ const setup = async () => {
 
   //create a fake data object
   const data: GarmentDeletedEvent["data"] = {
-      garmentId: garment.id,
+      garmentId: garment.garmentId,
       adminId: "adfadf",
       version: garment.version + 1
   };
