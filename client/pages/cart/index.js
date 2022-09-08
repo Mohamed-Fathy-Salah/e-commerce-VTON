@@ -3,10 +3,10 @@ import CartSummary from '../../components/CartSummary';
 import Layout from '../../components/Layout';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-
-const CartTable = dynamic(() => import('../../components/CartTable'), {
-  ssr: false,
-});
+import CartTable from '../../components/CartTable';
+// const CartTable = dynamic(() => import('../../components/CartTable'), {
+//   ssr: false,
+// });
 
 const cartToCookie = () => {
   const cart = Object.keys(localStorage)
