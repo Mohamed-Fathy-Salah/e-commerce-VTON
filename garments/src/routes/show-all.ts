@@ -24,11 +24,9 @@ router.get(
     const cart = JSON.parse(Buffer.from(encodedCart, 'base64').toString('ascii'));
 
     let garments = cart.map((value: {garmentId: string}) => Garment.findById(value.garmentId))
- 
-    garments = await Promise.allSettled(garments);
 
-    
-    
+
+    garments = await Promise.allSettled(garments);
 
     res.status(200).send(garments)
 });
