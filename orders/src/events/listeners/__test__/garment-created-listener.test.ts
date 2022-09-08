@@ -46,7 +46,7 @@ it("creates , saves a garment, ack msg", async () => {
   await listener.onMessage(data, msg);
 
   // write assertions to make sure a ticket was created
-  const garment = await Garments.findById(data.garmentId);
+  const garment = await Garments.findOne({garmentId: data.garmentId});
 
   expect(garment).toBeDefined();
   expect(garment!.price).toEqual(data.price);
