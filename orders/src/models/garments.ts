@@ -48,7 +48,6 @@ const garmentsSchema = new mongoose.Schema(
     garmentId: {
       type: String,
       requried: true,
-      unique: true
     },
     adminId: {
       type: String,

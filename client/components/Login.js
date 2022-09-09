@@ -18,7 +18,7 @@ const Login = () => {
 
     try {
       const res = await axios.post('/api/users/signin', data);
-      console.log(res);
+
       FormikHelpers.resetForm();
       setGenError('');
       router.push('/');
@@ -32,7 +32,6 @@ const Login = () => {
           </ul>
         </div>
       );
-      console.log(err);
     }
   };
 
@@ -50,9 +49,9 @@ const Login = () => {
       })}
       onSubmit={(values, FormikHelpers) => handleLogin(values, FormikHelpers)}
     >
-      <Form className='flex flex-col gap-4 w-10/12 lg:w-6/12 mx-auto bg-white p-6 sm:p-10 rounded-lg shadow-md'>
+      <Form className='mx-auto flex w-10/12 flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-10 lg:w-6/12'>
         <div>
-          <label htmlFor='email' className='block mb-2 p-1'>
+          <label htmlFor='email' className='mb-2 block p-1'>
             Enter your email:
           </label>
           <Field
@@ -62,11 +61,11 @@ const Login = () => {
             placeholder='Enter your email ...'
           />
           <ErrorMessage name='email'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='password' className='block mb-2 p-1'>
+          <label htmlFor='password' className='mb-2 block p-1'>
             Enter your password:
           </label>
           <Field
@@ -78,7 +77,7 @@ const Login = () => {
           />
         </div>
         <div>
-          <label htmlFor='accountType' className='block mb-2 p-1'>
+          <label htmlFor='accountType' className='mb-2 block p-1'>
             Select your account type
           </label>
           <Field as='select' id='accountType' name='accountType' className=''>
@@ -91,11 +90,11 @@ const Login = () => {
         </div>
         <div>{genError}</div>
         <Link href='#'>
-          <p className='underline text-center'>Forgot your password ?</p>
+          <p className='text-center underline'>Forgot your password ?</p>
         </Link>
         <button
           type='submit'
-          className='bg-blue-700 text-white rounded-md py-3 text-xl shadow-sm mt-3 hover:bg-blue-800 transition-colors'
+          className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800'
         >
           Login
         </button>

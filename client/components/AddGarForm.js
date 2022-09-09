@@ -13,8 +13,6 @@ const AddGarForm = () => {
     images: [],
   });
 
-  console.log(files);
-
   const handleFormSubmit = async (values, FormikHelpers) => {
     const data = {
       name: values.name,
@@ -39,7 +37,7 @@ const AddGarForm = () => {
           Accept: 'application/json',
         },
       });
-      console.log(res);
+
       FormikHelpers.resetForm();
       setGenError('');
       router.push('/admin/dashboard');
@@ -54,7 +52,6 @@ const AddGarForm = () => {
             </ul>
           </div>
         );
-        console.log(err);
       }
     }
   };

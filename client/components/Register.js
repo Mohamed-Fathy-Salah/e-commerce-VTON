@@ -23,7 +23,7 @@ const Register = () => {
 
       try {
         const res = await axios.post('/api/users/signup', data);
-        console.log(res);
+
         FormikHelpers.resetForm();
         setGenError('');
         router.push('/');
@@ -38,7 +38,6 @@ const Register = () => {
               </ul>
             </div>
           );
-          console.log(err);
         }
       }
     }
@@ -72,9 +71,9 @@ const Register = () => {
         handleFormSubmit(values, FormikHelpers)
       }
     >
-      <Form className='flex flex-col gap-4 w-10/12 lg:w-6/12 mx-auto bg-white p-6 sm:p-10 rounded-lg shadow-md'>
+      <Form className='mx-auto flex w-10/12 flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-10 lg:w-6/12'>
         <div>
-          <label htmlFor='name' className='block mb-2 p-1'>
+          <label htmlFor='name' className='mb-2 block p-1'>
             Enter your name:
           </label>
           <Field
@@ -84,11 +83,11 @@ const Register = () => {
             placeholder='Enter your name ...'
           />
           <ErrorMessage name='name'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='email' className='block mb-2 p-1'>
+          <label htmlFor='email' className='mb-2 block p-1'>
             Enter your email:
           </label>
           <Field
@@ -98,11 +97,11 @@ const Register = () => {
             placeholder='Enter your email ...'
           />
           <ErrorMessage name='email'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='age' className='block mb-2 p-1'>
+          <label htmlFor='age' className='mb-2 block p-1'>
             Enter your age:
           </label>
           <Field
@@ -112,11 +111,11 @@ const Register = () => {
             placeholder='Enter your age ...'
           />
           <ErrorMessage name='age'>
-            {(msg) => <div className=' text-red-600 p-1'>{msg}</div>}
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
           </ErrorMessage>
         </div>
         <div>
-          <label htmlFor='gender' className='block mb-2 p-1'>
+          <label htmlFor='gender' className='mb-2 block p-1'>
             Select your gender
           </label>
           <Field as='select' id='gender' name='gender' className=''>
@@ -129,7 +128,7 @@ const Register = () => {
           </Field>
         </div>
         <div>
-          <label htmlFor='password' className='block mb-2 p-1'>
+          <label htmlFor='password' className='mb-2 block p-1'>
             Enter your password:
           </label>
           <Field
@@ -141,7 +140,7 @@ const Register = () => {
           />
         </div>
         <div>
-          <label htmlFor='password2' className='block mb-2 p-1'>
+          <label htmlFor='password2' className='mb-2 block p-1'>
             Confirm your password:
           </label>
           <Field
@@ -153,7 +152,7 @@ const Register = () => {
           />
         </div>
         <div>
-          <label htmlFor='accountType' className='block mb-2 p-1'>
+          <label htmlFor='accountType' className='mb-2 block p-1'>
             Select your account type
           </label>
           <Field as='select' id='accountType' name='accountType' className=''>
@@ -164,10 +163,10 @@ const Register = () => {
             <option value='admin'>Seller</option>
           </Field>
         </div>
-        <div className=' text-red-600 p-1'>{genError}</div>
+        <div className=' p-1 text-red-600'>{genError}</div>
         <button
           type='submit'
-          className='bg-blue-700 text-white rounded-md py-3 text-xl shadow-sm mt-3 hover:bg-blue-800 transition-colors'
+          className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800'
         >
           Register
         </button>
