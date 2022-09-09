@@ -13,8 +13,6 @@ const AddGarForm = () => {
     images: [],
   });
 
-  console.log(files);
-
   const handleFormSubmit = async (values, FormikHelpers) => {
     const data = {
       name: values.name,
@@ -31,7 +29,6 @@ const AddGarForm = () => {
       backPhoto: files.back,
       photos: files.images,
     };
-    console.log(data);
 
     try {
       const res = await axios.post('/api/garments', data, {
@@ -40,7 +37,7 @@ const AddGarForm = () => {
           Accept: 'application/json',
         },
       });
-      console.log(res);
+
       FormikHelpers.resetForm();
       setGenError('');
       router.push('/admin/dashboard');
@@ -55,7 +52,6 @@ const AddGarForm = () => {
             </ul>
           </div>
         );
-        console.log(err);
       }
     }
   };

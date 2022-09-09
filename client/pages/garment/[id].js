@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Layout from '../../components/Layout';
-import axios from 'axios';
+import Modal from '../../components/utils/Modal';
 import Link from 'next/link';
 
 const GarmentPage = ({ user, garment }) => {
-  const router = useRouter();
-
   const avilableSizes = [
     {
       size: 's',
@@ -32,23 +30,46 @@ const GarmentPage = ({ user, garment }) => {
   ];
 
   const [activeTab, setActiveTab] = useState('m');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cartUpdate, setCartUpdate] = useState(0);
 
   const handleAddToCart = async () => {
     const data = {
-      garmentId: garment.id,
-      quantity: 1,
-      price: garment.price,
-      size: activeTab,
+      small: activeTab === 's' ? 1 : 0,
+      medium: activeTab === 'm' ? 1 : 0,
+      large: activeTab === 'l' ? 1 : 0,
+      xlarge: activeTab === 'xl' ? 1 : 0,
+      xxlarge: activeTab === 'xxl' ? 1 : 0,
     };
-    const res = axios.put('/api/cart');
-    // router.push('cart')
-    console.log(res);
+
+    localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
+    setCartUpdate(cartUpdate + 1);
+    setIsModalOpen(true);
   };
 
   return (
-    <Layout user={user} home>
+    <Layout user={user} home cartUpdate={cartUpdate}>
       <div className='flex flex-col justify-between lg:flex-row'>
         <div className='flex flex-col gap-10 py-5 px-5'>
+          <Modal
+            isOpen={isModalOpen}
+            setIsOpen={setIsModalOpen}
+            title='This item has been added to your cart successfully'
+            description={
+              <>
+                <Link href='/'>
+                  <button className='rounded-md bg-blue-700 py-1 px-3 text-white outline-none hover:opacity-90'>
+                    Continue Shopping
+                  </button>
+                </Link>
+                <Link href='/cart'>
+                  <button className='rounded-md bg-gray-200 py-1 px-3 outline-none hover:opacity-90'>
+                    Go To Cart
+                  </button>
+                </Link>
+              </>
+            }
+          />
           <div>
             <span className='rounded bg-gray-500 px-4 py-2 text-white'>
               {garment.small ||
@@ -62,8 +83,13 @@ const GarmentPage = ({ user, garment }) => {
           </div>
           <div>
             <h1 className=' text-6xl font-bold text-blue-700'>
-              {garment.name}
+              {garment.name || garment.garmentClass + '-' + garment.gender}
             </h1>
+            {garment.description && (
+              <p className='mt-4 max-w-lg text-gray-600'>
+                {garment.description}
+              </p>
+            )}
             <h3 className='my-4 text-3xl'>{garment.price} EGP</h3>
           </div>
           <div className='block lg:hidden'>
@@ -81,8 +107,10 @@ const GarmentPage = ({ user, garment }) => {
                 {avilableSizes.map((size) => (
                   <div
                     key={size.size}
-                    className={`cursor-pointer select-none rounded bg-blue-100 px-5 py-2 text-xl font-bold transition-colors duration-200 ${
-                      activeTab === size.size ? 'bg-blue-700 text-white' : ''
+                    className={`cursor-pointer select-none rounded  px-5 py-2 text-xl font-bold transition-colors duration-200 ${
+                      activeTab === size.size
+                        ? 'bg-blue-700 text-white'
+                        : 'bg-blue-100 text-gray-700'
                     }`}
                     onClick={() => setActiveTab(size.size)}
                   >
@@ -91,20 +119,22 @@ const GarmentPage = ({ user, garment }) => {
                 ))}
               </div>
               <hr />
-              <div className='mt-4 text-2xl'>
-                {avilableSizes.find((size) => size.size === activeTab).stock} In
-                stock
+              <div className='mt-4 flex items-center justify-between text-xl'>
+                <span className='text-gray-500'>
+                  {avilableSizes.find((size) => size.size === activeTab).stock}{' '}
+                  Avilable In stock
+                </span>
               </div>
             </div>
           </div>
           <div className='end mt-10 flex items-start gap-3'>
             <button
               onClick={handleAddToCart}
-              className='my-2 rounded-full bg-blue-700 px-6 py-4 text-white'
+              className='my-2 rounded-full bg-blue-700 px-6 py-4 text-white transition-opacity hover:opacity-90'
             >
               Add To Card
             </button>{' '}
-            <button className=' my-2 rounded-full bg-slate-900 px-6 py-4 text-white'>
+            <button className='my-2 rounded-full bg-slate-900 px-6 py-4 text-white transition-opacity hover:opacity-90'>
               Try On
             </button>
           </div>

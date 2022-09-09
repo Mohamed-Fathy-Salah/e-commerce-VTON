@@ -16,7 +16,7 @@ router.get(
     }
 
     const encodedCart = req.cookies.cart;
-
+    
     if (!encodedCart) {
       return res.status(200).send([]);
     }
@@ -24,6 +24,7 @@ router.get(
     const cart = JSON.parse(Buffer.from(encodedCart, 'base64').toString('ascii'));
 
     let garments = cart.map((value: {garmentId: string}) => Garment.findById(value.garmentId))
+
 
     garments = await Promise.allSettled(garments);
 

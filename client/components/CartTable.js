@@ -1,9 +1,19 @@
 import CartItem from './CartItem';
 
-const CartTable = ({ garments }) => {
+const CartTable = ({ garments, setCart, cart, updatels }) => {
+  const garmentRows = garments?.map((garment) => (
+    <CartItem
+      key={garment.id}
+      garment={garment}
+      setCart={setCart}
+      updatels={updatels}
+      cart={cart}
+    />
+  ));
+
   return (
     <table className='w-full'>
-      <tbody>
+      <thead>
         <tr className='border-b text-left font-normal'>
           <th className='pr-4 text-gray-500'>Item</th>
           <th className='pr-4 text-gray-500'>Price</th>
@@ -11,10 +21,8 @@ const CartTable = ({ garments }) => {
           <th className='pr-4 text-gray-500'>Total</th>
           <th></th>
         </tr>
-        {garments.map((garment) => (
-          <CartItem key={garment._id} garment={garment} />
-        ))}
-      </tbody>
+      </thead>
+      <tbody>{garmentRows}</tbody>
     </table>
   );
 };

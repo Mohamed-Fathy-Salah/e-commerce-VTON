@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
@@ -7,13 +7,14 @@ import buildClient from '../api/build-client';
 
 const Home = ({ user, garments }) => {
   const [search, setSearch] = useState('');
-  const filteredGarment = garments.filter((gar) =>
-    (gar.name || gar.description || gar.garmentClass || gar.gender).includes(
-      search
-    )
+  const filteredGarment = garments.filter(
+    (gar) =>
+      gar.gender.toLowerCase().includes(search.toLowerCase()) ||
+      gar.garmentClass.toLowerCase().includes(search.toLowerCase()) ||
+      gar.description?.toLowerCase().includes(search.toLowerCase()) ||
+      gar.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  console.log(search);
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -29,7 +30,7 @@ const Home = ({ user, garments }) => {
           ) : (
             <div className='text-center text-xl font-medium text-gray-400'>
               {' '}
-              No Garments Match Your Search{' '}
+              No Garments Match
             </div>
           )}
         </main>

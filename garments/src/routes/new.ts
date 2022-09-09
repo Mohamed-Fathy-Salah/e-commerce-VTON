@@ -70,6 +70,7 @@ router.post(
     }
     await garment.save();
 
+    
     new GarmentCreatedPublisher(natsWrapper.client).publish({
         garmentId: garment.id,
         adminId: garment.adminId,

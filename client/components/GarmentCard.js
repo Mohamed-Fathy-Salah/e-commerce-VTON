@@ -24,7 +24,7 @@ const GarmentCard = ({ garment }) => {
             </span>
           </div>
           <h3 className=' mt-1 text-xl font-bold text-gray-900'>
-            garment name
+            {garment.name || garment.garmentClass + '-' + garment.gender}
           </h3>
           <p className=' text-base font-bold text-gray-700'>
             {garment.price} EGP
