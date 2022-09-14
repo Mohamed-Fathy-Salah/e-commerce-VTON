@@ -1,8 +1,6 @@
 import {
-  GarmentSize,
   Listener,
   OrderCreatedEvent,
-  OrderStatus,
   Subjects,
 } from "@mfsvton/common";
 import { Message } from "node-nats-streaming";
