@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useState, useContext } from 'react';
 import Image from 'next/image';
 import Layout from '../../components/Layout';
 import Modal from '../../components/utils/Modal';
 import Link from 'next/link';
+import AuthContext from '../../context/AuthContext';
+import axios from 'axios';
+import buildClient from '../../api/build-client';
 
-const GarmentPage = ({ user, garment }) => {
+const GarmentPage = ({ garment }) => {
+  const { user } = useContext(AuthContext);
+
   const avilableSizes = [
     {
       size: 's',
@@ -153,21 +157,34 @@ const GarmentPage = ({ user, garment }) => {
   );
 };
 
-// export const getStaticPaths = async () => {
-//   // const { data } = await axios.get('/api/garments');
-//   // const paths = data.map((gar) => ({
-//   //   params: {
-//   //     garment: gar.id,
-//   //   },
-//   // }));
+// export async function getStaticPaths() {
+//   const { data } = await axios.get(
+//     'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/garments'
+//   );
+//   //   const client = buildClient(ctx);
+//   //   const { data } = await client.get('/api/users/currentuser');
+//   const paths = data.map((garment) => ({
+//     params: {
+//       id: garment.id,
+//     },
+//   }));
+
 //   return {
 //     paths: [{ params: { id: '1' } }, { params: { id: '2' } }],
 //     fallback: 'blocking',
 //   };
-// };
+// }
 
-GarmentPage.getInitialProps = async (context, client) => {
-  const { id } = context.query;
+// export async function getStaticPaths() {
+//   return {
+//     paths: [{ params: { id: '1' } }, { params: { id: '2' } }],
+//     fallback: 'blocking', // can also be true or 'blocking'
+//   };
+// }
+
+export async function getServerSideProps(context) {
+  const { id } = context.params;
+  const client = buildClient(context);
   const { data } = await client.get(`/api/garments/garment/${id}`);
 
   if (!data)
@@ -176,8 +193,10 @@ GarmentPage.getInitialProps = async (context, client) => {
     };
 
   return {
-    garment: data,
+    props: {
+      garment: data,
+    },
   };
-};
+}
 
 export default GarmentPage;

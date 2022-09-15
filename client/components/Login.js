@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Link from 'next/link';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { useRouter } from 'next/router';
+import AuthContext from '../context/AuthContext';
 
 const Login = () => {
-  const router = useRouter();
   const [genError, setGenError] = useState('');
+  const { login, error } = useContext(AuthContext);
 
   const handleLogin = async (values, FormikHelpers) => {
     const data = {
@@ -16,22 +15,13 @@ const Login = () => {
       type: values.accountType,
     };
 
-    try {
-      const res = await axios.post('/api/users/signin', data);
+    login(data);
 
+    if (error) {
+      setGenError(error);
+    } else {
       FormikHelpers.resetForm();
       setGenError('');
-      router.push('/');
-    } catch (err) {
-      setGenError(
-        <div className=''>
-          <ul className='my-0'>
-            {err.response?.data.errors.map((err) => (
-              <li key={err.message}>{err.message}</li>
-            ))}
-          </ul>
-        </div>
-      );
     }
   };
 

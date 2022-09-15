@@ -3,7 +3,7 @@ import CartItem from './CartItem';
 const CartTable = ({ garments, setCart, cart, updatels }) => {
   const garmentRows = garments?.map((garment) => (
     <CartItem
-      key={garment.garmentId}
+      key={garment.id}
       garment={garment}
       setCart={setCart}
       updatels={updatels}

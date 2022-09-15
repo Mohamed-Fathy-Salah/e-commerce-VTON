@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useContext } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
@@ -11,9 +11,12 @@ import {
   ArrowRightOnRectangleIcon,
   TableCellsIcon,
 } from '@heroicons/react/24/solid';
+import AuthContext from '../context/AuthContext';
 
 const ProfileMenu = ({ user }) => {
   const router = useRouter();
+  const { logout } = useContext(AuthContext);
+
   const endPoint =
     user.type === 'admin'
       ? `/api/admindata/data/${user.id}`
@@ -25,11 +28,6 @@ const ProfileMenu = ({ user }) => {
 
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
-
-  const handleLogout = async () => {
-    const res = await axios.post('/api/users/signout');
-    router.push('/');
-  };
 
   return (
     <Menu as='div' className='relative z-50'>
@@ -125,7 +123,7 @@ const ProfileMenu = ({ user }) => {
                       className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                         active ? 'bg-red-700 text-white' : 'text-gray-700'
                       }`}
-                      onClick={handleLogout}
+                      onClick={() => logout()}
                     >
                       <ArrowRightOnRectangleIcon
                         className={`mr-3 h-5 w-5  ${
