@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useState, useContext } from 'react';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import AuthContext from '../context/AuthContext';
 
 const Register = () => {
-  const router = useRouter();
   const [genError, setGenError] = useState('');
+  const { register, error } = useContext(AuthContext);
 
   const handleFormSubmit = async (values, FormikHelpers) => {
     if (values.password !== values.password2) {
@@ -21,24 +20,13 @@ const Register = () => {
         type: values.accountType,
       };
 
-      try {
-        const res = await axios.post('/api/users/signup', data);
+      register(data);
 
+      if (error) {
+        setGenError(error);
+      } else {
         FormikHelpers.resetForm();
         setGenError('');
-        router.push('/');
-      } catch (err) {
-        {
-          setGenError(
-            <div className=''>
-              <ul className='my-0'>
-                {err.response.data.errors.map((err) => (
-                  <li key={err.message}>{err.message}</li>
-                ))}
-              </ul>
-            </div>
-          );
-        }
       }
     }
   };

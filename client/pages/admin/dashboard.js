@@ -1,11 +1,13 @@
 import Layout from '../../components/Layout';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import Orders from '../../components/admin/Orders';
 import Garments from '../../components/admin/Garments';
 import Link from 'next/link';
+import AuthContext from '../../context/AuthContext';
 
-const dashboard = ({ user }) => {
+const dashboard = () => {
+  const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('orders');
 
   return (

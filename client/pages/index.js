@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import Head from 'next/head';
 import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
 import SearchBar from '../components/SearchBar';
 import buildClient from '../api/build-client';
+import AuthContext from '../context/AuthContext';
 
-const Home = ({ user, garments }) => {
+const Home = ({ garments }) => {
+  const { user } = useContext(AuthContext);
+
   const [search, setSearch] = useState('');
   const filteredGarment = garments.filter(
     (gar) =>

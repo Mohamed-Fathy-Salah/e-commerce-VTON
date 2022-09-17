@@ -1,9 +1,12 @@
 import Link from 'next/link';
-import buildClient from '../../api/build-client';
 import AddGarForm from '../../components/AddGarForm';
 import Layout from '../../components/Layout';
+import { useContext, useEffect } from 'react';
+import AuthContext from '../../context/AuthContext';
 
-const AddGarment = ({ user }) => {
+const AddGarment = () => {
+  const { user } = useContext(AuthContext);
+
   if (!user || user.type !== 'admin') {
     return (
       <div className=' flex h-screen items-center justify-center px-40'>
