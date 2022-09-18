@@ -1,11 +1,10 @@
-import { useState, useContext } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useContext, useState } from 'react';
+import buildClient from '../../api/build-client';
 import Layout from '../../components/Layout';
 import Modal from '../../components/utils/Modal';
-import Link from 'next/link';
 import AuthContext from '../../context/AuthContext';
-import axios from 'axios';
-import buildClient from '../../api/build-client';
 import CartContext from '../../context/CartContext';
 
 const GarmentPage = ({ garment }) => {

@@ -1,7 +1,7 @@
-import '../styles/globals.css';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import DevNote from '../components/DevNote';
 import { AppContextProvider } from '../context/AppContext';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import '../styles/globals.css';
 
 const queryClient = new QueryClient();
 

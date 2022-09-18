@@ -1,9 +1,9 @@
-import { useState, useContext, useEffect } from 'react';
 import Head from 'next/head';
+import { useContext, useState } from 'react';
+import buildClient from '../api/build-client';
 import GarmentList from '../components/GarmentList';
 import Layout from '../components/Layout';
 import SearchBar from '../components/SearchBar';
-import buildClient from '../api/build-client';
 import AuthContext from '../context/AuthContext';
 
 const Home = ({ garments }) => {
@@ -60,32 +60,5 @@ export async function getServerSideProps(ctx) {
     },
   };
 }
-
-// export async function getServerSideProps(ctx) {
-//   const client = buildClient(ctx);
-//   const { data } = await client.get('/api/users/currentuser');
-//   const user = data.currentUser;
-
-//   // if (!user) {
-//   //   return {
-//   //     redirect: {
-//   //       destination: '/login',
-//   //       permanent: false,
-//   //     },
-//   //   };
-//   // }
-
-//   if (user) {
-//     return {
-//       props: { user },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       user: null,
-//     },
-//   };
-// }
 
 export default Home;

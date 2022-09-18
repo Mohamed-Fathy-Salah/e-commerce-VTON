@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import GarmentCard from './GarmentCard';
 
 const GarmentList = ({ garments }) => {

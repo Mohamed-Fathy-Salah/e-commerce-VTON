@@ -8,7 +8,7 @@ const RegisterPage = () => {
       <div className='my-6'>
         <Logo size='text-5xl sm:text-6xl' />
         <p className='pt-3 text-center text-xl'>
-          Already registered?{' '}
+          Already registered?
           <Link href='/login'>
             <span className='cursor-pointer text-blue-700'>Sign in</span>
           </Link>
