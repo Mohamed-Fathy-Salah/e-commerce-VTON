@@ -1,7 +1,11 @@
 import { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-import { useCurrentUser } from '../hooks/useCurrentUser';
+import {
+  useCurrentUser,
+  useRegisterUser,
+  useLoginUser,
+  useLogoutUser,
+} from '../hooks/useCurrentUser';
 
 const AuthContext = createContext();
 
@@ -11,24 +15,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
-  const onFetchUserSuccess = (data) => {
-    setUser(data.data.currentUser);
-  };
-  const {
-    isLoading,
-    data,
-    error: fetchUserError,
-    refetch: refetchUser,
-  } = useCurrentUser({ enabled: false, onSuccess: onFetchUserSuccess });
-
   useEffect(() => {
     refetchUser();
   }, []);
 
-  const register = async (user) => {
+  const onFetchUserSuccess = (data) => {
+    if (data) setUser(data?.data.currentUser);
+  };
+
+  const { isLoading, refetch: refetchUser } = useCurrentUser({
+    onSuccess: onFetchUserSuccess,
+  });
+
+  const { mutate: registerUser } = useRegisterUser();
+  const { mutate: loginUser } = useLoginUser();
+  const { mutate: logoutUser } = useLogoutUser();
+
+  const register = (user) => {
     try {
-      const res = await axios.post('/api/users/signup', user);
-      refetchUser();
+      registerUser(user);
       setError(null);
       router.push('/');
     } catch (err) {
@@ -44,10 +49,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (user) => {
+  const login = (user) => {
     try {
-      const res = await axios.post('/api/users/signin', user);
-      refetchUser();
+      loginUser(user);
       setError(null);
       router.push('/');
     } catch (err) {
@@ -63,19 +67,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    const res = await axios.post('/api/users/signout');
+  const logout = () => {
+    logoutUser();
     setUser(null);
     router.push('/');
   };
-
-  //   const getUser = async () => {
-  //     const { data } = await axios.get('/api/users/currentuser');
-
-  //     if (data) {
-  //       setUser(data.currentUser);
-  //     }
-  //   };
 
   return (
     <AuthContext.Provider

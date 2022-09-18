@@ -1,10 +1,10 @@
-import dynamic from 'next/dynamic';
 import CartSummary from '../../components/CartSummary';
 import Layout from '../../components/Layout';
 import axios from 'axios';
 import { useState, useEffect, useContext } from 'react';
 import CartTable from '../../components/CartTable';
 import AuthContext from '../../context/AuthContext';
+import Link from 'next/link';
 
 const cartToCookie = () => {
   const cart = Object.keys(localStorage)
@@ -36,6 +36,21 @@ const CartPage = () => {
 
     fetchCart();
   }, []);
+
+  if (!user || user.type === 'admin') {
+    return (
+      <div className=' flex h-screen items-center justify-center px-40'>
+        <h3 className='rounded-md bg-gray-200 py-6 px-8 text-center text-4xl font-medium text-red-600'>
+          You are not authorized to access this page
+          <Link href='/'>
+            <a className='mt-4 block text-lg text-gray-700 underline'>
+              Return to home screen
+            </a>
+          </Link>
+        </h3>
+      </div>
+    );
+  }
 
   return (
     <Layout home user={user} cartUpdate={cart}>

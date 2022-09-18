@@ -1,19 +1,19 @@
 import '../styles/globals.css';
 import DevNote from '../components/DevNote';
-import { AuthProvider } from '../context/AuthContext';
+import { AppContextProvider } from '../context/AppContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps, currentUser }) {
+function MyApp({ Component, pageProps }) {
   return (
     <>
       <DevNote />
       <div className='mx-auto max-w-screen-xl'>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
+          <AppContextProvider>
             <Component {...pageProps} />
-          </AuthProvider>
+          </AppContextProvider>
         </QueryClientProvider>
       </div>
     </>

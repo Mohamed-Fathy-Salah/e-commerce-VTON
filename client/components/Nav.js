@@ -1,20 +1,14 @@
 import Link from 'next/link';
 import Logo from './Logo';
-import { useRouter } from 'next/router';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState, useContext } from 'react';
 import ProfileMenu from './ProfileMenu';
 import AuthContext from '../context/AuthContext';
+import CartContext from '../context/CartContext';
 
-const Nav = ({ user, cartUpdate }) => {
+const Nav = ({ user }) => {
   const { isLoading } = useContext(AuthContext);
-
-  const getCartItemsCount = () => {
-    return Object.keys(localStorage).filter((item) => item.startsWith('cart-'))
-      ?.length;
-  };
-
-  const [cart, setCart] = useState(() => getCartItemsCount);
+  const { cartCount } = useContext(CartContext);
   const [nav, setNav] = useState(<span>Loading...</span>);
 
   useEffect(() => {
@@ -26,9 +20,9 @@ const Nav = ({ user, cartUpdate }) => {
           {user.type === 'customer' && (
             <Link href='/cart'>
               <button className='relative cursor-pointer rounded-md bg-gray-200 p-3 text-gray-700 transition hover:bg-gray-300 '>
-                {cart > 0 && (
+                {cartCount > 0 && (
                   <div className='absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-600 p-1 text-xs text-white'>
-                    {cart}
+                    {cartCount}
                   </div>
                 )}
                 <ShoppingCartIcon className='h-6 w-6' />
@@ -51,14 +45,7 @@ const Nav = ({ user, cartUpdate }) => {
         </>
       );
     }
-  }, [isLoading, user]);
-
-  useEffect(() => {
-    const cart = Object.keys(localStorage).filter((item) =>
-      item.startsWith('cart-')
-    )?.length;
-    setCart(cart);
-  }, [cartUpdate]);
+  }, [isLoading, user, cartCount]);
 
   if (isLoading) {
     return <span>loading...</span>;
