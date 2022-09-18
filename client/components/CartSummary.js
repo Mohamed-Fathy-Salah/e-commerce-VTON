@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const CartSummary = ({ order, setOrder, cart, ls }) => {
   const [totalPrice, setTotalPrice] = useState(0);

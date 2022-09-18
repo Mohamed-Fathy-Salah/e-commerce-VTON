@@ -1,25 +1,28 @@
-import dynamic from 'next/dynamic';
-import CartSummary from '../../components/CartSummary';
-import Layout from '../../components/Layout';
 import axios from 'axios';
-import { useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
+import CartSummary from '../../components/CartSummary';
 import CartTable from '../../components/CartTable';
+import Layout from '../../components/Layout';
+import NotAuthorized from '../../components/utils/NotAuthorized';
 import AuthContext from '../../context/AuthContext';
+import CartContext from '../../context/CartContext';
 
-const cartToCookie = () => {
-  const cart = Object.keys(localStorage)
-    .filter((item) => item.startsWith('cart-'))
-    .map((cartElm) => {
-      const val = JSON.parse(localStorage.getItem(cartElm));
-      val['garmentId'] = cartElm.slice(5);
-      return val;
-    });
-  const cartBase64 = Buffer.from(JSON.stringify(cart)).toString('base64');
-  document.cookie = `cart=${cartBase64}`;
+const toBase64 = (string) => {
+  Buffer.from(string).toString('base64');
 };
 
 const CartPage = () => {
+  const router = useRouter();
   const { user } = useContext(AuthContext);
+  const { getCart } = useContext(CartContext);
+
+  const cartToCookie = () => {
+    const cart = getCart();
+    const cartBase64 = toBase64(JSON.stringify(cart));
+    document.cookie = `cart=${cartBase64}`;
+  };
+
   const [cart, setCart] = useState([]);
   const [updateLocalStorage, setUpdateLocalStorage] = useState(0);
 
@@ -36,6 +39,13 @@ const CartPage = () => {
 
     fetchCart();
   }, []);
+
+  if (!user) {
+    router.push('/login');
+  }
+  if (user.type !== 'customer') {
+    return <NotAuthorized />;
+  }
 
   return (
     <Layout home user={user} cartUpdate={cart}>

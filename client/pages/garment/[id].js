@@ -1,14 +1,15 @@
-import { useState, useContext } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useContext, useState } from 'react';
+import buildClient from '../../api/build-client';
 import Layout from '../../components/Layout';
 import Modal from '../../components/utils/Modal';
-import Link from 'next/link';
 import AuthContext from '../../context/AuthContext';
-import axios from 'axios';
-import buildClient from '../../api/build-client';
+import CartContext from '../../context/CartContext';
 
 const GarmentPage = ({ garment }) => {
   const { user } = useContext(AuthContext);
+  const { updateCartItemsCount } = useContext(CartContext);
 
   const avilableSizes = [
     {
@@ -35,7 +36,6 @@ const GarmentPage = ({ garment }) => {
 
   const [activeTab, setActiveTab] = useState('m');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cartUpdate, setCartUpdate] = useState(0);
 
   const handleAddToCart = async () => {
     const data = {
@@ -47,12 +47,12 @@ const GarmentPage = ({ garment }) => {
     };
 
     localStorage.setItem('cart-' + garment.id, JSON.stringify(data));
-    setCartUpdate(cartUpdate + 1);
     setIsModalOpen(true);
+    updateCartItemsCount();
   };
 
   return (
-    <Layout user={user} home cartUpdate={cartUpdate}>
+    <Layout user={user} home>
       <div className='flex flex-col justify-between lg:flex-row'>
         <div className='flex flex-col gap-10 py-5 px-5'>
           <Modal

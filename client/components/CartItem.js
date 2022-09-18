@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useContext, useEffect, useState } from 'react';
+import CartContext from '../context/CartContext';
 
 const CartItem = ({ garment, setCart, cart, updatels }) => {
+  const { updateCartItemsCount } = useContext(CartContext);
+
   const [itemQnt, setItemQnt] = useState(() =>
     JSON.parse(localStorage.getItem('cart-' + garment.id))
   );
@@ -23,6 +26,7 @@ const CartItem = ({ garment, setCart, cart, updatels }) => {
   const handelItemDelete = () => {
     setCart(cart.filter((item) => item.id !== garment.id));
     localStorage.removeItem('cart-' + garment.id);
+    updateCartItemsCount();
   };
 
   return (

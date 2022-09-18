@@ -1,25 +1,20 @@
-import Link from 'next/link';
-import AddGarForm from '../../components/AddGarForm';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import AddGarmentForm from '../../components/AddGarmentForm';
 import Layout from '../../components/Layout';
-import { useContext, useEffect } from 'react';
+import NotAuthorized from '../../components/utils/NotAuthorized';
 import AuthContext from '../../context/AuthContext';
 
 const AddGarment = () => {
+  const router = useRouter();
   const { user } = useContext(AuthContext);
 
-  if (!user || user.type !== 'admin') {
-    return (
-      <div className=' flex h-screen items-center justify-center px-40'>
-        <h3 className='rounded-md bg-gray-200 py-6 px-8 text-center text-4xl font-medium text-red-600'>
-          You are not authorized to access this page
-          <Link href='/'>
-            <a className='mt-4 block text-lg text-gray-700 underline'>
-              Return to home screen
-            </a>
-          </Link>
-        </h3>
-      </div>
-    );
+  if (!user) {
+    router.push('/login');
+  }
+
+  if (user.type !== 'admin') {
+    return <NotAuthorized />;
   }
 
   return (
@@ -28,7 +23,7 @@ const AddGarment = () => {
         <h2 className='pt-3 text-center text-3xl'>
           Add garment details below:
         </h2>
-        <AddGarForm />
+        <AddGarmentForm />
       </div>
     </Layout>
   );

@@ -1,14 +1,24 @@
-import Layout from '../../components/Layout';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useState, useContext, useEffect } from 'react';
-import Orders from '../../components/admin/Orders';
-import Garments from '../../components/admin/Garments';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useContext, useState } from 'react';
+import Garments from '../../components/admin/Garments';
+import Orders from '../../components/admin/Orders';
+import Layout from '../../components/Layout';
+import NotAuthorized from '../../components/utils/NotAuthorized';
 import AuthContext from '../../context/AuthContext';
 
 const dashboard = () => {
+  const router = useRouter();
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('orders');
+
+  if (!user) {
+    router.push('/login');
+  }
+  if (user.type !== 'admin') {
+    return <NotAuthorized />;
+  }
 
   return (
     <Layout user={user} home>
@@ -38,7 +48,7 @@ const dashboard = () => {
         </div>
         <Link href='/admin/add-garment' passHref>
           <button className='flex cursor-pointer items-center justify-center gap-1 rounded-full border border-blue-700 p-2 text-blue-700 transition duration-200 hover:bg-blue-700 hover:text-gray-100'>
-            <PlusIcon className='h-4 w-4' />{' '}
+            <PlusIcon className='h-4 w-4' />
             <span className='hidden md:inline'>Add New Garment</span>
           </button>
         </Link>

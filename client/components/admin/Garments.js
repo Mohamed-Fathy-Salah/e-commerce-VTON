@@ -1,7 +1,6 @@
-import GarmentItem from '../GarmentItem';
-import useSWR from 'swr';
 import axios from 'axios';
-import Link from 'next/link';
+import useSWR from 'swr';
+import GarmentItem from '../GarmentItem';
 
 const Garments = ({ user }) => {
   const { data, error } = useSWR(`/api/garments/admin/${user?.id}`, (url) =>
