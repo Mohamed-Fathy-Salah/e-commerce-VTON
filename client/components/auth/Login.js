@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import * as Yup from 'yup';
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../../context/AuthContext';
 
 const Login = () => {
   const [genError, setGenError] = useState('');

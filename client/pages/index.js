@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import { useContext, useState } from 'react';
 import buildClient from '../api/build-client';
-import GarmentList from '../components/GarmentList';
-import Layout from '../components/Layout';
-import SearchBar from '../components/SearchBar';
+import GarmentList from '../components/garment/GarmentList';
+import SearchBar from '../components/garment/SearchBar';
+import Layout from '../components/layout/Layout';
 import AuthContext from '../context/AuthContext';
 
 const Home = ({ garments }) => {

@@ -12,7 +12,7 @@ const CartTable = ({ garments, setCart, cart, updatels }) => {
   ));
 
   return (
-    <table className='w-full'>
+    <table className='w-full overflow-x-auto'>
       <thead>
         <tr className='border-b text-left font-normal'>
           <th className='pr-4 text-gray-500'>Item</th>

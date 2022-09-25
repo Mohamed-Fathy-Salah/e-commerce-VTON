@@ -1,6 +1,6 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useContext, useEffect, useState } from 'react';
-import CartContext from '../context/CartContext';
+import CartContext from '../../../context/CartContext';
 
 const CartItem = ({ garment, setCart, cart, updatels }) => {
   const { updateCartItemsCount } = useContext(CartContext);

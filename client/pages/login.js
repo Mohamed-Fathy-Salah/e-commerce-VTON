@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Login from '../components/Login';
-import Logo from '../components/Logo';
+import Login from '../components/auth/Login';
+import Logo from '../components/utils/Logo';
 
 const LoginPage = () => {
   return (

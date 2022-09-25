@@ -1,26 +1,27 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import CartSummary from '../../components/CartSummary';
-import CartTable from '../../components/CartTable';
-import Layout from '../../components/Layout';
+import CartSummary from '../../components/customer/cart/CartSummary';
+import CartTable from '../../components/customer/cart/CartTable';
+import Layout from '../../components/layout/Layout';
 import NotAuthorized from '../../components/utils/NotAuthorized';
 import AuthContext from '../../context/AuthContext';
 import CartContext from '../../context/CartContext';
-
-const toBase64 = (string) => {
-  Buffer.from(string).toString('base64');
-};
 
 const CartPage = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
   const { getCart } = useContext(CartContext);
 
+  const toBase64 = (string) => {
+    Buffer.from(string).toString('base64');
+  };
+
   const cartToCookie = () => {
     const cart = getCart();
     const cartBase64 = toBase64(JSON.stringify(cart));
     document.cookie = `cart=${cartBase64}`;
+    console.log(document.cookie);
   };
 
   const [cart, setCart] = useState([]);
@@ -38,14 +39,15 @@ const CartPage = () => {
     };
 
     fetchCart();
-  }, []);
 
-  if (!user) {
-    router.push('/login');
-  }
-  if (user.type !== 'customer') {
-    return <NotAuthorized />;
-  }
+    if (!user) {
+      router.push('/login');
+    }
+
+    if (user?.type !== 'customer') {
+      return <NotAuthorized />;
+    }
+  }, []);
 
   return (
     <Layout home user={user} cartUpdate={cart}>

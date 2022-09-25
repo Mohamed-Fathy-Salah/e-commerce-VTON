@@ -10,7 +10,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import useSWR from 'swr';
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../../context/AuthContext';
 
 const ProfileMenu = ({ user }) => {
   const router = useRouter();
@@ -86,7 +86,7 @@ const ProfileMenu = ({ user }) => {
                         className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                           active ? 'bg-blue-700 text-white' : 'text-gray-700'
                         }`}
-                        onClick={() => router.push('/customer/orders')}
+                        onClick={() => router.push('/orders')}
                       >
                         <TableCellsIcon
                           className={`mr-3  h-5 w-5 ${
@@ -106,7 +106,7 @@ const ProfileMenu = ({ user }) => {
                       className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                         active ? 'bg-blue-700 text-white' : 'text-gray-700'
                       }`}
-                      onClick={() => router.push('/admin/settings')}
+                      onClick={() => router.push('/settings')}
                     >
                       <Cog6ToothIcon
                         className={`mr-3 h-5 w-5  ${

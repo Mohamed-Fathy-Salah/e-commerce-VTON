@@ -1,0 +1,241 @@
+import axios from 'axios';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import * as Yup from 'yup';
+
+const AddGarmentForm = () => {
+  const router = useRouter();
+  const [genError, setGenError] = useState('');
+  const [files, setFiles] = useState({
+    front: '',
+    back: '',
+    images: [],
+  });
+
+  const handleFormSubmit = async (values, FormikHelpers) => {
+    const data = {
+      name: values.name,
+      description: values.description,
+      garmentClass: values.class,
+      gender: values.gender,
+      price: Number(values.price),
+      small: Number(values.smallQnt),
+      medium: Number(values.mediumQnt),
+      large: Number(values.largeQnt),
+      xlarge: Number(values.xlQnt),
+      xxlarge: Number(values.xxlQnt),
+      frontPhoto: files.front,
+      backPhoto: files.back,
+      photos: files.images,
+    };
+
+    try {
+      const res = await axios.post('/api/garments', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+        },
+      });
+
+      FormikHelpers.resetForm();
+      setGenError('');
+      router.push('/admin/dashboard');
+    } catch (err) {
+      {
+        setGenError(
+          <div className=''>
+            <ul className='my-0'>
+              {err.response?.data.errors.map((err) => (
+                <li key={err.message}>{err.message}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      }
+    }
+  };
+
+  return (
+    <Formik
+      initialValues={{
+        name: '',
+        description: '',
+        class: '',
+        gender: '',
+        price: '',
+        smallQnt: '',
+        mediumQnt: '',
+        largeQnt: '',
+        xlQnt: '',
+        xxlQnt: '',
+      }}
+      validationSchema={Yup.object({
+        name: Yup.string()
+          .max(30, 'Must be 30 characters or less')
+          .required('This field is requried'),
+        price: Yup.number()
+          .typeError('price must be a number')
+          .positive('price must be a positive number')
+          .required('This field is requried'),
+      })}
+      onSubmit={(values, FormikHelpers) =>
+        handleFormSubmit(values, FormikHelpers)
+      }
+    >
+      <Form className='mx-auto flex w-10/12 flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-10 lg:w-6/12'>
+        <div>
+          <label htmlFor='name' className='mb-2 block p-1'>
+            Garment Name:
+          </label>
+          <Field
+            id='name'
+            name='name'
+            type='text'
+            placeholder='e.g. kint color block t-shirt'
+          />
+          <ErrorMessage name='name'>
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
+          </ErrorMessage>
+        </div>
+        <div>
+          <label htmlFor='description' className='mb-2 block p-1'>
+            Garment Description:
+          </label>
+          <Field
+            as='textarea'
+            className=' h-32 resize-none'
+            id='description'
+            name='description'
+            type='text'
+            placeholder='e.g. T-shirt made of spun cotton fabric. Featuring a round neckline, short sleeves and ribbed trims.'
+          ></Field>
+          <ErrorMessage name='email'>
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
+          </ErrorMessage>
+        </div>
+        <div>
+          <label htmlFor='class' className='mb-2 block p-1'>
+            Garment Class:
+          </label>
+          <Field
+            as='select'
+            id='class'
+            name='class'
+            type='text'
+            placeholder='Enter your age ...'
+          >
+            <option value=''>select class</option>
+            <option value='shirt'>Shirt</option>
+            <option value='pants'>Pants</option>
+            <option value='short'>Short</option>
+            <option value='skirt'>Skirt</option>
+          </Field>
+          <ErrorMessage name='age'>
+            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
+          </ErrorMessage>
+        </div>
+        <div>
+          <label htmlFor='gender' className='mb-2 block p-1'>
+            Gender:
+          </label>
+          <Field as='select' id='gender' name='gender' className=''>
+            <option className='text-gray-400' value=''>
+              Select Gender
+            </option>
+            <option value='male'>Male</option>
+            <option value='female'>Female</option>
+            <option value='neutral'>Prefere not to say</option>
+          </Field>
+        </div>
+        <div>
+          <label htmlFor='price' className='mb-2 block p-1'>
+            Garment Price:
+          </label>
+          <Field
+            id='price'
+            name='price'
+            type='number'
+            placeholder='e.g. 188 EGP'
+          />
+        </div>
+        <div>
+          <label htmlFor='smallQnt' className='mb-2 block p-1'>
+            Avilable Quantity:
+          </label>
+          <div className='flex gap-2'>
+            <Field
+              id='smallQnt'
+              name='smallQnt'
+              type='number'
+              placeholder='Small'
+            />
+            <Field
+              id='mediumQnt'
+              name='mediumQnt'
+              type='number'
+              placeholder='Medium'
+            />
+            <Field
+              id='largeQnt'
+              name='largeQnt'
+              type='number'
+              placeholder='Large'
+            />
+            <Field id='xlQnt' name='xlQnt' type='number' placeholder='XL' />
+            <Field id='xxlQnt' name='xxlQnt' type='number' placeholder='XXL' />
+          </div>
+        </div>
+        <div>
+          <label htmlFor='front-img' className=' block p-1'>
+            Front Image:
+          </label>
+          <input
+            type='file'
+            id='front-img'
+            name='front-img'
+            onChange={(e) => setFiles({ ...files, front: e.target.files[0] })}
+          />
+        </div>
+        <div>
+          <label htmlFor='back-img' className=' block p-1'>
+            Back Image:
+          </label>
+          <input
+            type='file'
+            id='back-img'
+            name='back-img'
+            onChange={(e) => setFiles({ ...files, back: e.target.files[0] })}
+          />
+        </div>
+        <div>
+          <label htmlFor='prev-imgs' className='block p-1'>
+            Preview Images:
+          </label>
+          <input
+            className='py-0'
+            type='file'
+            multiple
+            id='prev-imgs'
+            name='prev-imgs'
+            onChange={(e) => {
+              let filesList = [];
+              Object.values(e.target.files).map((file) => {
+                filesList.push(file.name);
+              });
+              setFiles({ ...files, images: filesList });
+            }}
+          />
+        </div>
+        <div className=' p-1 text-red-600'>{genError}</div>
+        <button
+          type='submit'
+          className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800'
+        >
+          Add Garment
+        </button>
+      </Form>
+    </Formik>
+  );
+};
+export default AddGarmentForm;

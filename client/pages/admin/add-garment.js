@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import AddGarmentForm from '../../components/AddGarmentForm';
-import Layout from '../../components/Layout';
+import Layout from '../../components/layout/Layout';
 import NotAuthorized from '../../components/utils/NotAuthorized';
 import AuthContext from '../../context/AuthContext';
 

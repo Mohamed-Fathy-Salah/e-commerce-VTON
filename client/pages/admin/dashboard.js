@@ -4,8 +4,7 @@ import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
 import Garments from '../../components/admin/Garments';
 import Orders from '../../components/admin/Orders';
-import Layout from '../../components/Layout';
-import NotAuthorized from '../../components/utils/NotAuthorized';
+import Layout from '../../components/layout/Layout';
 import AuthContext from '../../context/AuthContext';
 
 const dashboard = () => {
@@ -13,12 +12,12 @@ const dashboard = () => {
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('orders');
 
-  if (!user) {
-    router.push('/login');
-  }
-  if (user.type !== 'admin') {
-    return <NotAuthorized />;
-  }
+  // if (!user) {
+  //   router.push('/login');
+  // }
+  // if (user?.type !== 'admin') {
+  //   return <NotAuthorized />;
+  // }
 
   return (
     <Layout user={user} home>

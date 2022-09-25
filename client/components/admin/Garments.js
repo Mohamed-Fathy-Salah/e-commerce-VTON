@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import GarmentItem from '../GarmentItem';
+import GarmentItem from '../garment/GarmentItem';
 
 const Garments = ({ user }) => {
   const { data, error } = useSWR(`/api/garments/admin/${user?.id}`, (url) =>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const fetchCurrentUser = () => {
   console.log('fetching user');
