@@ -1,4 +1,4 @@
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -47,15 +47,21 @@ const GarmentItem = ({ garment }) => {
         <div className='absolute top-1/2 z-50 hidden h-full w-full -translate-y-1/2 flex-col items-center justify-center gap-4 bg-gray-50 bg-opacity-50 backdrop-blur-sm group-hover:flex'>
           <button
             className='rounded-full bg-blue-700 p-4 text-gray-50 transition-transform hover:scale-105'
-            onClick={() => setConfirmDeleteModal(true)}
+            onClick={() => router.push(`/garment/${garment.id}`)}
           >
-            <TrashIcon className='h-6 w-6' />
+            <EyeIcon className='h-6 w-6' />
           </button>
           <button
             className='rounded-full bg-blue-700 p-4 text-gray-50 transition-transform hover:scale-105'
             onClick={() => router.push(`/admin/edit/${garment.id}`)}
           >
             <PencilIcon className='h-6 w-6' />
+          </button>
+          <button
+            className='rounded-full bg-blue-700 p-4 text-gray-50 transition-transform hover:scale-105'
+            onClick={() => setConfirmDeleteModal(true)}
+          >
+            <TrashIcon className='h-6 w-6' />
           </button>
         </div>
         <img

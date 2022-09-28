@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import buildClient from '../../api/build-client';
-import Layout from '../../components/Layout';
+import Layout from '../../components/layout/Layout';
 import Modal from '../../components/utils/Modal';
 import AuthContext from '../../context/AuthContext';
 import CartContext from '../../context/CartContext';

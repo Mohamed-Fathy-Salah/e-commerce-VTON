@@ -13,15 +13,10 @@ const CartPage = () => {
   const { user } = useContext(AuthContext);
   const { getCart } = useContext(CartContext);
 
-  const toBase64 = (string) => {
-    Buffer.from(string).toString('base64');
-  };
-
   const cartToCookie = () => {
     const cart = getCart();
-    const cartBase64 = toBase64(JSON.stringify(cart));
+    const cartBase64 = Buffer.from(JSON.stringify(cart)).toString('base64');
     document.cookie = `cart=${cartBase64}`;
-    console.log(document.cookie);
   };
 
   const [cart, setCart] = useState([]);
@@ -34,6 +29,7 @@ const CartPage = () => {
       const { data } = await axios.get('/api/garments?cart=1', {
         withCredentials: true,
       });
+      console.log(data);
       const garments = data.map((gar) => gar.value);
       setCart(garments);
     };
@@ -55,7 +51,7 @@ const CartPage = () => {
         Your Cart
       </h1>
       <div className='grid grid-cols-4 gap-4 px-4 2xl:px-0'>
-        <div className='col-span-4 md:col-span-3'>
+        <div className='col-span-4 overflow-x-auto md:col-span-3'>
           <CartTable
             garments={cart}
             setCart={setCart}

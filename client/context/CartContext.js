@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 const CartContext = createContext();
 
@@ -32,8 +32,30 @@ export const CartProvider = ({ children }) => {
     return cart;
   };
 
+  const clearCart = () => {
+    Object.keys(localStorage)
+      .filter((item) => item.startsWith('cart-'))
+      .map((cartItem) => {
+        localStorage.removeItem(cartItem);
+      });
+    updateCartItemsCount();
+  };
+
+  const deleteCartItem = (id) => {
+    localStorage.removeItem('cart-' + id);
+    updateCartItemsCount();
+  };
+
   return (
-    <CartContext.Provider value={{ updateCartItemsCount, cartCount, getCart }}>
+    <CartContext.Provider
+      value={{
+        updateCartItemsCount,
+        cartCount,
+        getCart,
+        deleteCartItem,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

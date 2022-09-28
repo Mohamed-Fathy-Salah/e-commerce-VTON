@@ -1,7 +1,9 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import Link from 'next/link';
-import { useContext, useState } from 'react';
 import * as Yup from 'yup';
+import { Select, TextInput } from '..//utils/FormElements';
+
+import { useContext, useState } from 'react';
 import AuthContext from '../../context/AuthContext';
 
 const Login = () => {
@@ -40,45 +42,27 @@ const Login = () => {
       onSubmit={(values, FormikHelpers) => handleLogin(values, FormikHelpers)}
     >
       <Form className='mx-auto flex w-10/12 flex-col gap-4 rounded-lg bg-white p-6 shadow-md sm:p-10 lg:w-6/12'>
-        <div>
-          <label htmlFor='email' className='mb-2 block p-1'>
-            Enter your email:
-          </label>
-          <Field
-            id='email'
-            name='email'
-            type='email'
-            placeholder='Enter your email ...'
-          />
-          <ErrorMessage name='email'>
-            {(msg) => <div className=' p-1 text-red-600'>{msg}</div>}
-          </ErrorMessage>
-        </div>
-        <div>
-          <label htmlFor='password' className='mb-2 block p-1'>
-            Enter your password:
-          </label>
-          <Field
-            id='password'
-            name='password'
-            type='password'
-            className=''
-            placeholder='Enter your password ...'
-          />
-        </div>
-        <div>
-          <label htmlFor='accountType' className='mb-2 block p-1'>
-            Select your account type
-          </label>
-          <Field as='select' id='accountType' name='accountType' className=''>
-            <option className='text-gray-400' value=''>
-              Please Select
-            </option>
-            <option value='customer'>Normal user</option>
-            <option value='admin'>Seller</option>
-          </Field>
-        </div>
-        <div>{genError}</div>
+        <TextInput
+          label='Enter your email address'
+          name='email'
+          type='email'
+          placeholder='test@example.com'
+        />
+
+        <TextInput
+          label='Enter your password'
+          name='password'
+          type='password'
+          placeholder='**************'
+        />
+
+        <Select label='Select account Type' name='accountType'>
+          <option value=''>account type</option>
+          <option value='admin'>Brand/Business</option>
+          <option value='customer'>Normal User</option>
+        </Select>
+
+        <div className=' p-1 text-red-600'>{genError}</div>
         <Link href='#'>
           <p className='text-center underline'>Forgot your password ?</p>
         </Link>

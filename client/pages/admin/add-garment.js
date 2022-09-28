@@ -1,21 +1,20 @@
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
-import AddGarmentForm from '../../components/AddGarmentForm';
+import AddGarmentForm from '../../components/admin/AddGarmentForm';
 import Layout from '../../components/layout/Layout';
-import NotAuthorized from '../../components/utils/NotAuthorized';
 import AuthContext from '../../context/AuthContext';
 
 const AddGarment = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
 
-  if (!user) {
-    router.push('/login');
-  }
+  // if (!user) {
+  //   router.push('/login');
+  // }
 
-  if (user.type !== 'admin') {
-    return <NotAuthorized />;
-  }
+  // if (user.type !== 'admin') {
+  //   return <NotAuthorized />;
+  // }
 
   return (
     <Layout home user={user}>
