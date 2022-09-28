@@ -15,7 +15,7 @@ interface OrderAttrs {
     large: number;
     xlarge: number;
     xxlarge: number;
-  };
+  }[];
   status: OrderStatus;
   version: number;
 }
@@ -40,7 +40,7 @@ export interface OrderDoc extends mongoose.Document {
     large: number;
     xlarge: number;
     xxlarge: number;
-  };
+  }[];
   status: OrderStatus;
   version: number;
 }
@@ -59,7 +59,7 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
-    garments: {
+    garments: [{
       garmentId: mongoose.Types.ObjectId,
       price: Number,
       small: Number,
@@ -67,7 +67,9 @@ const orderSchema = new mongoose.Schema(
       large: Number,
       xlarge: Number,
       xxlarge: Number,
-    },
+    }, {
+        _id: false
+    }],
     status: {
       type: String,
       enum: Object.values(OrderStatus),
