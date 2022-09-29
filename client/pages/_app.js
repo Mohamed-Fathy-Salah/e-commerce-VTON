@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
-import DevNote from '../components/DevNote';
+import DevNote from '../components/utils/DevNote';
 import { AppContextProvider } from '../context/AppContext';
 import '../styles/globals.css';
 

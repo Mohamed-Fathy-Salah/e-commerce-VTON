@@ -1,10 +1,10 @@
-import { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { createContext, useEffect, useState } from 'react';
 import {
   useCurrentUser,
-  useRegisterUser,
   useLoginUser,
   useLogoutUser,
+  useRegisterUser,
 } from '../hooks/useCurrentUser';
 
 const AuthContext = createContext();

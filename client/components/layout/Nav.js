@@ -1,9 +1,9 @@
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
-import AuthContext from '../context/AuthContext';
-import CartContext from '../context/CartContext';
-import Logo from './Logo';
+import AuthContext from '../../context/AuthContext';
+import CartContext from '../../context/CartContext';
+import Logo from '../utils/Logo';
 import ProfileMenu from './ProfileMenu';
 
 const Nav = ({ user }) => {

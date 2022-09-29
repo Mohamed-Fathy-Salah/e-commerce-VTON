@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Logo from '../components/Logo';
-import Register from '../components/Register';
+import Register from '../components/auth/Register';
+import Logo from '../components/utils/Logo';
 
 const RegisterPage = () => {
   return (

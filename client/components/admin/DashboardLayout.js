@@ -1,34 +1,26 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useContext, useState } from 'react';
-import Garments from '../../components/admin/Garments';
-import Orders from '../../components/admin/Orders';
-import Layout from '../../components/Layout';
-import NotAuthorized from '../../components/utils/NotAuthorized';
+import { useContext } from 'react';
 import AuthContext from '../../context/AuthContext';
+import Layout from '../layout/Layout';
 
-const dashboard = () => {
+const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState('orders');
-
-  if (!user) {
-    router.push('/login');
-  }
-  if (user.type !== 'admin') {
-    return <NotAuthorized />;
-  }
+  const activeTab = router.asPath.split('/').pop();
 
   return (
-    <Layout user={user} home>
+    <Layout home user={user}>
       <nav className='flex items-center justify-center gap-4 '>
         <div className='relative flex w-2/3 rounded-full bg-gray-200 py-2 text-gray-600'>
           <div
             className={`z-10 w-1/2 cursor-pointer text-center ${
               activeTab === 'orders' && ' text-gray-100'
             }`}
-            onClick={() => setActiveTab('orders')}
+            onClick={() =>
+              router.push('/admin/dashboard/orders', (scroll = false))
+            }
           >
             Orders
           </div>
@@ -36,7 +28,7 @@ const dashboard = () => {
             className={`z-10 w-1/2 cursor-pointer text-center ${
               activeTab === 'garments' && ' text-gray-100'
             }`}
-            onClick={() => setActiveTab('garments')}
+            onClick={() => router.push('/admin/dashboard/garments')}
           >
             Garments
           </div>
@@ -53,11 +45,8 @@ const dashboard = () => {
           </button>
         </Link>
       </nav>
-      <section>
-        {activeTab === 'orders' && <Orders user={user} />}
-        {activeTab === 'garments' && <Garments user={user} />}
-      </section>
+      {children}
     </Layout>
   );
 };
-export default dashboard;
+export default DashboardLayout;
