@@ -52,7 +52,7 @@ const AddGarmentForm = () => {
       addNewGarment(data);
       FormikHelpers.resetForm();
       setGenError('');
-      router.push('/admin/dashboard');
+      router.push('/admin/dashboard/garments');
     } catch (err) {
       {
         setGenError(

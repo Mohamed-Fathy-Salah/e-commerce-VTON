@@ -30,7 +30,7 @@ const OrderRow = ({ order }) => {
                 <span className='hidden font-semibold md:inline'>
                   Order Id:
                 </span>{' '}
-                {order.id}
+                {order.orderId}
               </h3>
               <h3
                 className={`rounded-full border px-3 transition-colors duration-300 ${statusColor} flex items-center justify-center`}

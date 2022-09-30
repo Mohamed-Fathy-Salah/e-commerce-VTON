@@ -1,11 +1,13 @@
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import { Select, TextInput } from '../utils/FormElements';
 
 const SettingsFormCustomer = ({ customer }) => {
+  const [file, setFile] = useState('');
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -24,6 +26,7 @@ const SettingsFormCustomer = ({ customer }) => {
       gender: values.gender,
       age: values.age,
       skinTone: values.skinTone,
+      file: file,
     };
 
     updateCustomerProfile(data);
@@ -73,6 +76,16 @@ const SettingsFormCustomer = ({ customer }) => {
           <option value='black'>Black</option>
           <option value='middleEastern'>Middle Eastern</option>
         </Select>
+
+        <TextInput
+          label='Upload profile photo'
+          name='file'
+          type='file'
+          onChange={(e) => {
+            setFile(e.target.files[0]);
+          }}
+        />
+
         <button
           type='submit'
           className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800 disabled:bg-gray-500'

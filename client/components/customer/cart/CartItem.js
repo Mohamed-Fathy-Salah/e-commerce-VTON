@@ -9,6 +9,8 @@ const CartItem = ({ garment, setCart, cart, updatels }) => {
     JSON.parse(localStorage.getItem('cart-' + garment.id))
   );
 
+  console.log(itemQnt);
+
   const handleQntChange = (e) => {
     setItemQnt({
       ...itemQnt,
