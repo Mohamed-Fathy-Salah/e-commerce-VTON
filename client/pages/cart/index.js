@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import CartSummary from '../../components/customer/cart/CartSummary';
@@ -47,22 +48,35 @@ const CartPage = () => {
 
   return (
     <Layout home user={user} cartUpdate={cart}>
-      <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
-        Your Cart
-      </h1>
-      <div className='grid grid-cols-4 gap-4 px-4 2xl:px-0'>
-        <div className='col-span-4 overflow-x-auto md:col-span-3'>
-          <CartTable
-            garments={cart}
-            setCart={setCart}
-            cart={cart}
-            updatels={setUpdateLocalStorage}
-          />
+      {cart.length ? (
+        <>
+          <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
+            Your Cart
+          </h1>
+          <div className='grid grid-cols-4 gap-4 px-4 2xl:px-0'>
+            <div className='col-span-4 overflow-x-auto md:col-span-3'>
+              <CartTable
+                garments={cart}
+                setCart={setCart}
+                cart={cart}
+                updatels={setUpdateLocalStorage}
+              />
+            </div>
+            <div className='col-span-4 md:col-span-1'>
+              <CartSummary ls={updateLocalStorage} cart={cart} />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className='flex h-72 flex-col items-center justify-center gap-2 text-4xl text-gray-500'>
+          <h3>The Cart Is Empty</h3>
+          <Link href='/'>
+            <a className='text-xl text-blue-700 underline hover:opacity-90'>
+              Add products to cart
+            </a>
+          </Link>
         </div>
-        <div className='col-span-4 md:col-span-1'>
-          <CartSummary ls={updateLocalStorage} cart={cart} />
-        </div>
-      </div>
+      )}
     </Layout>
   );
 };

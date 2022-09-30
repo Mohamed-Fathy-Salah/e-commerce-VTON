@@ -12,7 +12,7 @@ const Orders = ({ orders }) => {
     }
   }, [filteredStatusOrders]);
 
-  console.log(filteredOrders);
+  console.log(orders);
   return (
     <div className='my-16 px-16'>
       <div className='space-y-16 p-8'>
