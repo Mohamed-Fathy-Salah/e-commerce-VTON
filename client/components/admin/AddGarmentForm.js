@@ -83,9 +83,7 @@ const AddGarmentForm = () => {
         xxlarge: '',
       }}
       validationSchema={Yup.object({
-        name: Yup.string()
-          .max(30, 'Must be 30 characters or less')
-          .required('This field is requried'),
+        name: Yup.string().required('This field is requried'),
         price: Yup.number()
           .typeError('price must be a number')
           .positive('price must be a positive number')
@@ -193,6 +191,7 @@ const AddGarmentForm = () => {
               filesList.push(file.name);
             });
             setFiles({ ...files, images: filesList });
+            console.log(files);
           }}
         />
 
