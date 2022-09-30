@@ -26,7 +26,7 @@ interface OrderModel extends mongoose.Model<OrderDoc> {
 
 // An interface that describes the properties
 // that a Order Document has
-export interface OrderDoc extends mongoose.Document {
+interface OrderDoc extends mongoose.Document {
   orderId: string;
   adminId: string;
   customerId: string;
