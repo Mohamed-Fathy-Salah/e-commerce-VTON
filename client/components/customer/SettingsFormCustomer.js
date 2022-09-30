@@ -12,7 +12,13 @@ const SettingsFormCustomer = ({ customer }) => {
 
   const queryClient = useQueryClient();
   const { mutate: updateCustomerProfile } = useMutation(
-    (data) => axios.put('/api/customerdata', data),
+    (data) =>
+      axios.put('/api/customerdata', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+        },
+      }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('user-profile');
@@ -26,7 +32,7 @@ const SettingsFormCustomer = ({ customer }) => {
       gender: values.gender,
       age: values.age,
       skinTone: values.skinTone,
-      file: file,
+      photo: file,
     };
 
     updateCustomerProfile(data);

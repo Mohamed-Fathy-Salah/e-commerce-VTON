@@ -1,16 +1,24 @@
 import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import { TextInput } from '../utils/FormElements';
 
 const SettingsFormAdmin = ({ admin }) => {
+  const [file, setFile] = useState('');
   const router = useRouter();
 
   const queryClient = useQueryClient();
   const { mutate: updateAdminProfile } = useMutation(
-    (data) => axios.put('/api/admindata', data),
+    (data) =>
+      axios.put('/api/admindata', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+        },
+      }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('user-profile');
@@ -21,6 +29,7 @@ const SettingsFormAdmin = ({ admin }) => {
   const handleUpdateAdminProfile = async (values) => {
     const data = {
       name: values.name,
+      photo: file,
     };
 
     updateAdminProfile(data);
@@ -46,6 +55,16 @@ const SettingsFormAdmin = ({ admin }) => {
           type='text'
           placeholder='xxxx xxxx'
         />
+
+        <TextInput
+          label='Upload profile photo'
+          name='file'
+          type='file'
+          onChange={(e) => {
+            setFile(e.target.files[0]);
+          }}
+        />
+
         <button
           type='submit'
           className='mt-3 rounded-md bg-blue-700 py-3 text-xl text-white shadow-sm transition-colors hover:bg-blue-800 disabled:bg-gray-500'

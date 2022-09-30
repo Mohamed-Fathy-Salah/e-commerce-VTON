@@ -1,5 +1,5 @@
-import { OrderStatus } from "@mfsvton/common";
-import mongoose from "mongoose";
+import { OrderStatus } from '@mfsvton/common';
+import mongoose from 'mongoose';
 
 // An interface that describes the properties
 // that are requried to create a new Order
@@ -15,7 +15,7 @@ interface OrderAttrs {
     large: number;
     xlarge: number;
     xxlarge: number;
-  }[];
+  };
   status: OrderStatus;
   version: number;
 }
@@ -40,7 +40,7 @@ export interface OrderDoc extends mongoose.Document {
     large: number;
     xlarge: number;
     xxlarge: number;
-  }[];
+  };
   status: OrderStatus;
   version: number;
 }
@@ -59,7 +59,7 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
-    garments: [{
+    garments: {
       garmentId: mongoose.Types.ObjectId,
       price: Number,
       small: Number,
@@ -67,9 +67,7 @@ const orderSchema = new mongoose.Schema(
       large: Number,
       xlarge: Number,
       xxlarge: Number,
-    }, {
-        _id: false
-    }],
+    },
     status: {
       type: String,
       enum: Object.values(OrderStatus),
@@ -86,11 +84,11 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-orderSchema.set("versionKey", "version");
+orderSchema.set('versionKey', 'version');
 orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
 };
 
-const Order = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
+const Order = mongoose.model<OrderDoc, OrderModel>('Order', orderSchema);
 
 export { Order };
