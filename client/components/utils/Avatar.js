@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 const Avatar = ({ name, photo }) => {
   const nameArray = name.split(' ');
   const placehoder =
@@ -8,18 +6,16 @@ const Avatar = ({ name, photo }) => {
   return (
     <>
       {photo ? (
-        <Image
+        <img
           src={'data:image;base64,' + photo}
           alt='profile photo'
-          width={24}
-          height={24}
-          objectFit='cover'
+          className='h-12 w-12 rounded-md object-cover sm:h-8 sm:w-8'
         />
       ) : (
-        <div className='flex items-center justify-center rounded-md text-lg font-bold text-gray-500 sm:mr-2 sm:h-8 sm:w-8 sm:bg-gray-200 sm:text-sm'>
+        <div className='flex h-12 w-12 items-center justify-center rounded-md text-lg font-bold text-gray-500 sm:mr-2 sm:h-8 sm:w-8 sm:bg-gray-200 sm:text-sm'>
           {placehoder}
         </div>
-        // <UserIcon className='h-6 w-6 rounded-md text-gray-500 sm:mr-2 sm:h-8 sm:w-8 sm:bg-gray-200 sm:p-2' />
+        //  <UserIcon className='h-6 w-6 rounded-md text-gray-500 sm:mr-2 sm:h-8 sm:w-8 sm:bg-gray-200 sm:p-2' />
       )}
     </>
   );
