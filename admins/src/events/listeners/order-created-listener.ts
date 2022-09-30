@@ -18,15 +18,13 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
                 orderId,
                 adminId,
                 customerId,
-                garments: {
-                    garmentId,
-                    price,
-                    small,
-                    medium,
-                    large,
-                    xlarge,
-                    xxlarge,
-                },
+                garmentId,
+                price,
+                small,
+                medium,
+                large,
+                xlarge,
+                xxlarge,
                 status,
                 version
             });

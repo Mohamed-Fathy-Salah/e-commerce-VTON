@@ -13,25 +13,33 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
   subject: Subjects.OrderCancelled = Subjects.OrderCancelled;
   queueGroupName = queueGroupName;
   async onMessage(data: OrderCancelledEvent["data"], msg: Message) {
-    const { customerId } = data;
+    const { orderId, customerId, garments } = data;
 
-    const saves = new Array<Promise<OrderDoc>>(data.garments.length);
+    const orders = await Order.find({ customerId, orderId }, { _id: 0 });
 
-    for (let idx in data.garments) {
-      const { adminId, garmentId } = data.garments[idx];
+    const index: { [key: string]: { [key: string]: number } } = {};
+    orders.forEach((order, idx) => {
+      if (!index[order.adminId]) index[order.adminId] = {};
+      index[order.adminId][order.garmentId] = idx;
+    });
 
-      const order = await Order.findOne({ adminId, garmentId, customerId });
-
-      if (!order) {
+    garments.forEach(({ adminId, garmentId }) => {
+      // find idx of [adminId, garmentId] in orders
+      if (!index[adminId]) {
         throw new NotFoundError();
       }
 
-      order.status = OrderStatus.Cancelled;
+      const idx = index[adminId][garmentId];
+      // if not present throw not found error
+      if (idx === -1) {
+        throw new NotFoundError();
+      }
+      // update orders[idx].status = cancelled
+      orders[idx].status = OrderStatus.Cancelled;
+    });
 
-      saves[idx] = order.save();
-    }
-
-    await Promise.allSettled(saves);
+    //@ts-ignore
+    await orders.save();
 
     msg.ack();
   }
