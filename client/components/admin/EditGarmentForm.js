@@ -9,11 +9,9 @@ import { Select, TextInput } from '../../components/utils/FormElements';
 const EditGarmentForm = ({ garment }) => {
   const router = useRouter();
   const [genError, setGenError] = useState('');
-  const [files, setFiles] = useState({
-    front: '',
-    back: '',
-    images: [],
-  });
+  const [frontPhoto, setFrontPhoto] = useState('');
+  const [backPhoto, setBackPhoto] = useState('');
+  const [previewPhotos, setPreviewPhotos] = useState([]);
 
   const {
     name,
@@ -56,16 +54,17 @@ const EditGarmentForm = ({ garment }) => {
       large: Number(values.large),
       xlarge: Number(values.xlarge),
       xxlarge: Number(values.xxlarge),
-      frontPhoto: files.front || garment.frontPhoto,
-      backPhoto: files.back || garment.backPhoto,
-      photos: files.images || garment.photos,
+      frontPhoto: frontPhoto || garment.frontPhoto,
+      backPhoto: backPhoto || garment.backPhoto,
+      photos: previewPhotos || garment.photos,
     };
 
     try {
       updateGarmentInfo(data);
+      console.log(data);
       FormikHelpers.resetForm();
       setGenError('');
-      router.push('/admin/dashboard');
+      // router.push('/admin/dashboard/garments');
     } catch (err) {
       {
         setGenError(
@@ -96,9 +95,7 @@ const EditGarmentForm = ({ garment }) => {
         xxlarge,
       }}
       validationSchema={Yup.object({
-        name: Yup.string()
-          .max(30, 'Must be 30 characters or less')
-          .required('This field is requried'),
+        name: Yup.string().required('This field is requried'),
         price: Yup.number()
           .typeError('price must be a number')
           .positive('price must be a positive number')
@@ -183,7 +180,7 @@ const EditGarmentForm = ({ garment }) => {
           label='Enter garment photo (front photo)'
           name='front'
           type='file'
-          onChange={(e) => setFiles({ ...files, front: e.target.files[0] })}
+          onChange={(e) => setFrontPhoto(e.target.files[0])}
         />
 
         <TextInput
@@ -191,7 +188,7 @@ const EditGarmentForm = ({ garment }) => {
           name='back'
           type='file'
           placeholder='70'
-          onChange={(e) => setFiles({ ...files, back: e.target.files[0] })}
+          onChange={(e) => setBackPhoto(e.target.files[0])}
         />
 
         <TextInput
@@ -201,11 +198,7 @@ const EditGarmentForm = ({ garment }) => {
           type='file'
           placeholder='70'
           onChange={(e) => {
-            let filesList = [];
-            Object.values(e.target.files).map((file) => {
-              filesList.push(file.name);
-            });
-            setFiles({ ...files, images: filesList });
+            setPreviewPhotos(Object.values(e.target.files));
           }}
         />
 
