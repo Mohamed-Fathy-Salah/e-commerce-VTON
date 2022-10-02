@@ -1,5 +1,5 @@
-import { OrderStatus } from "@mfsvton/common";
-import mongoose from "mongoose";
+import { OrderStatus } from '@mfsvton/common';
+import mongoose from 'mongoose';
 
 // An interface that describes the properties
 // that are requried to create a new Order
@@ -81,11 +81,11 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-orderSchema.set("versionKey", "version");
+orderSchema.set('versionKey', 'version');
 orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
 };
 
-const Order = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
+const Order = mongoose.model<OrderDoc, OrderModel>('Order', orderSchema);
 
 export { Order };

@@ -9,11 +9,11 @@ import { Select, TextInput } from '../../components/utils/FormElements';
 const AddGarmentForm = () => {
   const router = useRouter();
   const [genError, setGenError] = useState('');
-  const [files, setFiles] = useState({
-    front: '',
-    back: '',
-    images: [],
-  });
+  const [frontPhoto, setFrontPhoto] = useState('');
+  const [backPhoto, setBackPhoto] = useState('');
+  const [previewPhotos, setPreviewPhotos] = useState([]);
+
+  console.log(frontPhoto);
 
   const postGarment = (data) => {
     return axios.post('/api/garments', data, {
@@ -43,16 +43,18 @@ const AddGarmentForm = () => {
       large: Number(values.large),
       xlarge: Number(values.xlarge),
       xxlarge: Number(values.xxlarge),
-      frontPhoto: files.front,
-      backPhoto: files.back,
-      photos: files.images,
+      frontPhoto: frontPhoto,
+      backPhoto: backPhoto,
+      photos: previewPhotos,
     };
+
+    console.log(data);
 
     try {
       addNewGarment(data);
-      FormikHelpers.resetForm();
+      // FormikHelpers.resetForm();
       setGenError('');
-      router.push('/admin/dashboard/garments');
+      // router.push('/admin/dashboard/garments');
     } catch (err) {
       {
         setGenError(
@@ -83,9 +85,7 @@ const AddGarmentForm = () => {
         xxlarge: '',
       }}
       validationSchema={Yup.object({
-        name: Yup.string()
-          .max(30, 'Must be 30 characters or less')
-          .required('This field is requried'),
+        name: Yup.string().required('This field is requried'),
         price: Yup.number()
           .typeError('price must be a number')
           .positive('price must be a positive number')
@@ -170,7 +170,7 @@ const AddGarmentForm = () => {
           label='Enter garment photo (front photo)'
           name='front'
           type='file'
-          onChange={(e) => setFiles({ ...files, front: e.target.files[0] })}
+          onChange={(e) => setFrontPhoto(e.target.files[0])}
         />
 
         <TextInput
@@ -178,7 +178,7 @@ const AddGarmentForm = () => {
           name='back'
           type='file'
           placeholder='70'
-          onChange={(e) => setFiles({ ...files, back: e.target.files[0] })}
+          onChange={(e) => setBackPhoto(e.target.files[0])}
         />
 
         <TextInput
@@ -188,11 +188,8 @@ const AddGarmentForm = () => {
           type='file'
           placeholder='70'
           onChange={(e) => {
-            let filesList = [];
-            Object.values(e.target.files).map((file) => {
-              filesList.push(file.name);
-            });
-            setFiles({ ...files, images: filesList });
+            setPreviewPhotos(Object.values(e.target.files));
+            console.log(previewPhotos);
           }}
         />
 

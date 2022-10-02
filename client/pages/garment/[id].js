@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import buildClient from '../../api/build-client';
 import Layout from '../../components/layout/Layout';
 import Modal from '../../components/utils/Modal';
+import PhotosGroup from '../../components/utils/PhotosGroup';
 import AuthContext from '../../context/AuthContext';
 import CartContext from '../../context/CartContext';
 
@@ -54,7 +54,7 @@ const GarmentPage = ({ garment }) => {
   return (
     <Layout user={user} home>
       <div className='flex flex-col justify-between lg:flex-row'>
-        <div className='flex flex-col gap-10 py-5 px-5'>
+        <div className='flex flex-col gap-10 py-5 px-5 lg:w-1/2'>
           <Modal
             isOpen={isModalOpen}
             setIsOpen={setIsModalOpen}
@@ -86,23 +86,21 @@ const GarmentPage = ({ garment }) => {
             </span>
           </div>
           <div>
-            <h1 className=' text-6xl font-bold text-blue-700'>
+            <h1 className='text-4xl font-bold text-blue-700 md:text-6xl'>
               {garment.name || garment.garmentClass + '-' + garment.gender}
             </h1>
             {garment.description && (
-              <p className='mt-4 max-w-lg text-gray-600'>
+              <p className='mt-4 max-w-lg text-lg text-gray-600'>
                 {garment.description}
               </p>
             )}
             <h3 className='my-4 text-3xl'>{garment.price} EGP</h3>
           </div>
           <div className='block lg:hidden'>
-            <Image
-              className='max-w-2xl rounded-xl hover:opacity-75 '
-              width={800}
-              height={800}
-              layout='intrinsic'
-              src={'data:image;base64,' + garment.frontPhoto}
+            <PhotosGroup
+              images={garment.photos}
+              front={garment.frontPhoto}
+              back={garment.backPhoto}
             />
           </div>
           <div>
@@ -143,13 +141,11 @@ const GarmentPage = ({ garment }) => {
             </button>
           </div>
         </div>
-        <div className='hidden pr-5 lg:block'>
-          <Image
-            className=' max-w-2xl rounded-xl object-cover hover:opacity-75 '
-            width={800}
-            height={800}
-            layout='intrinsic'
-            src={'data:image;base64,' + garment.frontPhoto}
+        <div className='hidden w-full pr-5 lg:block lg:w-1/2'>
+          <PhotosGroup
+            images={garment.photos}
+            front={garment.frontPhoto}
+            back={garment.backPhoto}
           />
         </div>
       </div>
