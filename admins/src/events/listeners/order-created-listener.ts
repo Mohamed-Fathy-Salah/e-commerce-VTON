@@ -1,41 +1,26 @@
 import { Listener, OrderCreatedEvent, Subjects } from "@mfsvton/common";
 import { Message } from "node-nats-streaming";
-import { Order, OrderDoc } from "../../models/orders";
+import { Order } from "../../models/orders";
 import { queueGroupName } from "./queue-group-name";
 
 export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
-    subject: Subjects.OrderCreated = Subjects.OrderCreated;
-    queueGroupName = queueGroupName;
-    async onMessage(data: OrderCreatedEvent['data'], msg: Message) {
-        const {orderId, customerId, status, version} = data;
+  subject: Subjects.OrderCreated = Subjects.OrderCreated;
+  queueGroupName = queueGroupName;
+  async onMessage(data: OrderCreatedEvent["data"], msg: Message) {
+    const { orderId, customerId, status, version, garments } = data;
 
-        const orders = new Array<Promise<OrderDoc>>(data.garments.length);
+    await Order.insertMany(
+      garments.map((garment) => {
+        return {
+          orderId,
+          customerId,
+          status,
+          version,
+          ...garment,
+        };
+      })
+    );
 
-        for(let idx in data.garments) {
-            const {adminId, garmentId, price, small, medium, large, xlarge, xxlarge} = data.garments[idx];
-
-            const order = Order.build({
-                orderId,
-                adminId,
-                customerId,
-                garments: {
-                    garmentId,
-                    price,
-                    small,
-                    medium,
-                    large,
-                    xlarge,
-                    xxlarge,
-                },
-                status,
-                version
-            });
-
-            orders[idx] = order.save();
-        }
-
-        await Promise.allSettled(orders)
-
-        msg.ack();
-    }
+    msg.ack();
+  }
 }
