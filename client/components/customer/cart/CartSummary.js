@@ -1,8 +1,12 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
+import CartContext from '../../../context/CartContext';
 
 const CartSummary = ({ order, setOrder, cart, ls }) => {
+  const router = useRouter();
   const [totalPrice, setTotalPrice] = useState(0);
+  const { clearCart } = useContext(CartContext);
 
   useEffect(() => {
     const priceArr = cart.map((item) => {
@@ -37,9 +41,13 @@ const CartSummary = ({ order, setOrder, cart, ls }) => {
       garments,
     };
 
-    console.log(order);
-    const postOrder = await axios.post('/api/orders', order);
-    console.log(postOrder);
+    try {
+      const { data } = await axios.post('/api/orders', order);
+      router.push('/orders/' + data.id);
+      clearCart();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

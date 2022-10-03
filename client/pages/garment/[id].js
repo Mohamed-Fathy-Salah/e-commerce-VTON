@@ -86,7 +86,7 @@ const GarmentPage = ({ garment }) => {
             </span>
           </div>
           <div>
-            <h1 className='text-4xl font-bold text-blue-700 md:text-6xl'>
+            <h1 className='break-words text-4xl font-bold text-blue-700 md:text-6xl'>
               {garment.name || garment.garmentClass + '-' + garment.gender}
             </h1>
             {garment.description && (

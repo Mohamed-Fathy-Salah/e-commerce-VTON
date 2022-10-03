@@ -43,13 +43,7 @@ const OrderRow = ({ order }) => {
             />
           </Disclosure.Button>
           <Disclosure.Panel className={`mb-3 p-5 ${open ? '' : ''} `}>
-            {user?.type === 'customer' ? (
-              order.garments.map((garment) => (
-                <OrderGarment key={garment.garmentId} garment={garment} />
-              ))
-            ) : (
-              <OrderGarment garment={order.garments} />
-            )}
+            <OrderGarment order={order} />
           </Disclosure.Panel>
         </>
       )}
