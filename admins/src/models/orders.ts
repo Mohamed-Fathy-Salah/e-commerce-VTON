@@ -46,6 +46,7 @@ const orderSchema = new mongoose.Schema(
     orderId: {
       type: mongoose.Types.ObjectId,
       required: true,
+      index: true
     },
     adminId: {
       type: mongoose.Types.ObjectId,
