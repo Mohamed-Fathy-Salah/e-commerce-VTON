@@ -25,7 +25,7 @@ router.get(
 
     const garmentIds = cart.map((val: {garmentId: string}) => val.garmentId);
 
-    const garments = Garment.find({_id: {"$in": garmentIds}})
+    const garments = await Garment.find({_id: {"$in": garmentIds}});
 
     res.status(200).send(garments)
 });
