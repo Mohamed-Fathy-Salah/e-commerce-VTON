@@ -66,13 +66,12 @@ const GarmentItem = ({ garment }) => {
         </div>
         <img
           layout='intrinsic'
-          objectFit='cover'
           className='w-full rounded object-contain'
           src={'data:image;base64,' + garment.frontPhoto}
         />
-        <Link href={'/garment/' + garment.id} replace={true}>
+        <Link href={'/garment/' + garment.id}>
           <h2 className='cursor-pointer text-lg font-semibold text-gray-600'>
-            {garment.name}
+            {garment.name?.substr(0, 15)}...
           </h2>
         </Link>
         <h3 className='my-2 text-2xl text-blue-700'>{garment.price} EGP</h3>

@@ -12,11 +12,10 @@ const Orders = ({ orders }) => {
     }
   }, [filteredStatusOrders]);
 
-  console.log(orders);
   return (
-    <div className='my-16 px-16'>
-      <div className='space-y-16 p-8'>
-        <div className='flex flex-col gap-4 border-b pb-8 md:flex-row'>
+    <>
+      <div className='p-8'>
+        <div className='mx-auto flex max-w-screen-lg flex-col gap-4 rounded-md bg-gray-100 p-8 md:flex-row'>
           <select
             className='max-w-sm'
             onChange={(e) => {
@@ -31,7 +30,7 @@ const Orders = ({ orders }) => {
             <option value='created'>Created</option>
             <option value='cancelled'>Cancelled</option>
             <option value='awaiting'>Awaiting</option>
-            <option value='complete'>Complete</option>
+            <option value='completed'>Completed</option>
           </select>
           <input
             type='text'
@@ -49,7 +48,7 @@ const Orders = ({ orders }) => {
             }}
           />
         </div>
-        <section className='mx-auto w-full max-w-4xl items-center justify-center p-10'>
+        <section className='mx-auto my-8 max-w-screen-lg items-center justify-center'>
           {filteredOrders.length ? (
             filteredOrders.map((order) => (
               <OrderRow key={order.id} order={order} />
@@ -61,7 +60,7 @@ const Orders = ({ orders }) => {
           )}
         </section>
       </div>
-    </div>
+    </>
   );
 };
 export default Orders;
