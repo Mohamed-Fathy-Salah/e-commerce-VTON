@@ -1,6 +1,7 @@
 import {
   GarmentClass,
   Gender,
+  NotAuthorizedError,
   NotFoundError,
   requireAdminAuth,
   validateRequest,
@@ -10,21 +11,21 @@ import { body } from "express-validator";
 import { GarmentUpdatedPublisher } from "../events/publishers/garment-updated-publisher";
 import { Garment } from "../models/garment";
 import { natsWrapper } from "../nats-wrapper";
-import multer from 'multer';
+import multer from "multer";
 
 const router = express.Router();
 
-const Storage = multer.memoryStorage()
+const Storage = multer.memoryStorage();
 
-const upload = multer({ storage:Storage });
+const upload = multer({ storage: Storage });
 
 router.put(
   "/api/garments/:garmentId",
   requireAdminAuth,
   upload.fields([
-      {name: 'frontPhoto', maxCount: 1},
-      {name: 'backPhoto', maxCount: 1},
-      {name: 'photos', maxCount: 4},
+    { name: "frontPhoto", maxCount: 1 },
+    { name: "backPhoto", maxCount: 1 },
+    { name: "photos", maxCount: 4 },
   ]),
   [
     body("garmentClass").custom((value) =>
@@ -46,51 +47,81 @@ router.put(
     const adminId = req.currentUser!.id;
     const garmentId = req.params.garmentId;
 
-    const garment = await Garment.findOne({ adminId, _id: garmentId });
+    const garment = await Garment.findById(garmentId);
 
     if (!garment) {
       throw new NotFoundError();
     }
 
-    const { name, description, garmentClass, gender, price, small, medium, large, xlarge, xxlarge} = req.body;
-    
+    if (garment.adminId !== adminId) {
+      throw new NotAuthorizedError();
+    }
+
+    const {
+      name,
+      description,
+      garmentClass,
+      gender,
+      price,
+      small,
+      medium,
+      large,
+      xlarge,
+      xxlarge,
+    } = req.body;
+
     //@ts-ignore
-    const {frontPhoto, backPhoto, photos} = req.files;
+    const { frontPhoto, backPhoto, photos } = req.files;
 
-    garment.set({ name, description, garmentClass, gender, price, small, medium, large, xlarge, xxlarge });
+    garment.set({
+      name,
+      description,
+      garmentClass,
+      gender,
+      price,
+      small,
+      medium,
+      large,
+      xlarge,
+      xxlarge,
+    });
 
-    if(frontPhoto) {
-        //@ts-ignore
-        garment.set({frontPhoto: frontPhoto[0].buffer.toString('base64')});
+    if (frontPhoto) {
+      //@ts-ignore
+      garment.set({ frontPhoto: frontPhoto[0].buffer.toString("base64") });
     }
 
-    if(backPhoto) {
-        //@ts-ignore
-        garment.set({backPhoto: backPhoto[0].buffer.toString('base64')});
+    if (backPhoto) {
+      //@ts-ignore
+      garment.set({ backPhoto: backPhoto[0].buffer.toString("base64") });
     }
 
-    if(photos) {
-        //@ts-ignore
-        garment.set({photos: photos.map(val => val.buffer.toString('base64'))});
+    if (photos) {
+      //@ts-ignore
+      garment.set({
+        photos: photos.map((val) => val.buffer.toString("base64")),
+      });
     }
 
     await garment.save();
 
     new GarmentUpdatedPublisher(natsWrapper.client).publish({
-        garmentId,
-        adminId: garment.adminId,
-        garmentClass: garment.garmentClass,
-        gender: garment.gender,
-        small: garment.small,
-        medium: garment.medium,
-        large: garment.large,
-        xlarge: garment.xlarge,
-        xxlarge: garment.xxlarge,
-        price: garment.price,
-        version: garment.version,
-        frontPhoto: frontPhoto ? frontPhoto[0].buffer.toString('base64'): undefined, // send onlywhen new image
-        backPhoto: backPhoto ? backPhoto[0].buffer.toString('base64'): undefined, // send onlywhen new image
-    })
+      garmentId,
+      adminId: garment.adminId,
+      garmentClass: garment.garmentClass,
+      gender: garment.gender,
+      small: garment.small,
+      medium: garment.medium,
+      large: garment.large,
+      xlarge: garment.xlarge,
+      xxlarge: garment.xxlarge,
+      price: garment.price,
+      version: garment.version,
+      frontPhoto: frontPhoto
+        ? frontPhoto[0].buffer.toString("base64")
+        : undefined, // send onlywhen new image
+      backPhoto: backPhoto ? backPhoto[0].buffer.toString("base64") : undefined, // send onlywhen new image
+    });
 
     res.status(201).send(garment);
   }
