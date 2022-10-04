@@ -50,6 +50,7 @@ const orderSchema = new mongoose.Schema(
     customerId: {
       type: String,
       required: true,
+      unique: true
     },
     status: {
       type: String,
