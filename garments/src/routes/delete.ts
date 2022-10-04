@@ -1,7 +1,4 @@
-import {
-  NotFoundError,
-  requireAdminAuth,
-} from "@mfsvton/common";
+import { NotAuthorizedError, NotFoundError, requireAdminAuth } from "@mfsvton/common";
 import express, { Response, Request } from "express";
 import { GarmentDeletedPublisher } from "../events/publishers/garment-deleted-publisher";
 import { Garment } from "../models/garment";
@@ -16,18 +13,23 @@ router.delete(
     const adminId = req.currentUser!.id;
     const garmentId = req.params.garmentId;
 
-    const garment = await Garment.findOne({ adminId, _id: garmentId });
+    const garment = await Garment.findById(garmentId);
+
 
     if (!garment) {
       throw new NotFoundError();
     }
 
+    if(garment.adminId !== adminId) {
+        throw new NotAuthorizedError();
+    }
+
     await garment.delete();
 
     new GarmentDeletedPublisher(natsWrapper.client).publish({
-        garmentId,
-        adminId: garment.adminId,
-        version: garment.version
+      garmentId,
+      adminId: garment.adminId,
+      version: garment.version,
     });
 
     return res.status(200).send(garment);
