@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const GarmentCard = ({ garment }) => {
   return (
-    <>
+    <div className='sm:w-60'>
       <Link href={'garment/' + garment.id}>
         <a className='group'>
           <div className='aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 w-full overflow-hidden rounded-lg bg-gray-200'>
@@ -30,7 +30,7 @@ const GarmentCard = ({ garment }) => {
           </p>
         </a>
       </Link>
-    </>
+    </div>
   );
 };
 export default GarmentCard;

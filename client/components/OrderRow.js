@@ -21,15 +21,13 @@ const OrderRow = ({ order }) => {
       {({ open }) => (
         <>
           <Disclosure.Button
-            className={` ${
-              open ? '' : ''
-            } flex w-full items-center justify-between border-b border-gray-200 bg-gray-100 p-5 first:rounded-t-md last:rounded-b-md `}
+            className={`flex w-full items-center justify-between border-b border-gray-200 bg-gray-100 p-5 first:rounded-t-md last:rounded-b-md `}
           >
             <div className='flex gap-6'>
               <h3>
                 <span className='hidden font-semibold md:inline'>
                   Order Id:
-                </span>{' '}
+                </span>
                 {order.orderId}
               </h3>
               <h3
@@ -42,14 +40,8 @@ const OrderRow = ({ order }) => {
               className={`h-5 w-5 ${open ? 'rotate-90 transform' : ''}`}
             />
           </Disclosure.Button>
-          <Disclosure.Panel className={`mb-3 p-5 ${open ? '' : ''} `}>
-            {user?.type === 'customer' ? (
-              order.garments.map((garment) => (
-                <OrderGarment key={garment.garmentId} garment={garment} />
-              ))
-            ) : (
-              <OrderGarment garment={order.garments} />
-            )}
+          <Disclosure.Panel className={`mb-3 p-5`}>
+            <OrderGarment order={order} />
           </Disclosure.Panel>
         </>
       )}

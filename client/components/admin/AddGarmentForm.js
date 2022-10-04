@@ -14,6 +14,8 @@ const AddGarmentForm = () => {
   const [previewPhotos, setPreviewPhotos] = useState([]);
 
   console.log(frontPhoto);
+  console.log(backPhoto);
+  console.log(previewPhotos);
 
   const postGarment = (data) => {
     return axios.post('/api/garments', data, {
@@ -32,26 +34,28 @@ const AddGarmentForm = () => {
   });
 
   const handleFormSubmit = async (values, FormikHelpers) => {
-    const data = {
-      name: values.name,
-      description: values.description,
-      garmentClass: values.class,
-      gender: values.gender,
-      price: Number(values.price),
-      small: Number(values.small),
-      medium: Number(values.medium),
-      large: Number(values.large),
-      xlarge: Number(values.xlarge),
-      xxlarge: Number(values.xxlarge),
-      frontPhoto: frontPhoto,
-      backPhoto: backPhoto,
-      photos: previewPhotos,
-    };
+    const formData = new FormData();
+    formData.set('name', values.name);
+    formData.set('description', values.description);
+    formData.set('garmentClass', values.class);
+    formData.set('gender', values.gender);
+    formData.set('price', Number(values.price));
+    formData.set('small', Number(values.small));
+    formData.set('medium', Number(values.medium));
+    formData.set('large', Number(values.large));
+    formData.set('xlarge', Number(values.xlarge));
+    formData.set('xxlarge', Number(values.xxlarge));
+    formData.set('frontPhoto', frontPhoto);
+    formData.set('backPhoto', backPhoto);
 
-    console.log(data);
+    previewPhotos.forEach((photo) => {
+      formData.append('photos', photo);
+    });
+
+    console.log(formData);
 
     try {
-      addNewGarment(data);
+      addNewGarment(formData);
       // FormikHelpers.resetForm();
       setGenError('');
       // router.push('/admin/dashboard/garments');

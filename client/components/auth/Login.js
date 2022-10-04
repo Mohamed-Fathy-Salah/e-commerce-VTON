@@ -3,10 +3,12 @@ import Link from 'next/link';
 import * as Yup from 'yup';
 import { Select, TextInput } from '..//utils/FormElements';
 
+import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
 import AuthContext from '../../context/AuthContext';
 
 const Login = () => {
+  const router = useRouter();
   const [genError, setGenError] = useState('');
   const { login, error } = useContext(AuthContext);
 
@@ -22,6 +24,9 @@ const Login = () => {
     if (error) {
       setGenError(error);
     } else {
+      data.type === 'admin'
+        ? router.push('/admin/dashboard/orders')
+        : router.push('/');
       FormikHelpers.resetForm();
       setGenError('');
     }

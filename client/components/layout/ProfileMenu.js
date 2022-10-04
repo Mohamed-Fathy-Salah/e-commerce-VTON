@@ -34,10 +34,10 @@ const ProfileMenu = ({ user }) => {
   if (isLoading) return <div>loading...</div>;
 
   return (
-    <Menu as='div' className='relative z-50'>
+    <Menu as='div' className='relative z-50 '>
       {({ open }) => (
         <>
-          <Menu.Button className='focut:ring-offset-gray-100 inline-flex w-full items-center justify-center rounded-md border-gray-300 bg-gray-200 text-sm font-medium text-gray-700 shadow-sm hover:bg-opacity-80 focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 sm:border sm:bg-white sm:p-2'>
+          <Menu.Button className='focut:ring-offset-gray-100 flex h-12 w-full items-center justify-center rounded-md border-gray-300 bg-gray-200 text-sm font-medium text-gray-700 shadow-sm hover:bg-opacity-90 focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 sm:border sm:bg-white sm:p-2'>
             <Avatar photo={profile.data.photo} name={profile.data.name} />
             <p className='hidden font-medium sm:ml-2 sm:inline'>
               Hello {profile.data.name?.split(' ')[0]}

@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }) => {
     try {
       registerUser(user);
       setError(null);
-      router.push('/');
     } catch (err) {
       setError(
         <div className=''>
@@ -53,7 +52,6 @@ export const AuthProvider = ({ children }) => {
     try {
       loginUser(user);
       setError(null);
-      router.push('/');
     } catch (err) {
       setError(
         <div className=''>

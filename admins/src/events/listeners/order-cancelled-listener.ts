@@ -2,20 +2,21 @@ import {
   Listener,
   NotFoundError,
   OrderCancelledEvent,
-  Subjects,
   OrderStatus,
-} from "@mfsvton/common";
-import { Message } from "node-nats-streaming";
-import { Order, OrderDoc } from "../../models/orders";
-import { queueGroupName } from "./queue-group-name";
+  Subjects,
+} from '@mfsvton/common';
+import { Message } from 'node-nats-streaming';
+import { Order } from '../../models/orders';
+import { queueGroupName } from './queue-group-name';
 
 export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
   subject: Subjects.OrderCancelled = Subjects.OrderCancelled;
   queueGroupName = queueGroupName;
-  async onMessage(data: OrderCancelledEvent["data"], msg: Message) {
+  async onMessage(data: OrderCancelledEvent['data'], msg: Message) {
     const { orderId, customerId, garments } = data;
 
-    const orders = await Order.find({ customerId, orderId }, { _id: 0 });
+    const orders = await Order.find({ customerId, orderId });
+    console.log(orders);
 
     const index: { [key: string]: { [key: string]: number } } = {};
     orders.forEach((order, idx) => {
@@ -23,7 +24,7 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
       index[order.adminId][order.garmentId] = idx;
     });
 
-    garments.forEach(({ adminId, garmentId }) => {
+    garments.forEach(async ({ adminId, garmentId }) => {
       // find idx of [adminId, garmentId] in orders
       if (!index[adminId]) {
         throw new NotFoundError();
@@ -36,10 +37,8 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
       }
       // update orders[idx].status = cancelled
       orders[idx].status = OrderStatus.Cancelled;
+      await orders[idx].save();
     });
-
-    //@ts-ignore
-    await orders.save();
 
     msg.ack();
   }

@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <DevNote />
-      <div className='mx-auto max-w-screen-xl'>
+      <div className='mx-auto'>
         <QueryClientProvider client={queryClient}>
           <AppContextProvider>
             <Component {...pageProps} />

@@ -15,7 +15,7 @@ const Nav = ({ user }) => {
     if (isLoading) setNav(<span>Loading...</span>);
     if (user) {
       setNav(
-        <>
+        <div className='flex h-12 items-center gap-2'>
           <ProfileMenu user={user} />
           {user.type === 'customer' && (
             <Link href='/cart'>
@@ -29,7 +29,7 @@ const Nav = ({ user }) => {
               </button>
             </Link>
           )}
-        </>
+        </div>
       );
     } else {
       setNav(
