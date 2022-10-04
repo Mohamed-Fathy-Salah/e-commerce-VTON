@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useContext, useState } from 'react';
 import buildClient from '../api/build-client';
 import GarmentList from '../components/garment/GarmentList';
@@ -19,26 +18,20 @@ const Home = ({ garments }) => {
   );
 
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center py-2'>
-      <Head>
-        <title>SmartFasion</title>
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-
-      <Layout home user={user}>
-        <main className='w-full items-center justify-center px-10 '>
+    <Layout home user={user}>
+      <main className='w-full items-center justify-center px-10 '>
+        <div className='mx-auto max-w-screen-xl'>
           <SearchBar search={search} setSearch={setSearch} />
           {filteredGarment.length ? (
             <GarmentList garments={search ? filteredGarment : garments} />
           ) : (
-            <div className='text-center text-xl font-medium text-gray-400'>
-              {' '}
+            <div className='flex h-96 items-center justify-center text-xl font-medium text-gray-400'>
               No Garments Match
             </div>
           )}
-        </main>
-      </Layout>
-    </div>
+        </div>
+      </main>
+    </Layout>
   );
 };
 

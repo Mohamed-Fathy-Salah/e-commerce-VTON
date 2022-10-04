@@ -1,10 +1,10 @@
 const SearchBar = ({ search, setSearch }) => {
   return (
-    <div className='mx-auto my-16 rounded-lg lg:px-8'>
-      <div className='flex flex-col items-center justify-center p-10'>
+    <div className='mx-auto mt-16 mb-8 lg:px-16'>
+      <div className='p-5 md:p-10'>
         <label
           htmlFor='price'
-          className='mx-auto mb-5 block text-lg font-bold text-gray-700 sm:mb-10 sm:text-3xl '
+          className='mx-auto mb-5 block text-center text-2xl font-bold text-blue-700 sm:mb-10 md:text-3xl'
         >
           Whate are you buying today?
         </label>
@@ -14,7 +14,7 @@ const SearchBar = ({ search, setSearch }) => {
           id='price'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className='text-md block w-full rounded-full border-2 bg-transparent px-7 py-2 text-lg sm:ml-10 sm:w-full sm:py-3'
+          className='block w-full rounded-md border-2 px-4 py-2 text-lg shadow-sm'
           placeholder='search here ...'
         />
       </div>

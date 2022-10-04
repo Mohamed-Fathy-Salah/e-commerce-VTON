@@ -18,7 +18,7 @@ const CheckoutPage = () => {
   } = useQuery('order-data', () => axios.get(`/api/orders/${orderId}`));
   const { mutate: doRequest } = useMutation((data) => {
     console.log(data);
-    return axios.post('api/payments', data);
+    return axios.post('/api/payments', data);
   });
 
   if (isLoading) return <div>Loading ...</div>;

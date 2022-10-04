@@ -1,10 +1,12 @@
 import { Form, Formik } from 'formik';
+import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
 import * as Yup from 'yup';
 import AuthContext from '../../context/AuthContext';
 import { Checkbox, Select, TextInput } from '../utils/FormElements';
 
 const Register = () => {
+  const router = useRouter();
   const [genError, setGenError] = useState('');
   const { register, error } = useContext(AuthContext);
 
@@ -26,6 +28,9 @@ const Register = () => {
       if (error) {
         setGenError(error);
       } else {
+        data.type === 'admin'
+          ? router.push('/admin/dashboard/orders')
+          : router.push('/');
         FormikHelpers.resetForm();
         setGenError('');
       }
