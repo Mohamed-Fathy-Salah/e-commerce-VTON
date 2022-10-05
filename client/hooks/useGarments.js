@@ -45,7 +45,9 @@ export const useAdminGarments = ({ adminId }) => {
 };
 
 export const useCartGarments = () => {
-  return useQuery('cart-garments', fetchCartGarments);
+  return useQuery('cart-garments', fetchCartGarments, {
+    enabled: false,
+  });
 };
 
 export const useGarmentById = ({ garmentId }) => {
@@ -73,7 +75,7 @@ export const useDeleteGarment = ({ garmentId }) => {
 
 export const useUpdateGarment = ({ garmentId }) => {
   const queryClient = useQueryClient();
-  return useMutation(() => deleteGarment(garmentId), {
+  return useMutation(() => editGarment(garmentId), {
     onSuccess: () => {
       queryClient.invalidateQueries('garments');
     },

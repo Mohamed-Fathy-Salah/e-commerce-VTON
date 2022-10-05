@@ -73,7 +73,7 @@ const CartSummary = ({ order, setOrder, cart, ls }) => {
       </div>
       <button
         onClick={handleCheckout}
-        className='my-2 w-full rounded-md bg-blue-700 px-6 py-4 text-white'
+        className='my-2 w-full rounded-md bg-blue-700 px-6 py-4 text-white transition-opacity hover:opacity-90'
       >
         Checkout
       </button>

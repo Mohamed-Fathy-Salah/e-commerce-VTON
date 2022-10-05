@@ -1,14 +1,19 @@
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-const fetchOrders = () => {
+const fetchAdminOrders = () => {
   console.log('fetching orders');
   return axios.get('/api/admindata/orders');
 };
 
-const fetchOrderById = (orderId) => {
+const fetchAdminOrderById = (orderId) => {
   console.log('fetching order by id');
   return axios.get(`/api/admindata/orders/${orderId}`);
+};
+
+const fetchCustomerOrderById = (orderId) => {
+  console.log('fetching order by id');
+  return axios.get(`/api/orders/${orderId}`);
 };
 
 const createNewOrder = (order) => {
@@ -21,12 +26,16 @@ const deleteOrder = (orderId) => {
   return axios.post(`/api/orders/${orderId}`);
 };
 
-export const useOrders = () => {
-  return useQuery('orders', fetchOrders);
+export const useAdminOrders = () => {
+  return useQuery('orders', fetchAdminOrders);
 };
 
-export const useOrderById = ({ orderId }) => {
-  return useQuery('order', () => fetchOrderById(orderId));
+export const useAdminOrderById = (orderId) => {
+  return useQuery('admin-order', () => fetchAdminOrderById(orderId));
+};
+
+export const useCustomerOrderById = (orderId) => {
+  return useQuery('customer-order', () => fetchCustomerOrderById(orderId));
 };
 
 export const useNewOrder = () => {

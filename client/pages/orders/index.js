@@ -6,7 +6,7 @@ import AuthContext from '../../context/AuthContext';
 
 const OrdersPage = ({ orders }) => {
   const { user } = useContext(AuthContext);
-  console.log(orders);
+
   return (
     <Layout home user={user}>
       <section className='mx-auto w-full max-w-4xl items-center justify-center p-10'>

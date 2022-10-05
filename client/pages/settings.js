@@ -8,8 +8,6 @@ import AuthContext from '../context/AuthContext';
 const SettingsPage = ({ profile }) => {
   const { user } = useContext(AuthContext);
 
-  console.log(profile);
-
   return (
     <Layout home user={user}>
       {user?.type === 'admin' ? (

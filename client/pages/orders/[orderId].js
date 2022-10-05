@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
-import { useMutation, useQuery } from 'react-query';
 import StripeCheckout from 'react-stripe-checkout';
 import AuthContext from '../../context/AuthContext';
+import { useCustomerOrderById } from '../../hooks/useOrders';
+import { usePayment } from '../../hooks/usePayment';
 
 const CheckoutPage = () => {
   const router = useRouter();
@@ -15,11 +15,8 @@ const CheckoutPage = () => {
     isError,
     error,
     isLoading,
-  } = useQuery('order-data', () => axios.get(`/api/orders/${orderId}`));
-  const { mutate: doRequest } = useMutation((data) => {
-    console.log(data);
-    return axios.post('/api/payments', data);
-  });
+  } = useCustomerOrderById(orderId);
+  const { mutate: doPayment } = usePayment();
 
   if (isLoading) return <div>Loading ...</div>;
   if (isError) console.error(error);
@@ -39,7 +36,7 @@ const CheckoutPage = () => {
   return (
     <div>
       <StripeCheckout
-        token={() => doRequest({ token: 'tok_visa', orderId })}
+        token={() => doPayment({ token: 'tok_visa', orderId })}
         stripeKey='pk_test_51LQZtWBAQNSaSjvuy8R5lyKO8pZpR74tgWtEW6Bp76sUqXUOSbS32A7exBrRFUMSNN3nND6b8eWHBuk72ESwJOHD00kYSbC9qY'
         amount={totalPrice * 100}
         currency='EGP'
