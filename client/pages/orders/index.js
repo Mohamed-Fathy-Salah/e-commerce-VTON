@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import buildClient from '../../api/build-client';
+import OrderRow from '../../components/customer/OrderRow';
 import Layout from '../../components/layout/Layout';
-import OrderRow from '../../components/OrderRow';
 import AuthContext from '../../context/AuthContext';
 
 const OrdersPage = ({ orders }) => {
