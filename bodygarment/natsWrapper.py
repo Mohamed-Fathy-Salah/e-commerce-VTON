@@ -11,6 +11,7 @@ from asyncpg.exceptions import UniqueViolationError
 from models.customers import Customers
 from models.garments import Garments
 from texturemap import run as generate_texturemap
+from betaCalc import run as get_betas
 
 cluster_id = environ.get('NATS_CLUSTER_ID') 
 client_id = environ.get('NATS_CLIENT_ID')
@@ -62,10 +63,17 @@ async def run(loop):
         
         try:
             async with async_session() as session:
-                # todo : betas = get_betas(data['measurements'], data['gender'])
-                
-                stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin']).execution_options(synchronize_session="evaluate")
+                stmt = None
 
+                if 'measurements' in data:
+                    log.warning(f"-------- inside if {data['measurements']}")
+                    betas = json.dumps(get_betas(data['measurements'], data['gender']))
+                    stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin'], betas=betas).execution_options(synchronize_session="evaluate")
+                else:
+                    log.warning(f"-------- inside else")
+                    stmt = update(Customers).where(and_(Customers.id == data['customerId'], Customers.version == data['version'] - 1)).values(gender=data['gender'], version=data['version'], skin=data['skin']).execution_options(synchronize_session="evaluate")
+
+                log.warning(f"-------- outside if else {stmt}")
                 await session.execute(stmt)
 
                 await session.commit()
