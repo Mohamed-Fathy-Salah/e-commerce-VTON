@@ -9,6 +9,9 @@ const OrdersPage = ({ orders }) => {
 
   return (
     <Layout home user={user}>
+      <h1 className='mt-20 mb-10 text-center text-3xl font-semibold text-gray-700'>
+        Your orders
+      </h1>
       <section className='mx-auto w-full max-w-4xl items-center justify-center p-10'>
         {orders.map((order) => (
           <OrderRow key={order.id} order={order} />

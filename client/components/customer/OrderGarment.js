@@ -12,7 +12,7 @@ const SizeElem = ({ size, label }) => {
   );
 };
 
-const OrderGarment = ({ garment }) => {
+const OrderGarment = ({ garment, orderStatus }) => {
   const { data: orderGarment, isLoading } = useGarmentById(garment.garmentId);
 
   if (isLoading) return <div>Loading ...</div>;
@@ -56,8 +56,24 @@ const OrderGarment = ({ garment }) => {
           {garment.price} EGP
         </h5>
       </div>
-      <div className='text-lg md:p-10'>
-        <span className='font-semibold text-blue-700 md:block md:text-2xl'>
+      <div
+        className={`rounded-md text-lg shadow-sm md:mr-5 md:p-7 ${
+          orderStatus === 'created' || orderStatus === 'awaiting'
+            ? 'border-yellow-600 md:border md:bg-orange-50'
+            : orderStatus === 'completed'
+            ? 'border-green-600 md:border md:bg-green-50'
+            : 'border-red-600 md:border md:bg-red-50'
+        }`}
+      >
+        <span
+          className={`font-semibold md:block md:text-2xl ${
+            orderStatus === 'created' || orderStatus === 'awaiting'
+              ? 'text-yellow-600'
+              : orderStatus === 'completed'
+              ? 'text-green-600'
+              : 'text-red-600'
+          }`}
+        >
           Total Price:{' '}
         </span>
         <span className='md:text-xl'>

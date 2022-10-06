@@ -25,8 +25,10 @@ export const CartProvider = ({ children }) => {
       .filter((item) => item.startsWith('cart-'))
       .map((cartElm) => {
         const val = JSON.parse(localStorage.getItem(cartElm));
-        val['garmentId'] = cartElm.slice(5);
-        return val;
+        if (val) {
+          val['garmentId'] = cartElm.slice(5);
+          return val;
+        }
       });
 
     return cart;

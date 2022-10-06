@@ -42,7 +42,11 @@ const OrderRow = ({ order }) => {
           </Disclosure.Button>
           <Disclosure.Panel className={`mb-3 p-5`}>
             {order.garments.map((garment) => (
-              <OrderGarment key={garment.garmentId} garment={garment} />
+              <OrderGarment
+                key={garment.garmentId}
+                garment={garment}
+                orderStatus={order?.status}
+              />
             ))}
           </Disclosure.Panel>
         </>
