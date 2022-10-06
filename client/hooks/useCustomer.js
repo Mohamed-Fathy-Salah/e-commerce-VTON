@@ -8,10 +8,15 @@ const fetchCustomerData = (customerId) => {
 
 const editCustomerData = (data) => {
   console.log('editing customer data');
-  return axios.put(`/api/customerdata`, data);
+  return axios.put(`/api/customerdata`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Accept: 'application/json',
+    },
+  });
 };
 
-export const useCustomerData = ({ customerId }) => {
+export const useCustomerData = (customerId) => {
   return useQuery('customer-data', () => fetchCustomerData(customerId));
 };
 
@@ -20,6 +25,7 @@ export const useEditCustomerData = () => {
   return useMutation(editCustomerData, {
     onSuccess: () => {
       queryClient.invalidateQueries('customer-data');
+      queryClient.invalidateQueries('current-user');
     },
   });
 };

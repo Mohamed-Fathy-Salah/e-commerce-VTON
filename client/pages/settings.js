@@ -10,6 +10,9 @@ const SettingsPage = ({ profile }) => {
 
   return (
     <Layout home user={user}>
+      <h1 className='my-20 text-center text-3xl font-semibold text-gray-700'>
+        Edit your profile
+      </h1>
       {user?.type === 'admin' ? (
         <SettingsFormAdmin admin={profile} />
       ) : (
@@ -38,7 +41,6 @@ export async function getServerSideProps(context) {
     profile = data;
   }
 
-  console.log(data);
   if (!data)
     return {
       profile: null,

@@ -2,7 +2,7 @@ import { Disclosure } from '@headlessui/react';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import OrderGarment from './OrderGarment';
 
-const OrderRow = ({ order, userType }) => {
+const OrderRow = ({ order }) => {
   let statusColor = '';
 
   if (order.status === 'created' || order.status === 'awaiting') {
@@ -28,7 +28,7 @@ const OrderRow = ({ order, userType }) => {
                 <span className='hidden  font-semibold md:inline'>
                   Order Id:
                 </span>
-                {userType === 'customer' ? order.id : order.orderId}
+                {order.orderId}
               </h3>
               <h3
                 className={`rounded-full border px-3 transition-colors duration-300 ${statusColor} flex items-center justify-center`}
@@ -41,7 +41,7 @@ const OrderRow = ({ order, userType }) => {
             />
           </Disclosure.Button>
           <Disclosure.Panel className={`mb-3 p-5`}>
-            <OrderGarment order={order} userType={userType} />
+            <OrderGarment order={order} orderStatus={order.status} />
           </Disclosure.Panel>
         </>
       )}

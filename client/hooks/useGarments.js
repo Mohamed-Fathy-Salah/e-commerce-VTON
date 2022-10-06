@@ -23,12 +23,22 @@ const fetchGarmentById = (garmentId) => {
 
 const createNewGarment = (data) => {
   console.log('adding new garment');
-  return axios.post(`/api/garments`, data);
+  return axios.post('/api/garments', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Accept: 'application/json',
+    },
+  });
 };
 
 const editGarment = (garmentId, data) => {
   console.log('create new order');
-  return axios.put(`/api/garments/${garmentId}`, data);
+  return axios.put(`/api/garments/${garmentId}`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Accept: 'application/json',
+    },
+  });
 };
 
 const deleteGarment = (garmentId) => {
@@ -40,7 +50,7 @@ export const useGarments = () => {
   return useQuery('garments', fetchGarments);
 };
 
-export const useAdminGarments = ({ adminId }) => {
+export const useAdminGarments = (adminId) => {
   return useQuery('admin-garments', () => fetchAdminGarments(adminId));
 };
 
@@ -50,8 +60,8 @@ export const useCartGarments = () => {
   });
 };
 
-export const useGarmentById = ({ garmentId }) => {
-  return useQuery('garment', () => fetchGarmentById(orderId));
+export const useGarmentById = (garmentId) => {
+  return useQuery('garment', () => fetchGarmentById(garmentId));
 };
 
 export const useNewGarment = () => {
@@ -64,19 +74,21 @@ export const useNewGarment = () => {
   });
 };
 
-export const useDeleteGarment = ({ garmentId }) => {
+export const useDeleteGarment = (garmentId) => {
   const queryClient = useQueryClient();
   return useMutation(() => deleteGarment(garmentId), {
     onSuccess: () => {
+      queryClient.invalidateQueries('admin-garments');
       queryClient.invalidateQueries('garments');
     },
   });
 };
 
-export const useUpdateGarment = ({ garmentId }) => {
+export const useUpdateGarment = (garmentId) => {
   const queryClient = useQueryClient();
   return useMutation(() => editGarment(garmentId), {
     onSuccess: () => {
+      queryClient.invalidateQueries('admin-garments');
       queryClient.invalidateQueries('garments');
     },
   });

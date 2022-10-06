@@ -1,6 +1,5 @@
-import axios from 'axios';
 import Link from 'next/link';
-import { useQuery } from 'react-query';
+import { useGarmentById } from '../../hooks/useGarments';
 
 const SizeElem = ({ size, label }) => {
   return Number(size) ? (
@@ -14,9 +13,7 @@ const SizeElem = ({ size, label }) => {
 };
 
 const OrderGarment = ({ garment }) => {
-  const { data: orderGarment, isLoading } = useQuery('order-garment', () =>
-    axios.get(`/api/garments/garment/${garment.garmentId}`)
-  );
+  const { data: orderGarment, isLoading } = useGarmentById(garment.garmentId);
 
   if (isLoading) return <div>Loading ...</div>;
 

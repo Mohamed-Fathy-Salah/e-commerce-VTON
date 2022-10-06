@@ -35,7 +35,6 @@ const CartPage = () => {
 
   useEffect(() => {
     const garments = cartGarments?.data.map((garment) => garment.value);
-    console.log(garments);
     setCart(garments);
   }, [cartGarments]);
 

@@ -6,8 +6,6 @@ const PhotosGroup = ({ images, front, back }) => {
     images.length > 0 ? images[0] : front ? front : back
   );
 
-  console.log(images);
-
   return (
     <div className='flex max-w-2xl flex-col gap-2'>
       <div>
@@ -23,17 +21,16 @@ const PhotosGroup = ({ images, front, back }) => {
       </div>
       {images.length > 0 ? (
         <div className='flex items-center gap-2 overflow-x-auto rounded-lg'>
-          {images.map((image) => (
+          {images.map((image, index) => (
             <img
-              // src={image}
+              key={index}
               src={'data:image;base64,' + image}
               alt='product photo'
-              className={`cursor-pointer rounded-xl hover:opacity-75 ${
+              className={`cursor-pointer rounded-xl object-cover hover:opacity-75 ${
                 currentPhoto === image ? '  ' : ''
               }`}
               width={80}
               height={80}
-              objectFit='cover'
               onClick={() => setCurrentPhoto(image)}
             />
           ))}

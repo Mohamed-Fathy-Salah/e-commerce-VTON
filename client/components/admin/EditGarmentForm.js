@@ -1,10 +1,13 @@
-import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
-import { Select, TextInput } from '../../components/utils/FormElements';
+import {
+  Droparea,
+  Select,
+  TextInput,
+} from '../../components/utils/FormElements';
+import { useUpdateGarment } from '../../hooks/useGarments';
 
 const EditGarmentForm = ({ garment }) => {
   const router = useRouter();
@@ -26,21 +29,7 @@ const EditGarmentForm = ({ garment }) => {
     xxlarge,
   } = garment;
 
-  const updateGarment = (data) => {
-    return axios.put(`/api/garments/${garment.id}`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Accept: 'application/json',
-      },
-    });
-  };
-
-  const queryClient = useQueryClient();
-  const { mutate: updateGarmentInfo } = useMutation(updateGarment, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('admin-garments');
-    },
-  });
+  const { mutate: updateGarmentInfo } = useUpdateGarment(garment.id);
 
   const handleFormSubmit = async (values, FormikHelpers) => {
     const data = {
@@ -61,10 +50,8 @@ const EditGarmentForm = ({ garment }) => {
 
     try {
       updateGarmentInfo(data);
-      console.log(data);
-      FormikHelpers.resetForm();
       setGenError('');
-      // router.push('/admin/dashboard/garments');
+      router.push('/admin/dashboard/garments');
     } catch (err) {
       {
         setGenError(
@@ -176,30 +163,31 @@ const EditGarmentForm = ({ garment }) => {
           placeholder='70'
         />
 
-        <TextInput
-          label='Enter garment photo (front photo)'
-          name='front'
-          type='file'
-          onChange={(e) => setFrontPhoto(e.target.files[0])}
+        <Droparea
+          onDrop={(uploadedPhoto) => setFrontPhoto(uploadedPhoto[0])}
+          onReject={(uploaedPhoto) =>
+            console.log(`${uploaedPhoto[0]} has been rejected`)
+          }
+          photo={frontPhoto}
+          multiple={false}
         />
 
-        <TextInput
-          label='Enter garment photo (back photo)'
-          name='back'
-          type='file'
-          placeholder='70'
-          onChange={(e) => setBackPhoto(e.target.files[0])}
+        <Droparea
+          onDrop={(uploadedPhoto) => setBackPhoto(uploadedPhoto[0])}
+          onReject={(uploaedPhoto) =>
+            console.log(`${uploaedPhoto[0]} has been rejected`)
+          }
+          photo={backPhoto}
+          multiple={false}
         />
 
-        <TextInput
-          label='Enter garment photos (preview photos)'
-          name='preview'
-          multiple
-          type='file'
-          placeholder='70'
-          onChange={(e) => {
-            setPreviewPhotos(Object.values(e.target.files));
-          }}
+        <Droparea
+          onDrop={(uploadedPhoto) => setPreviewPhotos(uploadedPhoto)}
+          onReject={(uploaedPhoto) =>
+            console.log(`${uploaedPhoto} has been rejected`)
+          }
+          photos={previewPhotos}
+          multiple={true}
         />
 
         <div className=' p-1 text-red-600'>{genError}</div>

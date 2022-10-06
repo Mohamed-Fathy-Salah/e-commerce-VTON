@@ -1,18 +1,19 @@
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useDeleteGarment } from '../../hooks/useGarments';
 import Modal from '../utils/Modal';
 
 const GarmentItem = ({ garment }) => {
   const router = useRouter();
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
 
-  const handelDeleteGarment = async () => {
-    const res = await axios.delete(`/api/garments/${garment.id}`);
+  const { mutate: deleteGarment } = useDeleteGarment(garment.id);
+
+  const handelDeleteGarment = () => {
+    deleteGarment();
     setConfirmDeleteModal(false);
-    console.log(res);
   };
 
   return (

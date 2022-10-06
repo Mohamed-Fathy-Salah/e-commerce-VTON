@@ -7,10 +7,11 @@ import NumInput from '../../utils/NumInput';
 
 const SizeElem = ({ size, label }) => {
   return Number(size) ? (
-    <div className='rounded bg-gray-200 px-2'>
-      <span className=''>{label}:</span>
-      {size}
-    </div>
+    <>
+      <span className='rounded bg-gray-200 px-2'>
+        {label}:{size}
+      </span>
+    </>
   ) : (
     ''
   );
@@ -74,7 +75,10 @@ const CartItem = ({ garment, setCart, cart, updatels }) => {
         description={
           <div className='mt-10 flex flex-col gap-2'>
             {sizes.map((size) => (
-              <div className='flex items-center justify-end gap-4'>
+              <div
+                key={size.size}
+                className='flex items-center justify-end gap-4'
+              >
                 <label className='text-gray-600'>{size.label}</label>
                 <NumInput
                   value={itemQty[size.size]}
@@ -94,33 +98,35 @@ const CartItem = ({ garment, setCart, cart, updatels }) => {
       />
 
       <tr className='border-b text-sm md:text-base'>
-        <td className='p-4 pr-28 lg:p-10'>
-          <div className='inline-flex'>
-            <img
-              className='cursor-pointer object-contain'
-              width={100}
-              height={100}
-              src={'data:image;base64,' + garment.frontPhoto}
+        <td className='inline-flex p-4 pr-28 lg:p-10'>
+          <img
+            className='cursor-pointer object-contain'
+            width={100}
+            height={100}
+            src={'data:image;base64,' + garment.frontPhoto}
+            onClick={() => router.push(`/garment/${garment.id}`)}
+          />
+          <h5 className='p-4 text-gray-700 lg:px-10'>
+            <span
+              className='block cursor-pointer font-semibold hover:text-blue-700  hover:underline'
               onClick={() => router.push(`/garment/${garment.id}`)}
-            />
-            <div className='p-4 text-gray-700 lg:px-10'>
-              <h4
-                className='cursor-pointer font-semibold hover:text-blue-700  hover:underline'
-                onClick={() => router.push(`/garment/${garment.id}`)}
-              >
-                {garment.name}
-              </h4>
-              <span className='font-medium'>{garment.garmentClass}</span>
-            </div>
-          </div>
+            >
+              {garment.name}
+            </span>
+            <span className='font-medium'>{garment.garmentClass}</span>
+          </h5>
         </td>
 
         <td className='p-4 lg:px-10'>{garment.price} EGP</td>
 
         <td className='p-4 lg:px-10'>
-          <div className='flex w-28 flex-wrap gap-1.5'>
+          <h5 className='flex w-28 flex-wrap gap-1.5'>
             {sizes.map((size) => (
-              <SizeElem size={itemQty[size.size]} label={size.label} />
+              <SizeElem
+                key={size.size}
+                size={itemQty[size.size]}
+                label={size.label}
+              />
             ))}
             <span
               className='cursor-pointer text-blue-700 hover:underline'
@@ -128,7 +134,7 @@ const CartItem = ({ garment, setCart, cart, updatels }) => {
             >
               Edit
             </span>
-          </div>
+          </h5>
         </td>
 
         <td className='p-4 lg:px-10'>

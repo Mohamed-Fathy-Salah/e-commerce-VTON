@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import OrderRow from '../OrderRow';
+import OrderRow from './OrderRow';
 
 const Orders = ({ orders }) => {
   const [filteredStatusOrders, setFilteredStatusOrders] = useState(orders);
@@ -41,7 +41,7 @@ const Orders = ({ orders }) => {
               setFilteredOrders(
                 e.target.value.length > 0
                   ? filteredStatusOrders.filter((order) =>
-                      order.id.includes(e.target.value)
+                      order.orderId.includes(e.target.value)
                     )
                   : filteredStatusOrders
               );

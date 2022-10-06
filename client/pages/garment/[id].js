@@ -53,27 +53,27 @@ const GarmentPage = ({ garment }) => {
 
   return (
     <Layout user={user} home>
-      <div className='flex flex-col justify-between lg:flex-row'>
-        <div className='flex flex-col gap-10 py-5 px-5 lg:w-1/2'>
-          <Modal
-            isOpen={isModalOpen}
-            setIsOpen={setIsModalOpen}
-            title='This item has been added to your cart successfully'
-            description={
-              <>
-                <Link href='/'>
-                  <button className='rounded-md bg-blue-700 py-1 px-3 text-white outline-none hover:opacity-90'>
-                    Continue Shopping
-                  </button>
-                </Link>
-                <Link href='/cart'>
-                  <button className='rounded-md bg-gray-200 py-1 px-3 outline-none hover:opacity-90'>
-                    Go To Cart
-                  </button>
-                </Link>
-              </>
-            }
-          />
+      <Modal
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        title='This item has been added to your cart successfully'
+        description={
+          <>
+            <Link href='/'>
+              <button className='rounded-md bg-blue-700 py-1 px-3 text-white outline-none hover:opacity-90'>
+                Continue Shopping
+              </button>
+            </Link>
+            <Link href='/cart'>
+              <button className='rounded-md bg-gray-200 py-1 px-3 outline-none hover:opacity-90'>
+                Go To Cart
+              </button>
+            </Link>
+          </>
+        }
+      />
+      <section className='mx-auto flex max-w-screen-xl flex-col items-center justify-between lg:flex-row'>
+        <div className=' flex flex-col gap-10 py-5 px-5 first-line:flex-col lg:w-1/2'>
           <div>
             <span className='rounded bg-gray-500 px-4 py-2 text-white'>
               {garment.small ||
@@ -148,7 +148,7 @@ const GarmentPage = ({ garment }) => {
             back={garment.backPhoto}
           />
         </div>
-      </div>
+      </section>
     </Layout>
   );
 };
