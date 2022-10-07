@@ -6,13 +6,13 @@ import {
   requireCustomerAuth,
   SkinTone,
   validateRequest,
-} from "@mfsvton/common";
-import express, { Request, Response } from "express";
-import { body } from "express-validator";
-import { CustomerDataUpdatedPublisher } from "../events/publishers/customer-data-updated-publisher";
-import { Customer } from "../models/customer";
-import { natsWrapper } from "../nats-wrapper";
-import multer from "multer";
+} from '@mfsvton/common';
+import express, { Request, Response } from 'express';
+import { body } from 'express-validator';
+import multer from 'multer';
+import { CustomerDataUpdatedPublisher } from '../events/publishers/customer-data-updated-publisher';
+import { Customer } from '../models/customer';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -21,39 +21,66 @@ const Storage = multer.memoryStorage();
 const upload = multer({ storage: Storage });
 
 router.put(
-  "/api/customerdata",
+  '/api/customerdata',
   requireCustomerAuth,
-  upload.single("file"),
+  upload.single('photo'),
   [
-    body("name").notEmpty(),
-    body("gender").custom((value) => Object.values(Gender).includes(value)),
-    body("age").custom((value) => value > 13 && value < 120),
-    body("skinTone").custom((value) => Object.values(SkinTone).includes(value)),
-    body("measurements").custom((value) => {
+    body('name').notEmpty(),
+    body('gender').custom((value) => Object.values(Gender).includes(value)),
+    body('age').custom((value) => value > 13 && value < 120),
+    body('skinTone').custom((value) => Object.values(SkinTone).includes(value)),
+    body('measurements').custom((value) => {
       if (!value) return true;
 
       try {
-        const { height, arm, hips, weight, chest, waist, inseam, neckline, shoulder, } = JSON.parse(value);
+        const {
+          height,
+          arm,
+          hips,
+          weight,
+          chest,
+          waist,
+          inseam,
+          neckline,
+          shoulder,
+        } = JSON.parse(value);
 
         return (
-          height && arm && hips && weight && chest && waist && inseam && neckline && shoulder &&
-          height >= 140 && height <= 250 &&
-          arm >= 50 && arm <= 80 &&
-          hips >= 80 && hips <= 120 &&
-          weight >= 40 && weight <= 130 &&
-          chest >= 80 && chest <= 130 &&
-          waist >= 80 && waist <= 130 &&
-          inseam >= 60 && inseam <= 100 &&
-          neckline >= 35 && neckline <= 60 &&
-          shoulder >= 30 && shoulder <= 70
+          height &&
+          arm &&
+          hips &&
+          weight &&
+          chest &&
+          waist &&
+          inseam &&
+          neckline &&
+          shoulder &&
+          height >= 140 &&
+          height <= 250 &&
+          arm >= 50 &&
+          arm <= 80 &&
+          hips >= 80 &&
+          hips <= 120 &&
+          weight >= 40 &&
+          weight <= 130 &&
+          chest >= 80 &&
+          chest <= 130 &&
+          waist >= 80 &&
+          waist <= 130 &&
+          inseam >= 60 &&
+          inseam <= 100 &&
+          neckline >= 35 &&
+          neckline <= 60 &&
+          shoulder >= 30 &&
+          shoulder <= 70
         );
       } catch (e) {
         console.log(e);
         return false;
       }
     }),
-    body("sizePreferences").custom((value) => {
-      if(!value) return true;
+    body('sizePreferences').custom((value) => {
+      if (!value) return true;
 
       try {
         const arr = JSON.parse(value);
@@ -108,7 +135,7 @@ router.put(
     }
 
     if (req.file) {
-      customer.set({ photo: req.file.buffer.toString("base64") });
+      customer.set({ photo: req.file.buffer.toString('base64') });
     }
 
     await customer.save();

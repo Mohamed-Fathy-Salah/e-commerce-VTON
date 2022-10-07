@@ -7,8 +7,11 @@ export class GarmentCreatedListener extends Listener<GarmentCreatedEvent> {
   subject: Subjects.GarmentCreated = Subjects.GarmentCreated;
   queueGroupName = queueGroupName;
   async onMessage(data: GarmentCreatedEvent["data"], msg: Message): Promise<void> {
+    console.log(data);
+    
+    
     const garment = Garments.build({
-        id: data.garmentId,
+        garmentId: data.garmentId,
         garmentClass: data.garmentClass,
         gender: data.gender,
         price: data.price,

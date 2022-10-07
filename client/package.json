@@ -11,12 +11,17 @@
   "dependencies": {
     "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^2.0.4",
+    "@mantine/core": "^5.5.2",
+    "@mantine/dropzone": "^5.5.4",
+    "@tabler/icons": "^1.101.0",
     "axios": "^0.27.2",
     "formik": "^2.2.9",
-    "next": "12.2.5",
+    "next": "^12.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.2",
+    "react-query": "^3.39.2",
+    "react-stripe-checkout": "^2.6.3",
     "swr": "^1.3.0",
     "yup": "^0.32.11"
   },

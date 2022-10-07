@@ -1,36 +1,66 @@
-const Orders = () => {
+import { useEffect, useState } from 'react';
+import OrderRow from './OrderRow';
+
+const Orders = ({ orders }) => {
+  const [filteredStatusOrders, setFilteredStatusOrders] = useState(orders);
+  const [filteredOrders, setFilteredOrders] = useState(filteredStatusOrders);
+  const [searchFilter, setSearchFilter] = useState('');
+
+  useEffect(() => {
+    if (!searchFilter || searchFilter.length < 0) {
+      setFilteredOrders(filteredStatusOrders);
+    }
+  }, [filteredStatusOrders]);
+
   return (
-    <div className='my-16 px-16'>
-      <div className='space-y-16 bg-gray-100 p-8'>
-        <div className='flex flex-col gap-4 border-b pb-8 md:flex-row'>
-          <select className='max-w-sm'>
-            <option value=''>Order Status</option>
+    <>
+      <div className='p-8'>
+        <div className='mx-auto flex max-w-screen-lg flex-col gap-4 rounded-md bg-gray-100 p-8 md:flex-row'>
+          <select
+            className='max-w-sm'
+            onChange={(e) => {
+              setFilteredStatusOrders(
+                e.target.value === 'all'
+                  ? orders
+                  : orders.filter((order) => order.status === e.target.value)
+              );
+            }}
+          >
+            <option value='all'>All</option>
+            <option value='created'>Created</option>
             <option value='cancelled'>Cancelled</option>
             <option value='awaiting'>Awaiting</option>
-            <option value='complete'>Complete</option>
+            <option value='completed'>Completed</option>
           </select>
-          <input type='text' placeholder='search by order id' />
+          <input
+            type='text'
+            placeholder='search by order id'
+            value={searchFilter}
+            onChange={(e) => {
+              setSearchFilter(e.target.value);
+              setFilteredOrders(
+                e.target.value.length > 0
+                  ? filteredStatusOrders.filter((order) =>
+                      order.orderId.includes(e.target.value)
+                    )
+                  : filteredStatusOrders
+              );
+            }}
+          />
         </div>
-        <div>
-          <table className='w-full'>
-            <tbody>
-              <tr className='bg-gray-200 text-left font-normal'>
-                <th className='px-4 text-gray-500'>Order Id</th>
-                <th className='hidden px-4 text-gray-500 md:inline'>
-                  Garments
-                </th>
-                <th className='px-4 text-gray-500'>Status</th>
-                <th className='px-4 text-gray-500'>Total</th>
-                <th className='hidden px-4 text-gray-500 md:inline'>Created</th>
-                <th className='hidden px-4 text-gray-500 md:inline'>
-                  Last update
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <section className='mx-auto my-8 max-w-screen-lg items-center justify-center'>
+          {filteredOrders.length ? (
+            filteredOrders.map((order) => (
+              <OrderRow key={order.id} order={order} />
+            ))
+          ) : (
+            <div className='flex items-center justify-center text-xl text-gray-400'>
+              No Orders
+            </div>
+          )}
+        </section>
       </div>
-    </div>
+    </>
   );
 };
 export default Orders;

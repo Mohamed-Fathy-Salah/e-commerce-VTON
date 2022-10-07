@@ -1,40 +1,37 @@
-import { useState } from 'react';
-import Head from 'next/head';
-import GarmentList from '../components/GarmentList';
-import Layout from '../components/Layout';
-import SearchBar from '../components/SearchBar';
+import { useContext, useState } from 'react';
 import buildClient from '../api/build-client';
+import GarmentList from '../components/garment/GarmentList';
+import SearchBar from '../components/garment/SearchBar';
+import Layout from '../components/layout/Layout';
+import AuthContext from '../context/AuthContext';
 
-const Home = ({ user, garments }) => {
+const Home = ({ garments }) => {
+  const { user } = useContext(AuthContext);
+
   const [search, setSearch] = useState('');
-  const filteredGarment = garments.filter((gar) =>
-    (gar.name || gar.description || gar.garmentClass || gar.gender).includes(
-      search
-    )
+  const filteredGarment = garments.filter(
+    (gar) =>
+      gar.gender.toLowerCase().includes(search.toLowerCase()) ||
+      gar.garmentClass.toLowerCase().includes(search.toLowerCase()) ||
+      gar.description?.toLowerCase().includes(search.toLowerCase()) ||
+      gar.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  console.log(search);
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center py-2'>
-      <Head>
-        <title>SmartFasion</title>
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-
-      <Layout home user={user}>
-        <main className='w-full items-center justify-center px-10 '>
+    <Layout home user={user}>
+      <main className='w-full items-center justify-center px-10 '>
+        <div className='mx-auto max-w-screen-xl'>
           <SearchBar search={search} setSearch={setSearch} />
           {filteredGarment.length ? (
             <GarmentList garments={search ? filteredGarment : garments} />
           ) : (
-            <div className='text-center text-xl font-medium text-gray-400'>
-              {' '}
-              No Garments Match Your Search{' '}
+            <div className='flex h-96 items-center justify-center text-xl font-medium text-gray-400'>
+              No Garments Match
             </div>
           )}
-        </main>
-      </Layout>
-    </div>
+        </div>
+      </main>
+    </Layout>
   );
 };
 
@@ -56,32 +53,5 @@ export async function getServerSideProps(ctx) {
     },
   };
 }
-
-// export async function getServerSideProps(ctx) {
-//   const client = buildClient(ctx);
-//   const { data } = await client.get('/api/users/currentuser');
-//   const user = data.currentUser;
-
-//   // if (!user) {
-//   //   return {
-//   //     redirect: {
-//   //       destination: '/login',
-//   //       permanent: false,
-//   //     },
-//   //   };
-//   // }
-
-//   if (user) {
-//     return {
-//       props: { user },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       user: null,
-//     },
-//   };
-// }
 
 export default Home;

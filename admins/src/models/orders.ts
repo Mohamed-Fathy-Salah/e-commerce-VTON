@@ -1,5 +1,5 @@
-import { OrderStatus } from "@mfsvton/common";
-import mongoose from "mongoose";
+import { OrderStatus } from '@mfsvton/common';
+import mongoose from 'mongoose';
 
 // An interface that describes the properties
 // that are requried to create a new Order
@@ -7,15 +7,13 @@ interface OrderAttrs {
   orderId: string;
   adminId: string;
   customerId: string;
-  garments: {
-    garmentId: string;
-    price: number;
-    small: number;
-    medium: number;
-    large: number;
-    xlarge: number;
-    xxlarge: number;
-  };
+  garmentId: string;
+  price: number;
+  small: number;
+  medium: number;
+  large: number;
+  xlarge: number;
+  xxlarge: number;
   status: OrderStatus;
   version: number;
 }
@@ -28,19 +26,17 @@ interface OrderModel extends mongoose.Model<OrderDoc> {
 
 // An interface that describes the properties
 // that a Order Document has
-export interface OrderDoc extends mongoose.Document {
+interface OrderDoc extends mongoose.Document {
   orderId: string;
   adminId: string;
   customerId: string;
-  garments: {
-    garmentId: string;
-    price: number;
-    small: number;
-    medium: number;
-    large: number;
-    xlarge: number;
-    xxlarge: number;
-  };
+  garmentId: string;
+  price: number;
+  small: number;
+  medium: number;
+  large: number;
+  xlarge: number;
+  xxlarge: number;
   status: OrderStatus;
   version: number;
 }
@@ -59,15 +55,16 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
-    garments: {
-      garmentId: mongoose.Types.ObjectId,
-      price: Number,
-      small: Number,
-      medium: Number,
-      large: Number,
-      xlarge: Number,
-      xxlarge: Number,
+    garmentId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
     },
+    price: Number,
+    small: Number,
+    medium: Number,
+    large: Number,
+    xlarge: Number,
+    xxlarge: Number,
     status: {
       type: String,
       enum: Object.values(OrderStatus),
@@ -84,11 +81,11 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-orderSchema.set("versionKey", "version");
+orderSchema.set('versionKey', 'version');
 orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
 };
 
-const Order = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
+const Order = mongoose.model<OrderDoc, OrderModel>('Order', orderSchema);
 
 export { Order };

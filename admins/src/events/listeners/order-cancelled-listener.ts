@@ -2,36 +2,43 @@ import {
   Listener,
   NotFoundError,
   OrderCancelledEvent,
-  Subjects,
   OrderStatus,
-} from "@mfsvton/common";
-import { Message } from "node-nats-streaming";
-import { Order, OrderDoc } from "../../models/orders";
-import { queueGroupName } from "./queue-group-name";
+  Subjects,
+} from '@mfsvton/common';
+import { Message } from 'node-nats-streaming';
+import { Order } from '../../models/orders';
+import { queueGroupName } from './queue-group-name';
 
 export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
   subject: Subjects.OrderCancelled = Subjects.OrderCancelled;
   queueGroupName = queueGroupName;
-  async onMessage(data: OrderCancelledEvent["data"], msg: Message) {
-    const { customerId } = data;
+  async onMessage(data: OrderCancelledEvent['data'], msg: Message) {
+    const { orderId, customerId, garments } = data;
 
-    const saves = new Array<Promise<OrderDoc>>(data.garments.length);
+    const orders = await Order.find({ customerId, orderId });
+    console.log(orders);
 
-    for (let idx in data.garments) {
-      const { adminId, garmentId } = data.garments[idx];
+    const index: { [key: string]: { [key: string]: number } } = {};
+    orders.forEach((order, idx) => {
+      if (!index[order.adminId]) index[order.adminId] = {};
+      index[order.adminId][order.garmentId] = idx;
+    });
 
-      const order = await Order.findOne({ adminId, garmentId, customerId });
-
-      if (!order) {
+    garments.forEach(async ({ adminId, garmentId }) => {
+      // find idx of [adminId, garmentId] in orders
+      if (!index[adminId]) {
         throw new NotFoundError();
       }
 
-      order.status = OrderStatus.Cancelled;
-
-      saves[idx] = order.save();
-    }
-
-    await Promise.allSettled(saves);
+      const idx = index[adminId][garmentId];
+      // if not present throw not found error
+      if (idx === -1) {
+        throw new NotFoundError();
+      }
+      // update orders[idx].status = cancelled
+      orders[idx].status = OrderStatus.Cancelled;
+      await orders[idx].save();
+    });
 
     msg.ack();
   }

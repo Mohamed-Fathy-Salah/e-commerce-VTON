@@ -1,23 +1,10 @@
-import Link from 'next/link';
-import buildClient from '../../api/build-client';
-import AddGarForm from '../../components/AddGarForm';
-import Layout from '../../components/Layout';
+import { useContext } from 'react';
+import AddGarmentForm from '../../components/admin/AddGarmentForm';
+import Layout from '../../components/layout/Layout';
+import AuthContext from '../../context/AuthContext';
 
-const AddGarment = ({ user }) => {
-  if (!user || user.type !== 'admin') {
-    return (
-      <div className=' flex h-screen items-center justify-center px-40'>
-        <h3 className='rounded-md bg-gray-200 py-6 px-8 text-center text-4xl font-medium text-red-600'>
-          You are not authorized to access this page
-          <Link href='/'>
-            <a className='mt-4 block text-lg text-gray-700 underline'>
-              Return to home screen
-            </a>
-          </Link>
-        </h3>
-      </div>
-    );
-  }
+const AddGarment = () => {
+  const { user } = useContext(AuthContext);
 
   return (
     <Layout home user={user}>
@@ -25,7 +12,7 @@ const AddGarment = ({ user }) => {
         <h2 className='pt-3 text-center text-3xl'>
           Add garment details below:
         </h2>
-        <AddGarForm />
+        <AddGarmentForm />
       </div>
     </Layout>
   );

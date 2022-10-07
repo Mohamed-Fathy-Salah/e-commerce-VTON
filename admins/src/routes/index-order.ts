@@ -11,7 +11,7 @@ router.get(
     const adminId = req.currentUser!.id;
     const orderId = req.params.orderId;
 
-    const order = await Order.findOne({ orderId, adminId });
+    const order = await Order.find({ orderId, adminId });
 
     if (!order) {
       throw new NotFoundError();

@@ -1,44 +1,42 @@
-import { useEffect } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import axios from 'axios';
 import { Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon, UserIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import {
+  ArrowRightOnRectangleIcon,
   Cog6ToothIcon,
   PresentationChartLineIcon,
-  ArrowRightOnRectangleIcon,
   TableCellsIcon,
 } from '@heroicons/react/24/solid';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import AuthContext from '../../context/AuthContext';
+import CartContext from '../../context/CartContext';
+import { useAdminData } from '../../hooks/useAdmin';
+import { useCustomerData } from '../../hooks/useCustomer';
+import Avatar from '../utils/Avatar';
 
 const ProfileMenu = ({ user }) => {
   const router = useRouter();
-  const endPoint =
-    user.type === 'admin'
-      ? `/api/admindata/data/${user.id}`
-      : `/api/customerdata/${user.id}`;
+  const { logout } = useContext(AuthContext);
+  const { clearCart } = useContext(CartContext);
 
-  const { data, error } = useSWR(endPoint, (url) =>
-    axios.get(url).then((res) => res.data)
-  );
+  const {
+    data: profile,
+    isError,
+    isLoading,
+  } = user.type === 'admin' ? useAdminData(user.id) : useCustomerData(user.id);
 
-  if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
-
-  const handleLogout = async () => {
-    const res = await axios.post('/api/users/signout');
-    router.push('/');
-  };
+  if (isError) return <div>failed to load</div>;
+  if (isLoading) return <div>loading...</div>;
 
   return (
-    <Menu as='div' className='relative z-50'>
+    <Menu as='div' className='relative z-50 '>
       {({ open }) => (
         <>
-          <Menu.Button className='focut:ring-offset-gray-100 inline-flex w-full items-center justify-center rounded-md border-gray-300 bg-gray-200 p-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 sm:border sm:bg-white sm:p-2'>
-            {/* <Image /> */}
-            <UserIcon className='h-6 w-6 rounded-md text-gray-500 sm:mr-2 sm:h-8 sm:w-8 sm:bg-gray-200 sm:p-2' />
-            <p className=' hidden font-medium sm:inline'>Hello {data.name}</p>
+          <Menu.Button className='focut:ring-offset-gray-100 flex h-12 w-full items-center justify-center rounded-md border-gray-300 bg-gray-200 text-sm font-medium text-gray-700 shadow-sm hover:bg-opacity-90 focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 sm:border sm:bg-white sm:p-2'>
+            <Avatar photo={profile.data.photo} name={profile.data.name} />
+            <p className='hidden font-medium sm:ml-2 sm:inline'>
+              Hello {profile.data.name?.split(' ')[0]}
+            </p>
             <ChevronDownIcon
               className='mr-1 ml-2 hidden h-4 w-4 sm:inline'
               aria-hidden='true'
@@ -66,7 +64,7 @@ const ProfileMenu = ({ user }) => {
                         className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                           active ? 'bg-blue-700 text-white' : 'text-gray-700'
                         }`}
-                        onClick={() => router.push('/admin/dashboard')}
+                        onClick={() => router.push('/admin/dashboard/orders')}
                       >
                         <PresentationChartLineIcon
                           className={`mr-3  h-5 w-5 ${
@@ -87,7 +85,7 @@ const ProfileMenu = ({ user }) => {
                         className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                           active ? 'bg-blue-700 text-white' : 'text-gray-700'
                         }`}
-                        onClick={() => router.push('/customer/orders')}
+                        onClick={() => router.push('/orders')}
                       >
                         <TableCellsIcon
                           className={`mr-3  h-5 w-5 ${
@@ -107,7 +105,7 @@ const ProfileMenu = ({ user }) => {
                       className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                         active ? 'bg-blue-700 text-white' : 'text-gray-700'
                       }`}
-                      onClick={() => router.push('/admin/settings')}
+                      onClick={() => router.push('/settings')}
                     >
                       <Cog6ToothIcon
                         className={`mr-3 h-5 w-5  ${
@@ -125,7 +123,10 @@ const ProfileMenu = ({ user }) => {
                       className={`flex cursor-pointer items-center px-4 py-2 text-sm ${
                         active ? 'bg-red-700 text-white' : 'text-gray-700'
                       }`}
-                      onClick={handleLogout}
+                      onClick={() => {
+                        clearCart();
+                        logout();
+                      }}
                     >
                       <ArrowRightOnRectangleIcon
                         className={`mr-3 h-5 w-5  ${

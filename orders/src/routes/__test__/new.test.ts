@@ -61,7 +61,7 @@ it("order reserved garments", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garments.build({
-    id: garmentId,
+    garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     small: 2,
@@ -100,7 +100,7 @@ it("order garment with wrong adminid", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garments.build({
-    id: garmentId,
+    garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     small: 2,
@@ -139,7 +139,7 @@ it("order success", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garments.build({
-    id: garmentId,
+    garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     small: 2,

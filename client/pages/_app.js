@@ -1,36 +1,23 @@
+import { QueryClient, QueryClientProvider } from 'react-query';
+import DevNote from '../components/utils/DevNote';
+import { AppContextProvider } from '../context/AppContext';
 import '../styles/globals.css';
-import DevNote from '../components/DevNote';
-import buildClient from '../api/build-client';
-import axios from 'axios';
 
-function MyApp({ Component, pageProps, currentUser }) {
+const queryClient = new QueryClient();
+
+function MyApp({ Component, pageProps }) {
   return (
     <>
       <DevNote />
-      <div className='mx-auto max-w-screen-xl'>
-        <Component user={currentUser} {...pageProps} />
+      <div className='mx-auto'>
+        <QueryClientProvider client={queryClient}>
+          <AppContextProvider>
+            <Component {...pageProps} />
+          </AppContextProvider>
+        </QueryClientProvider>
       </div>
     </>
   );
 }
-
-MyApp.getInitialProps = async (appContext) => {
-  const client = buildClient(appContext.ctx);
-  const { data } = await client.get('/api/users/currentuser');
-
-  let pageProps = {};
-  if (appContext.Component.getInitialProps) {
-    pageProps = await appContext.Component.getInitialProps(
-      appContext.ctx,
-      client,
-      data.currentUser
-    );
-  }
-
-  return {
-    pageProps,
-    ...data,
-  };
-};
 
 export default MyApp;

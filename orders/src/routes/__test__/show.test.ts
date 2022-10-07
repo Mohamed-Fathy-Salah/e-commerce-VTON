@@ -33,7 +33,7 @@ it("customer not current user", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garments.build({
-    id: garmentId,
+    garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     small: 2,
@@ -77,7 +77,7 @@ it("show order", async () => {
   const garmentId = new mongoose.Types.ObjectId().toHexString();
 
   const garment = Garments.build({
-    id: garmentId,
+    garmentId,
     garmentClass: GarmentClass.Shirt,
     gender: Gender.Male,
     small: 2,

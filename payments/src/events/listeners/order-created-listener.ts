@@ -7,7 +7,7 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
     subject: Subjects.OrderCreated = Subjects.OrderCreated;
     queueGroupName = queueGroupName;
     async onMessage(data: OrderCreatedEvent['data'], msg: Message): Promise<void> {
-        const price = data.garments.reduce((acc, obj) => acc + obj.price, 0);
+        const price = data.garments.reduce((acc, obj) => acc + obj.price * (obj.small + obj.medium + obj.large + obj.xlarge + obj.xxlarge), 0);
 
         const order = Order.build({
             id: data.orderId,
