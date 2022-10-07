@@ -52,6 +52,7 @@ const garmentSchema = new mongoose.Schema(
     adminId: {
       type: String,
       required: true,
+      index: true
     },
     name: {
         type: String,

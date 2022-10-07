@@ -23,10 +23,9 @@ router.get(
 
     const cart = JSON.parse(Buffer.from(encodedCart, 'base64').toString('ascii'));
 
-    let garments = cart.map((value: {garmentId: string}) => Garment.findById(value.garmentId))
+    const garmentIds = cart.map((val: {garmentId: string}) => val.garmentId);
 
-
-    garments = await Promise.allSettled(garments);
+    const garments = await Garment.find({_id: {"$in": garmentIds}});
 
     res.status(200).send(garments)
 });
