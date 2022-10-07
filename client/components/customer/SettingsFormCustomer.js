@@ -1,30 +1,17 @@
-import axios from 'axios';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
-import { Select, TextInput } from '../utils/FormElements';
+import { useEditCustomerData } from '../../hooks/useCustomer';
+import { Droparea, Select, TextInput } from '../utils/FormElements';
 
 const SettingsFormCustomer = ({ customer }) => {
   const [file, setFile] = useState('');
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-  const { mutate: updateCustomerProfile } = useMutation(
-    (data) =>
-      axios.put('/api/customerdata', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Accept: 'application/json',
-        },
-      }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('user-profile');
-      },
-    }
-  );
+  console.log(file);
+
+  const { mutate: updateCustomerProfile } = useEditCustomerData();
 
   const handleUpdateCustomerProfile = async (values) => {
     const data = {
@@ -83,13 +70,13 @@ const SettingsFormCustomer = ({ customer }) => {
           <option value='middleEastern'>Middle Eastern</option>
         </Select>
 
-        <TextInput
-          label='Upload profile photo'
-          name='file'
-          type='file'
-          onChange={(e) => {
-            setFile(e.target.files[0]);
-          }}
+        <Droparea
+          onDrop={(uploadedPhoto) => setFile(uploadedPhoto[0])}
+          onReject={(uploaedPhoto) =>
+            console.log(`${uploaedPhoto[0]} has been rejected`)
+          }
+          photo={file}
+          multiple={false}
         />
 
         <button

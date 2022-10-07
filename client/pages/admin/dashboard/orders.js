@@ -1,14 +1,10 @@
-import { useContext } from 'react';
 import buildClient from '../../../api/build-client';
 import DashboardLayout from '../../../components/admin/DashboardLayout';
 import Orders from '../../../components/admin/Orders';
-import AuthContext from '../../../context/AuthContext';
 
 const AdminOrdersPage = ({ orders }) => {
-  const { user } = useContext(AuthContext);
-
   return (
-    <DashboardLayout home user={user}>
+    <DashboardLayout>
       <Orders orders={orders} />
     </DashboardLayout>
   );

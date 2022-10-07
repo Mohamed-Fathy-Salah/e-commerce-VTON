@@ -1,15 +1,13 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
-import CartContext from '../../../context/CartContext';
+import { useEffect, useState } from 'react';
 
 const CartSummary = ({ order, setOrder, cart, ls }) => {
   const router = useRouter();
   const [totalPrice, setTotalPrice] = useState(0);
-  const { clearCart } = useContext(CartContext);
 
   useEffect(() => {
-    const priceArr = cart.map((item) => {
+    const priceArr = cart?.map((item) => {
       const itemPrice = item.price;
       const cartData = JSON.parse(localStorage.getItem('cart-' + item.id));
       return (
@@ -21,7 +19,7 @@ const CartSummary = ({ order, setOrder, cart, ls }) => {
         itemPrice
       );
     });
-    const price = priceArr.reduce((prev, curr) => prev + curr, 0);
+    const price = priceArr?.reduce((prev, curr) => prev + curr, 0);
     setTotalPrice(price);
   }, [cart, ls]);
 
@@ -44,7 +42,6 @@ const CartSummary = ({ order, setOrder, cart, ls }) => {
     try {
       const { data } = await axios.post('/api/orders', order);
       router.push('/orders/' + data.id);
-      clearCart();
     } catch (error) {
       console.error(error);
     }
@@ -73,7 +70,7 @@ const CartSummary = ({ order, setOrder, cart, ls }) => {
       </div>
       <button
         onClick={handleCheckout}
-        className='my-2 w-full rounded-md bg-blue-700 px-6 py-4 text-white'
+        className='my-2 w-full rounded-md bg-blue-700 px-6 py-4 text-white transition-opacity hover:opacity-90'
       >
         Checkout
       </button>

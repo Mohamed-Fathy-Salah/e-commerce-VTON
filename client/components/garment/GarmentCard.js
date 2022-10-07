@@ -22,7 +22,7 @@ const GarmentCard = ({ garment }) => {
               {garment.garmentClass}
             </span>
           </div>
-          <h3 className=' mt-1 text-xl font-bold text-gray-900'>
+          <h3 className=' mt-1 break-words text-xl font-bold text-gray-900'>
             {garment.name || garment.garmentClass + '-' + garment.gender}
           </h3>
           <p className=' text-base font-bold text-gray-700'>

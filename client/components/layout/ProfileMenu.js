@@ -6,12 +6,12 @@ import {
   PresentationChartLineIcon,
   TableCellsIcon,
 } from '@heroicons/react/24/solid';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
 import AuthContext from '../../context/AuthContext';
 import CartContext from '../../context/CartContext';
+import { useAdminData } from '../../hooks/useAdmin';
+import { useCustomerData } from '../../hooks/useCustomer';
 import Avatar from '../utils/Avatar';
 
 const ProfileMenu = ({ user }) => {
@@ -19,16 +19,11 @@ const ProfileMenu = ({ user }) => {
   const { logout } = useContext(AuthContext);
   const { clearCart } = useContext(CartContext);
 
-  const endPoint =
-    user.type === 'admin'
-      ? `/api/admindata/data/${user.id}`
-      : `/api/customerdata/${user.id}`;
-
   const {
     data: profile,
     isError,
     isLoading,
-  } = useQuery('user-profile', () => axios.get(endPoint));
+  } = user.type === 'admin' ? useAdminData(user.id) : useCustomerData(user.id);
 
   if (isError) return <div>failed to load</div>;
   if (isLoading) return <div>loading...</div>;

@@ -1,29 +1,65 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import CartContext from '../../../context/CartContext';
+import Modal from '../../utils/Modal';
+import NumInput from '../../utils/NumInput';
+
+const SizeElem = ({ size, label }) => {
+  return Number(size) ? (
+    <>
+      <span className='rounded bg-gray-200 px-2'>
+        {label}:{size}
+      </span>
+    </>
+  ) : (
+    ''
+  );
+};
+
+const sizes = [
+  {
+    label: 'S',
+    size: 'small',
+  },
+  {
+    label: 'M',
+    size: 'medium',
+  },
+  {
+    label: 'L',
+    size: 'large',
+  },
+  {
+    label: 'XL',
+    size: 'xlarge',
+  },
+  {
+    label: 'XXL',
+    size: 'xxlarge',
+  },
+];
 
 const CartItem = ({ garment, setCart, cart, updatels }) => {
-  const { updateCartItemsCount, deleteCartItem } = useContext(CartContext);
+  const router = useRouter();
+  const { deleteCartItem } = useContext(CartContext);
 
-  const [itemQnt, setItemQnt] = useState(() =>
+  const [editQtyModal, setEditQtyModal] = useState(false);
+  const [itemQty, setItemQty] = useState(() =>
     JSON.parse(localStorage.getItem('cart-' + garment.id))
   );
 
-  console.log(itemQnt);
-
-  const handleQntChange = (e) => {
-    setItemQnt({
-      ...itemQnt,
-      [e.target.id]:
-        Number(e.target.value) <= garment[e.target.id] &&
-        Number(e.target.value),
+  const handleQtyChange = (label, value) => {
+    setItemQty({
+      ...itemQty,
+      [label]: value,
     });
   };
 
   useEffect(() => {
-    localStorage.setItem(`cart-${garment.id}`, JSON.stringify(itemQnt));
+    localStorage.setItem(`cart-${garment.id}`, JSON.stringify(itemQty));
     updatels((x) => x + 1);
-  }, [itemQnt]);
+  }, [itemQty]);
 
   const handelItemDelete = () => {
     setCart(cart.filter((item) => item.id !== garment.id));
@@ -31,107 +67,91 @@ const CartItem = ({ garment, setCart, cart, updatels }) => {
   };
 
   return (
-    <tr className='border-b text-sm md:text-base'>
-      <td className='py-4 pr-4'>
-        <div className='inline-flex'>
+    <>
+      <Modal
+        isOpen={editQtyModal}
+        setIsOpen={setEditQtyModal}
+        title='Update Quantity'
+        description={
+          <div className='mt-10 flex flex-col gap-2'>
+            {sizes.map((size) => (
+              <div
+                key={size.size}
+                className='flex items-center justify-end gap-4'
+              >
+                <label className='text-gray-600'>{size.label}</label>
+                <NumInput
+                  value={itemQty[size.size]}
+                  onChange={(val) => handleQtyChange(size.size, val)}
+                  max={garment[size.size]}
+                />
+              </div>
+            ))}
+            <button
+              className='mt-5 w-full rounded-md bg-blue-700 p-2 text-white transition-opacity hover:bg-opacity-90'
+              onClick={() => setEditQtyModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        }
+      />
+
+      <tr className='border-b text-sm md:text-base'>
+        <td className='inline-flex p-4 pr-28 lg:p-10'>
           <img
-            className=' object-contain'
+            className='cursor-pointer object-contain'
             width={100}
             height={100}
             src={'data:image;base64,' + garment.frontPhoto}
+            onClick={() => router.push(`/garment/${garment.id}`)}
           />
-          <div className='p-4 text-gray-700'>
-            <h4 className='font-semibold'>{garment.name}</h4>
+          <h5 className='p-4 text-gray-700 lg:px-10'>
+            <span
+              className='block cursor-pointer font-semibold hover:text-blue-700  hover:underline'
+              onClick={() => router.push(`/garment/${garment.id}`)}
+            >
+              {garment.name}
+            </span>
             <span className='font-medium'>{garment.garmentClass}</span>
-          </div>
-        </div>
-      </td>
-      <td className='pr-4'>{garment.price} EGP</td>
-      <td className='py-3 pr-4'>
-        <div className='space-y-2'>
-          <div className='flex items-center justify-between gap-2'>
-            <label className='text-sm text-gray-600' htmlFor='small'>
-              S:
-            </label>
-            <input
-              className='w-10 px-2 py-1'
-              type='number'
-              id='small'
-              placeholder='S'
-              value={itemQnt.small}
-              onChange={handleQntChange}
-            />
-          </div>
-          <div className='flex items-center justify-between gap-2'>
-            <label className='text-sm text-gray-600' htmlFor='medium'>
-              M:
-            </label>
-            <input
-              className='w-10 px-2 py-1'
-              type='number'
-              id='medium'
-              placeholder='M'
-              value={itemQnt.medium}
-              onChange={handleQntChange}
-            />
-          </div>
-          <div className='flex items-center justify-between gap-2'>
-            <label className='text-sm text-gray-600' htmlFor='large'>
-              L:
-            </label>
-            <input
-              className='w-10 px-2 py-1'
-              type='number'
-              id='large'
-              placeholder='L'
-              value={itemQnt.large}
-              onChange={handleQntChange}
-            />
-          </div>
-          <div className='flex items-center justify-between gap-2'>
-            <label className='text-sm text-gray-600' htmlFor='xlarge'>
-              XL:
-            </label>
-            <input
-              className='w-10 px-2 py-1'
-              type='number'
-              id='xlarge'
-              placeholder='XL'
-              value={itemQnt.xlarge}
-              onChange={handleQntChange}
-            />
-          </div>
-          <div className='flex items-center justify-between gap-2'>
-            <label className='text-sm text-gray-600' htmlFor='xxlarge'>
-              XXL:
-            </label>
-            <input
-              className='w-10 px-2 py-1'
-              type='number'
-              id='xxlarge'
-              placeholder='XXL'
-              value={itemQnt.xxlarge}
-              onChange={handleQntChange}
-            />
-          </div>
-        </div>
-      </td>
-      <td className='pr-4'>
-        {(itemQnt.small +
-          itemQnt.medium +
-          itemQnt.large +
-          itemQnt.xlarge +
-          itemQnt.xxlarge) *
-          garment.price}{' '}
-        EGP
-      </td>
-      <td className='pr-4'>
-        <XMarkIcon
-          onClick={handelItemDelete}
-          className='h-6 w-6 cursor-pointer rounded-full bg-gray-200 p-1.5 transition duration-200 hover:bg-red-600 hover:text-white'
-        />
-      </td>
-    </tr>
+          </h5>
+        </td>
+
+        <td className='p-4 lg:px-10'>{garment.price} EGP</td>
+
+        <td className='p-4 lg:px-10'>
+          <h5 className='flex w-28 flex-wrap gap-1.5'>
+            {sizes.map((size) => (
+              <SizeElem
+                key={size.size}
+                size={itemQty[size.size]}
+                label={size.label}
+              />
+            ))}
+            <span
+              className='cursor-pointer text-blue-700 hover:underline'
+              onClick={() => setEditQtyModal(true)}
+            >
+              Edit
+            </span>
+          </h5>
+        </td>
+
+        <td className='p-4 lg:px-10'>
+          {sizes
+            .map((size) => itemQty[size.size])
+            .reduce((prev, curr) => prev + curr) * garment.price}{' '}
+          EGP
+        </td>
+
+        <td className='p-4 lg:px-10'>
+          <XMarkIcon
+            onClick={handelItemDelete}
+            className='h-8 w-8 cursor-pointer rounded-full bg-gray-200 p-2 transition duration-200 hover:bg-red-600 hover:text-white'
+          />
+        </td>
+      </tr>
+    </>
   );
 };
 export default CartItem;

@@ -1,14 +1,17 @@
 import { useContext } from 'react';
 import buildClient from '../../api/build-client';
+import OrderRow from '../../components/customer/OrderRow';
 import Layout from '../../components/layout/Layout';
-import OrderRow from '../../components/OrderRow';
 import AuthContext from '../../context/AuthContext';
 
 const OrdersPage = ({ orders }) => {
   const { user } = useContext(AuthContext);
-  console.log(orders);
+
   return (
     <Layout home user={user}>
+      <h1 className='mt-20 mb-10 text-center text-3xl font-semibold text-gray-700'>
+        Your orders
+      </h1>
       <section className='mx-auto w-full max-w-4xl items-center justify-center p-10'>
         {orders.map((order) => (
           <OrderRow key={order.id} order={order} />

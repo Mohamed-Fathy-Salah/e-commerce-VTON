@@ -1,20 +1,20 @@
-name: deploy-cart
+name: deploy-client
 
 on:
   push:
     branches:
       - master
     paths:
-      - "cart/**"
+      - "client/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd cart && docker build -t mofasa101/cart .
+      - run: cd client && docker build -t mofasa101/vton-client .
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker push mofasa101/cart
+      - run: docker push mofasa101/vton-client
