@@ -1,25 +1,26 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import StripeCheckout from 'react-stripe-checkout';
+import buildClient from '../../api/build-client';
 import SuccessfulPayment from '../../components/utils/SuccessfulPayment';
 import AuthContext from '../../context/AuthContext';
-import { useCustomerOrderById } from '../../hooks/useOrders';
+import CartContext from '../../context/CartContext';
 import { usePayment } from '../../hooks/usePayment';
 
-const CheckoutPage = () => {
+const CheckoutPage = ({ order }) => {
   const router = useRouter();
   const orderId = router.query.orderId;
   const { user } = useContext(AuthContext);
+  const { clearCart } = useContext(CartContext);
 
   const [timeLeft, setTimeLeft] = useState(0);
-
-  const { data: order, isLoading } = useCustomerOrderById(orderId);
-  console.log(order);
+  const [successPayment, setSuccessPayment] = useState(false);
 
   useEffect(() => {
     const findTimeLeft = () => {
-      const msLeft = new Date(order?.data.expiresAt) - new Date();
+      const msLeft = new Date(order?.expiresAt) - new Date();
       setTimeLeft(Math.round(msLeft / 1000));
     };
 
@@ -31,9 +32,17 @@ const CheckoutPage = () => {
     };
   }, [order]);
 
-  const { mutate: doPayment } = usePayment();
+  const queryClient = useQueryClient();
+  const { mutate: doPayment } = usePayment({
+    onSuccess: () => {
+      queryClient.invalidateQueries('orders');
+      queryClient.invalidateQueries('customer-order');
+      clearCart();
+      setSuccessPayment(true);
+    },
+  });
 
-  const totalPrice = order?.data.garments
+  const totalPrice = order?.garments
     .map(
       (garment) =>
         (garment.small +
@@ -45,8 +54,7 @@ const CheckoutPage = () => {
     )
     .reduce((prev, curr) => prev + curr);
 
-  if (isLoading) return <div>Loading ...</div>;
-  if (order?.data.status === 'completed') return <SuccessfulPayment />;
+  if (successPayment) return <SuccessfulPayment />;
 
   return (
     <div className='flex h-screen w-full flex-col items-center gap-5 p-36'>
@@ -75,22 +83,22 @@ const CheckoutPage = () => {
   );
 };
 
-// export async function getServerSideProps(context) {
-//   const { orderId } = context.params;
+export async function getServerSideProps(context) {
+  const { orderId } = context.params;
 
-//   const client = buildClient(context);
-//   const { data } = await client.get(`/api/orders/${orderId}`);
+  const client = buildClient(context);
+  const { data } = await client.get(`/api/orders/${orderId}`);
 
-//   if (!data)
-//     return {
-//       order: null,
-//     };
+  if (!data)
+    return {
+      order: null,
+    };
 
-//   return {
-//     props: {
-//       order: data,
-//     },
-//   };
-// }
+  return {
+    props: {
+      order: data,
+    },
+  };
+}
 
 export default CheckoutPage;
